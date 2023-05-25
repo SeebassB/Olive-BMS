@@ -1,3 +1,8 @@
+// TEST PROGRAM TO MAKE SURE EACH STUDIO CAN TURN ON
+// NOT PART OF THE MAIN PROGRAM
+
+
+
 import java.util.Scanner;
 
 import jssc.SerialPortException;
