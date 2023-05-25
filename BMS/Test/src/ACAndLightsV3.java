@@ -1,7 +1,12 @@
 
 /*TODO
  * 
- * 
+ *   OLD PROGRAM KEPT TO CANNIBALIZE IN CASE OF NEW FEATURES ADDING 
+ *
+ *
+ *
+ *
+ *
  * cd/shutdown cycle
  * 
  * multithreading? into other
