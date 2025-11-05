@@ -5,10 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.Collections;
-import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -17,7 +13,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
 import jssc.SerialPortException;
 
@@ -248,12 +243,12 @@ public class TextFieldLabel extends JFrame
 		
 		//make sure you dont throw in any commands while the other thread is operating
 		int clearanceOnce =0;
-		while(HVACMultiTest.hvacThreadStatus==1)
+		while(BMSMainController.hvacThreadStatus==1)
 		{
 			//printout the waiting for Clearance 2
 			if(clearanceOnce<=4)
 			{	
-				System.out.println("-=-=-=-=Waiting for clearance: "+HVACMultiTest.hvacThreadStatus);
+				System.out.println("-=-=-=-=Waiting for clearance: "+ BMSMainController.hvacThreadStatus);
 				clearanceOnce++;
 			}
 			Thread.sleep(1000);
@@ -277,12 +272,12 @@ public class TextFieldLabel extends JFrame
 			
 			
 			//lower the temps of the HVACs bac to 74(baseline)
-			HVACMultiTest.outerAccessibleRoomList[0].setTargetTemp(74);
-			HVACMultiTest.outerAccessibleRoomList[1].setTargetTemp(74);
-			HVACMultiTest.outerAccessibleRoomList[2].setTargetTemp(74);
-			HVACMultiTest.outerAccessibleRoomList[3].setTargetTemp(74);
-			HVACMultiTest.outerAccessibleRoomList[4].setTargetTemp(74);
-			HVACMultiTest.outerAccessibleRoomList[5].setTargetTemp(74);
+			BMSMainController.outerAccessibleRoomList[0].setTargetTemp(74);
+			BMSMainController.outerAccessibleRoomList[1].setTargetTemp(74);
+			BMSMainController.outerAccessibleRoomList[2].setTargetTemp(74);
+			BMSMainController.outerAccessibleRoomList[3].setTargetTemp(74);
+			BMSMainController.outerAccessibleRoomList[4].setTargetTemp(74);
+			BMSMainController.outerAccessibleRoomList[5].setTargetTemp(74);
 			System.out.println("STUDIOS ON");
 		}		
 		
@@ -308,12 +303,12 @@ public class TextFieldLabel extends JFrame
 			bms.shutdownAll();
 			
 			//raise the target temps of the rooms to effectively turn off the HVAC
-			HVACMultiTest.outerAccessibleRoomList[0].setTargetTemp(80);
-			HVACMultiTest.outerAccessibleRoomList[1].setTargetTemp(80);
-			HVACMultiTest.outerAccessibleRoomList[2].setTargetTemp(80);
-			HVACMultiTest.outerAccessibleRoomList[3].setTargetTemp(80);
-			HVACMultiTest.outerAccessibleRoomList[4].setTargetTemp(80);
-			HVACMultiTest.outerAccessibleRoomList[5].setTargetTemp(80);
+			BMSMainController.outerAccessibleRoomList[0].setTargetTemp(80);
+			BMSMainController.outerAccessibleRoomList[1].setTargetTemp(80);
+			BMSMainController.outerAccessibleRoomList[2].setTargetTemp(80);
+			BMSMainController.outerAccessibleRoomList[3].setTargetTemp(80);
+			BMSMainController.outerAccessibleRoomList[4].setTargetTemp(80);
+			BMSMainController.outerAccessibleRoomList[5].setTargetTemp(80);
 			System.out.println("STUDIOS OFF");
 	        //test
 			}
@@ -332,22 +327,22 @@ public class TextFieldLabel extends JFrame
 			System.out.println("STUDIO "+roomNumber+" LAUNCHING");
 			if(roomNumber==1)
 			{
-				HVACMultiTest.outerAccessibleRoomList[0].setTargetTemp(74);
-				HVACMultiTest.outerAccessibleRoomList[3].setTargetTemp(74);
+				BMSMainController.outerAccessibleRoomList[0].setTargetTemp(74);
+				BMSMainController.outerAccessibleRoomList[3].setTargetTemp(74);
 				bms.launchStudio1();
 				System.out.println("STUDIO 1 ON");
 			}	
 			else if(roomNumber==2)
 			{
-				HVACMultiTest.outerAccessibleRoomList[1].setTargetTemp(74);
-				HVACMultiTest.outerAccessibleRoomList[4].setTargetTemp(80);
+				BMSMainController.outerAccessibleRoomList[1].setTargetTemp(74);
+				BMSMainController.outerAccessibleRoomList[4].setTargetTemp(80);
 				bms.launchStudio2();
 				System.out.println("STUDIO 2 ON");
 			}
 			else if(roomNumber==3)
 			{
-				HVACMultiTest.outerAccessibleRoomList[2].setTargetTemp(74);
-				HVACMultiTest.outerAccessibleRoomList[5].setTargetTemp(74);
+				BMSMainController.outerAccessibleRoomList[2].setTargetTemp(74);
+				BMSMainController.outerAccessibleRoomList[5].setTargetTemp(74);
 				bms.launchStudio3();
 				System.out.println("STUDIO 3 ON");
 			}
@@ -364,22 +359,22 @@ public class TextFieldLabel extends JFrame
 			
 			if(roomNumber==1)
 			{
-				HVACMultiTest.outerAccessibleRoomList[0].setTargetTemp(80);
-				HVACMultiTest.outerAccessibleRoomList[3].setTargetTemp(80);
+				BMSMainController.outerAccessibleRoomList[0].setTargetTemp(80);
+				BMSMainController.outerAccessibleRoomList[3].setTargetTemp(80);
 				bms.shutdownStudio1();
 				System.out.println("STUDIO 1 OFF");
 			}
 			else if(roomNumber==2)
 			{
-				HVACMultiTest.outerAccessibleRoomList[1].setTargetTemp(80);
-				HVACMultiTest.outerAccessibleRoomList[4].setTargetTemp(80);
+				BMSMainController.outerAccessibleRoomList[1].setTargetTemp(80);
+				BMSMainController.outerAccessibleRoomList[4].setTargetTemp(80);
 				bms.shutdownStudio2();
 				System.out.println("STUDIO 2 OFF");
 			}
 			else if(roomNumber==3)
 			{
-				HVACMultiTest.outerAccessibleRoomList[2].setTargetTemp(80);
-				HVACMultiTest.outerAccessibleRoomList[5].setTargetTemp(80);
+				BMSMainController.outerAccessibleRoomList[2].setTargetTemp(80);
+				BMSMainController.outerAccessibleRoomList[5].setTargetTemp(80);
 				bms.shutdownStudio3();
 				System.out.println("STUDIO 3 OFF");
 			}	
@@ -413,18 +408,18 @@ public class TextFieldLabel extends JFrame
 			System.out.println("CONTROL ROOM "+roomNumber+" TEMPERATURE SET TO "+tempNumber+" C/H SET TO "+coolHeat);
 			if(roomNumber==1)
 			{
-				HVACMultiTest.outerAccessibleRoomList[0].setTargetTemp(tempNumber);
-				HVACMultiTest.outerAccessibleRoomList[0].setCoolHeat(coolHeat);
+				BMSMainController.outerAccessibleRoomList[0].setTargetTemp(tempNumber);
+				BMSMainController.outerAccessibleRoomList[0].setCoolHeat(coolHeat);
 			}	
 			else if(roomNumber==2)
 			{
-				HVACMultiTest.outerAccessibleRoomList[1].setTargetTemp(tempNumber);
-				HVACMultiTest.outerAccessibleRoomList[1].setCoolHeat(coolHeat);
+				BMSMainController.outerAccessibleRoomList[1].setTargetTemp(tempNumber);
+				BMSMainController.outerAccessibleRoomList[1].setCoolHeat(coolHeat);
 			}
 			else if(roomNumber==3)
 			{
-				HVACMultiTest.outerAccessibleRoomList[2].setTargetTemp(tempNumber);
-				HVACMultiTest.outerAccessibleRoomList[2].setCoolHeat(coolHeat);
+				BMSMainController.outerAccessibleRoomList[2].setTargetTemp(tempNumber);
+				BMSMainController.outerAccessibleRoomList[2].setCoolHeat(coolHeat);
 			}
 			
 		}
@@ -456,18 +451,18 @@ public class TextFieldLabel extends JFrame
 			System.out.println("BOOTH "+roomNumber+" TEMPERATURE SET TO "+tempNumber+" C/H SET TO "+coolHeat);
 			if(roomNumber==1)
 			{
-				HVACMultiTest.outerAccessibleRoomList[4].setTargetTemp(tempNumber);
-				HVACMultiTest.outerAccessibleRoomList[4].setCoolHeat(coolHeat);
+				BMSMainController.outerAccessibleRoomList[4].setTargetTemp(tempNumber);
+				BMSMainController.outerAccessibleRoomList[4].setCoolHeat(coolHeat);
 			}	
 			else if(roomNumber==2)
 			{
-				HVACMultiTest.outerAccessibleRoomList[5].setTargetTemp(tempNumber);
-				HVACMultiTest.outerAccessibleRoomList[5].setCoolHeat(coolHeat);
+				BMSMainController.outerAccessibleRoomList[5].setTargetTemp(tempNumber);
+				BMSMainController.outerAccessibleRoomList[5].setCoolHeat(coolHeat);
 			}
 			else if(roomNumber==3)
 			{
-				HVACMultiTest.outerAccessibleRoomList[6].setTargetTemp(tempNumber);
-				HVACMultiTest.outerAccessibleRoomList[6].setCoolHeat(coolHeat);
+				BMSMainController.outerAccessibleRoomList[6].setTargetTemp(tempNumber);
+				BMSMainController.outerAccessibleRoomList[6].setCoolHeat(coolHeat);
 			}
 			
 		}
@@ -491,15 +486,15 @@ public class TextFieldLabel extends JFrame
 			System.out.println("CONTROL ROOM "+roomNumber+" TEMPERATURE SET TO "+tempNumber);
 			if(roomNumber==1)
 			{
-				HVACMultiTest.outerAccessibleRoomList[0].setTargetTemp(tempNumber);
+				BMSMainController.outerAccessibleRoomList[0].setTargetTemp(tempNumber);
 			}	
 			else if(roomNumber==2)
 			{
-				HVACMultiTest.outerAccessibleRoomList[1].setTargetTemp(tempNumber);
+				BMSMainController.outerAccessibleRoomList[1].setTargetTemp(tempNumber);
 			}
 			else if(roomNumber==3)
 			{
-				HVACMultiTest.outerAccessibleRoomList[2].setTargetTemp(tempNumber);
+				BMSMainController.outerAccessibleRoomList[2].setTargetTemp(tempNumber);
 			}
 			
 		}
@@ -523,15 +518,15 @@ public class TextFieldLabel extends JFrame
 			System.out.println("BOOTH "+roomNumber+" TEMPERATURE SET TO "+tempNumber);
 			if(roomNumber==1)
 			{
-				HVACMultiTest.outerAccessibleRoomList[3].setTargetTemp(tempNumber);
+				BMSMainController.outerAccessibleRoomList[3].setTargetTemp(tempNumber);
 			}	
 			else if(roomNumber==2)
 			{
-				HVACMultiTest.outerAccessibleRoomList[4].setTargetTemp(tempNumber);
+				BMSMainController.outerAccessibleRoomList[4].setTargetTemp(tempNumber);
 			}
 			else if(roomNumber==3)
 			{
-				HVACMultiTest.outerAccessibleRoomList[5].setTargetTemp(tempNumber);
+				BMSMainController.outerAccessibleRoomList[5].setTargetTemp(tempNumber);
 			}
 			
 		}
@@ -540,20 +535,20 @@ public class TextFieldLabel extends JFrame
 		else if(input.matches("INFO"))
 		{
 			
-			bms.printInfo(HVACMultiTest.outerAccessibleRoomList, HVACMultiTest.outerAccessibleDumpList);
+			bms.printInfo(BMSMainController.outerAccessibleRoomList, BMSMainController.outerAccessibleDumpList);
 		}	
 		
 		//system standby
 		else if(input.matches("STANDBY")||input.matches("PAUSE"))
 		{
-			HVACMultiTest.pause=1;
+			BMSMainController.pause=1;
 			System.out.println("System in stasis");
 		}
 		
 		//system resume
 		else if(input.matches("RESUME"))
 		{
-			HVACMultiTest.pause=0;
+			BMSMainController.pause=0;
 			System.out.println("System resumed");
 		}
 		
@@ -561,35 +556,35 @@ public class TextFieldLabel extends JFrame
 		else if(input.matches("ZA WARUDO"))
 		{
 			System.out.println("TOKI WO TOMARE");
-			HVACMultiTest.pause=115;
+			BMSMainController.pause=115;
 			bms.stopHVAC();
 		}
 		
 		//reset to default, default being 74 degrees cool
 		else if(input.matches("RESET")||input.matches("DEFAULT"))
 		{
-			HVACMultiTest.outerAccessibleRoomList[0].setTargetTemp(74);
-			HVACMultiTest.outerAccessibleRoomList[1].setTargetTemp(74);
-			HVACMultiTest.outerAccessibleRoomList[2].setTargetTemp(74);
-			HVACMultiTest.outerAccessibleRoomList[3].setTargetTemp(74);
-			HVACMultiTest.outerAccessibleRoomList[4].setTargetTemp(74);
-			HVACMultiTest.outerAccessibleRoomList[5].setTargetTemp(74);
-			HVACMultiTest.outerAccessibleRoomList[0].setCoolHeat(0);
-			HVACMultiTest.outerAccessibleRoomList[1].setCoolHeat(0);
-			HVACMultiTest.outerAccessibleRoomList[2].setCoolHeat(0);
-			HVACMultiTest.outerAccessibleRoomList[3].setCoolHeat(0);
-			HVACMultiTest.outerAccessibleRoomList[4].setCoolHeat(0);
-			HVACMultiTest.outerAccessibleRoomList[5].setCoolHeat(0);
+			BMSMainController.outerAccessibleRoomList[0].setTargetTemp(74);
+			BMSMainController.outerAccessibleRoomList[1].setTargetTemp(74);
+			BMSMainController.outerAccessibleRoomList[2].setTargetTemp(74);
+			BMSMainController.outerAccessibleRoomList[3].setTargetTemp(74);
+			BMSMainController.outerAccessibleRoomList[4].setTargetTemp(74);
+			BMSMainController.outerAccessibleRoomList[5].setTargetTemp(74);
+			BMSMainController.outerAccessibleRoomList[0].setCoolHeat(0);
+			BMSMainController.outerAccessibleRoomList[1].setCoolHeat(0);
+			BMSMainController.outerAccessibleRoomList[2].setCoolHeat(0);
+			BMSMainController.outerAccessibleRoomList[3].setCoolHeat(0);
+			BMSMainController.outerAccessibleRoomList[4].setCoolHeat(0);
+			BMSMainController.outerAccessibleRoomList[5].setCoolHeat(0);
 			
 			//reset the outer rooms to the heat standard
-			HVACMultiTest.outerAccessibleDumpList[0].setCoolHeat(1);
-			HVACMultiTest.outerAccessibleDumpList[0].setTargetTemp(72);
-			HVACMultiTest.outerAccessibleDumpList[1].setCoolHeat(1);
-			HVACMultiTest.outerAccessibleDumpList[1].setTargetTemp(72);
-			HVACMultiTest.outerAccessibleDumpList[2].setCoolHeat(1);
-			HVACMultiTest.outerAccessibleDumpList[2].setTargetTemp(72);
-			HVACMultiTest.outerAccessibleDumpList[3].setCoolHeat(1);
-			HVACMultiTest.outerAccessibleDumpList[3].setTargetTemp(72);
+			BMSMainController.outerAccessibleDumpList[0].setCoolHeat(1);
+			BMSMainController.outerAccessibleDumpList[0].setTargetTemp(72);
+			BMSMainController.outerAccessibleDumpList[1].setCoolHeat(1);
+			BMSMainController.outerAccessibleDumpList[1].setTargetTemp(72);
+			BMSMainController.outerAccessibleDumpList[2].setCoolHeat(1);
+			BMSMainController.outerAccessibleDumpList[2].setTargetTemp(72);
+			BMSMainController.outerAccessibleDumpList[3].setCoolHeat(1);
+			BMSMainController.outerAccessibleDumpList[3].setTargetTemp(72);
 		}
 		
 		//blanket drop all inportant rooms by 1 degree
@@ -602,12 +597,12 @@ public class TextFieldLabel extends JFrame
 			
 			System.out.println("CHANGING ALL CRs and BTHs by "+blanketAmount);
 			
-			HVACMultiTest.outerAccessibleRoomList[0].setTargetTemp((int) (HVACMultiTest.outerAccessibleRoomList[0].getTargetTemp()+blanketAmount));
-			HVACMultiTest.outerAccessibleRoomList[1].setTargetTemp((int) (HVACMultiTest.outerAccessibleRoomList[1].getTargetTemp()+blanketAmount));
-			HVACMultiTest.outerAccessibleRoomList[2].setTargetTemp((int) (HVACMultiTest.outerAccessibleRoomList[2].getTargetTemp()+blanketAmount));
-			HVACMultiTest.outerAccessibleRoomList[3].setTargetTemp((int) (HVACMultiTest.outerAccessibleRoomList[3].getTargetTemp()+blanketAmount));
-			HVACMultiTest.outerAccessibleRoomList[4].setTargetTemp((int) (HVACMultiTest.outerAccessibleRoomList[4].getTargetTemp()+blanketAmount));
-			HVACMultiTest.outerAccessibleRoomList[5].setTargetTemp((int) (HVACMultiTest.outerAccessibleRoomList[5].getTargetTemp()+blanketAmount));
+			BMSMainController.outerAccessibleRoomList[0].setTargetTemp((int) (BMSMainController.outerAccessibleRoomList[0].getTargetTemp()+blanketAmount));
+			BMSMainController.outerAccessibleRoomList[1].setTargetTemp((int) (BMSMainController.outerAccessibleRoomList[1].getTargetTemp()+blanketAmount));
+			BMSMainController.outerAccessibleRoomList[2].setTargetTemp((int) (BMSMainController.outerAccessibleRoomList[2].getTargetTemp()+blanketAmount));
+			BMSMainController.outerAccessibleRoomList[3].setTargetTemp((int) (BMSMainController.outerAccessibleRoomList[3].getTargetTemp()+blanketAmount));
+			BMSMainController.outerAccessibleRoomList[4].setTargetTemp((int) (BMSMainController.outerAccessibleRoomList[4].getTargetTemp()+blanketAmount));
+			BMSMainController.outerAccessibleRoomList[5].setTargetTemp((int) (BMSMainController.outerAccessibleRoomList[5].getTargetTemp()+blanketAmount));
 
 		}
 		
@@ -618,10 +613,10 @@ public class TextFieldLabel extends JFrame
 			int tempNumber = Integer.parseInt(input.substring(5));
 			System.out.println("SET EDIT, HALLWAY, KITCHEN, AND PHONE BOOTH TO ="+tempNumber);
 			
-			HVACMultiTest.outerAccessibleDumpList[0].setTargetTemp(tempNumber);
-			HVACMultiTest.outerAccessibleDumpList[1].setTargetTemp(tempNumber);
-			HVACMultiTest.outerAccessibleDumpList[2].setTargetTemp(tempNumber);
-			HVACMultiTest.outerAccessibleDumpList[3].setTargetTemp(tempNumber);
+			BMSMainController.outerAccessibleDumpList[0].setTargetTemp(tempNumber);
+			BMSMainController.outerAccessibleDumpList[1].setTargetTemp(tempNumber);
+			BMSMainController.outerAccessibleDumpList[2].setTargetTemp(tempNumber);
+			BMSMainController.outerAccessibleDumpList[3].setTargetTemp(tempNumber);
 
 		}
 		
@@ -632,7 +627,7 @@ public class TextFieldLabel extends JFrame
 			int tempNumber = Integer.parseInt(input.substring(7));
 			System.out.println("OFFICE(EDIT) TO ="+tempNumber);
 					
-			HVACMultiTest.outerAccessibleDumpList[0].setTargetTemp(tempNumber);
+			BMSMainController.outerAccessibleDumpList[0].setTargetTemp(tempNumber);
 
 		}
 
@@ -643,7 +638,7 @@ public class TextFieldLabel extends JFrame
 			int tempNumber = Integer.parseInt(input.substring(8));
 			System.out.println("SETTING KITHCEN TO ="+tempNumber);
 					
-			HVACMultiTest.outerAccessibleDumpList[1].setTargetTemp(tempNumber);
+			BMSMainController.outerAccessibleDumpList[1].setTargetTemp(tempNumber);
 
 		}
 		
@@ -654,7 +649,7 @@ public class TextFieldLabel extends JFrame
 			int tempNumber = Integer.parseInt(input.substring(6));
 			System.out.println("SETTING PHONE BOOTH TO ="+tempNumber);
 					
-			HVACMultiTest.outerAccessibleDumpList[3].setTargetTemp(tempNumber);
+			BMSMainController.outerAccessibleDumpList[3].setTargetTemp(tempNumber);
 
 		}	
 		
@@ -669,7 +664,7 @@ public class TextFieldLabel extends JFrame
 				System.out.println("CONTROL ROOM "+roomNumber+" SET TO COOL");
 				roomNumber-=1;
 			
-				HVACMultiTest.outerAccessibleRoomList[roomNumber].setCoolHeat(0);
+				BMSMainController.outerAccessibleRoomList[roomNumber].setCoolHeat(0);
 			}
 			else
 			System.out.println("CONTROL ROOM NUMBER NOT RECOGNIZED");	
@@ -685,7 +680,7 @@ public class TextFieldLabel extends JFrame
 				System.out.println("CONTROL ROOM "+roomNumber+" SET TO HEAT");
 				roomNumber-=1;
 
-				HVACMultiTest.outerAccessibleRoomList[roomNumber].setCoolHeat(1);
+				BMSMainController.outerAccessibleRoomList[roomNumber].setCoolHeat(1);
 			}
 			else
 			System.out.println("CONTROL ROOM NUMBER NOT RECOGNIZED");	
@@ -701,7 +696,7 @@ public class TextFieldLabel extends JFrame
 				System.out.println("BOOTH "+roomNumber+" SET TO COOL");
 				roomNumber-=1;
 
-				HVACMultiTest.outerAccessibleRoomList[roomNumber+3].setCoolHeat(0);
+				BMSMainController.outerAccessibleRoomList[roomNumber+3].setCoolHeat(0);
 			}
 			else
 			System.out.println("BOOTH NUMBER NOT RECOGNIZED");	
@@ -718,7 +713,7 @@ public class TextFieldLabel extends JFrame
 				System.out.println("BOOTH "+roomNumber+" SET TO HEAT");
 				roomNumber-=1;
 
-				HVACMultiTest.outerAccessibleRoomList[roomNumber+3].setCoolHeat(1);
+				BMSMainController.outerAccessibleRoomList[roomNumber+3].setCoolHeat(1);
 			}
 			else
 			System.out.println("BOOTH NUMBER NOT RECOGNIZED");	
@@ -730,10 +725,10 @@ public class TextFieldLabel extends JFrame
 			
 				System.out.println("EDIT/OUTSIDE SET TO COOL");
 			
-				HVACMultiTest.outerAccessibleDumpList[0].setCoolHeat(0);
-				HVACMultiTest.outerAccessibleDumpList[1].setCoolHeat(0);
-				HVACMultiTest.outerAccessibleDumpList[2].setCoolHeat(0);
-				HVACMultiTest.outerAccessibleDumpList[3].setCoolHeat(0);			
+				BMSMainController.outerAccessibleDumpList[0].setCoolHeat(0);
+				BMSMainController.outerAccessibleDumpList[1].setCoolHeat(0);
+				BMSMainController.outerAccessibleDumpList[2].setCoolHeat(0);
+				BMSMainController.outerAccessibleDumpList[3].setCoolHeat(0);
 			
 		}	
 		
@@ -743,10 +738,10 @@ public class TextFieldLabel extends JFrame
 			
 				System.out.println("EDIT/OUTSIDE SET TO HEAT");
 			
-				HVACMultiTest.outerAccessibleDumpList[0].setCoolHeat(1);
-				HVACMultiTest.outerAccessibleDumpList[1].setCoolHeat(1);
-				HVACMultiTest.outerAccessibleDumpList[2].setCoolHeat(1);
-				HVACMultiTest.outerAccessibleDumpList[3].setCoolHeat(1);			
+				BMSMainController.outerAccessibleDumpList[0].setCoolHeat(1);
+				BMSMainController.outerAccessibleDumpList[1].setCoolHeat(1);
+				BMSMainController.outerAccessibleDumpList[2].setCoolHeat(1);
+				BMSMainController.outerAccessibleDumpList[3].setCoolHeat(1);
 			
 		}
 		

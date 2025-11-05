@@ -10,61 +10,19 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 import javax.swing.*;
 
 import jssc.SerialPort;
 import jssc.SerialPortException;
-import jssc.SerialPortList;
 
 
-/*  TODO 1/28/20
- * 
- * 	firgure out CR2 Lights, ask carlols to move it to another contacto
- * 
- * 
- *  WarningPrint() make sure the warning little box is apporpriate/not default
- * 
- * 
- * 
- * 
- * gets and sets that chris needs? do those come from the array Obj?
- * 
- * add error handling to portRectifier()
- * 
- * WARNING SUPRESSION??
- * 
- * ADD IMPORTANT LOGS TO LAUNCH/SHUTDOWNS
- * 
- * warning log also does important log?
- * 
- * 
- * 
- * 
- * CHECKLIST OF COMPLETELY DONE METHODS THAT ARE COOL AND DONT NEED TO BE TOUVHED ANYMORE
- * logPrint
- * logImportantPrint
- * debugPrint
- * TODO WARNINGPRINT
- * adcRead
- * relayWrite
- * relayRead
- * formatOutput
- * 
- * 
- * 
- * 
- * 
- */
-
-//nice color #4287f5
-
-
-public class BMSMethods extends Thread
+@SuppressWarnings("CallToPrintStackTrace")
+public class BMSMethods
 {
 
-	
-	//const list of relays and all of the connections to the boards
+	//const list of relays and all the connections to the boards
 	
 	final int CR1_Right_Speaker  = 21; //Contactor 1  //Breakers 1  and 3  //to be reviewed
 	final int CR1_Middle_Speaker = 22; //Contactor 2  //Breakers 5  and 7  //to be reviewed
@@ -114,8 +72,8 @@ public class BMSMethods extends Thread
 	
 	final String on = "on";
 	final String off = "off";
-    private static DecimalFormat df2 = new DecimalFormat("00.00");
-    private static DecimalFormat df2sans0 = new DecimalFormat("0.00");
+    private static final DecimalFormat df2 = new DecimalFormat("00.00");
+    private static final DecimalFormat df2sans0 = new DecimalFormat("0.00");
 
     int currentCoolMachine = 0;
 	int currentHeatMachine = 0;
@@ -123,13 +81,8 @@ public class BMSMethods extends Thread
 	int mr49 = 0;
 	int doubleOff =1;
 	int previousHVAC = -1;
-	
-	int WARNING_SUPPRESSION = 0;
-	//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-	//thread stuff
-	
 
-	
+
 	
 	
 	//----------------------------------------------------------------------------------------------
@@ -138,7 +91,7 @@ public class BMSMethods extends Thread
 	 * Used to log almost everything into a log file
 	 * log files can be found at C:\\Users\\%USERNAME&\\Documents\\BMS Logs
 	 * Each day a new log is created
-	 * @param String information to log
+	 * @param in information to log
 	 * */
 	public void logPrint(String in)
 	{	
@@ -187,7 +140,7 @@ public class BMSMethods extends Thread
 	 * Used to log only the important stuff
 	 * The default log will still log everything, this one will just filter out the not important stuff 
 	 *
-	 *	@param String what you want logged
+	 *	@param in what you want logged
 	 */
 	public void logImportantPrint(String in)
 	{	
@@ -236,7 +189,7 @@ public class BMSMethods extends Thread
 	
 	/**
 	 *	System.out.printlns the input
-	 *	@param String inputs what you want to print 
+	 *	@param in inputs what you want to print
 	 */
 	public void debugPrint(String in)
 	{
@@ -248,11 +201,9 @@ public class BMSMethods extends Thread
 	 *  Displays an important error in a dialogPane
 	 *  also writes the message to the log
 	 *  if the global int WARNING_SUPPRESSION is non-zero, will suppress warnings
-	 * @param String inputs what you want to warn about
-	 * @throws InterruptedException 
-	 */
-	public void warningPrint(String in) throws InterruptedException
-	{
+	 * @param in inputs what you want to warn about
+     */
+	public void warningPrint(String in) {
 		//append in WARNING: so it reads in both the log and the option pane
 
 			in = "WARNING: "+in;
@@ -267,10 +218,8 @@ public class BMSMethods extends Thread
 	 * Used to write the position of a relay from the relay board
 	 * Logs each relay write
 	 * 
-	 * @param int         which relay you want to write
-	 * @param String         which state you want the relay to be
-	 * @throws SerialPortException 
-	 * @throws InterruptedException 
+	 * @param inRelay         which relay you want to write
+	 * @param onoff           which state you want the relay to be
 	 * */
 	public void relayWrite(int inRelay, String onoff) throws SerialPortException, InterruptedException
 	{
@@ -295,10 +244,7 @@ public class BMSMethods extends Thread
 	 * Used to write any command manually into the board
 	 * Logs each relay write
 	 * 
-	 * @param String         literal input into the board
-	 * @throws SerialPortException 
-	 * @throws InterruptedException 
-	 * */
+	 * @param rawIn literal input into the board */
 	public void relayWrite(String rawIn) throws SerialPortException, InterruptedException
 	{
 		//send the command to the port, then tell the log it happened
@@ -313,9 +259,7 @@ public class BMSMethods extends Thread
 	 * Used to read the position of a relay from the relay board
 	 * Logs each relay read
 	 * 
-	 * @param int         which relay you want to write
-	 * @throws SerialPortException 
-	 * @throws InterruptedException 
+	 * @param inRelay which relay you want to write
 	 * @return String the result of a formatOutput() relay read XX
 	 * */
 	public String relayRead(int inRelay) throws SerialPortException, InterruptedException
@@ -349,8 +293,8 @@ public class BMSMethods extends Thread
 	 *  Looks for both newline characters which only exist in specific spots related to the important numbers 
 	 *  Uses those numbers to trim everything down to a simple int
 	 * 
-	 * @param  String output from the board taht you want formatted into an int
-	 * @return String    just the number cut away from all of the other echoed chars 
+	 * @param  inFromBoard output from the board that you want formatted into an int
+	 * @return String    just the number cut away from all the other echoed chars
 	 */
 	public String formatOutput(String inFromBoard) throws InterruptedException
 	{
@@ -599,23 +543,21 @@ public class BMSMethods extends Thread
 	/**
 	 * Method to open a damper
 	 * 
-	 * @param int which damper to open by number
-	 * @throws InterruptedException 
-	 * @throws SerialPortException 
+	 * @param inDamper which damper to open by number
+	 * @throws InterruptedException boilerplate
+	 * @throws SerialPortException relayWrite might have a serial exception
 	 */
 	public void openDamper(int inDamper) throws SerialPortException, InterruptedException
 	{
 		this.relayWrite(inDamper,on);
 		this.logPrint("Opened Damper "+inDamper+".");
-	}	
+	}
 	
 	/**
 	 * Method to close a damper
 	 * copy of the above method
 	 * 
-	 * @param int which damper to open by number
-	 * @throws InterruptedException 
-	 * @throws SerialPortException 
+	 * @param inDamper which damper to open by number
 	 */
 	public void closeDamper(int inDamper) throws SerialPortException, InterruptedException
 	{
@@ -625,7 +567,6 @@ public class BMSMethods extends Thread
 	
 	/** 
 	 * Method used to open the port
-	 * @throws SerialPortException 
 	 * */
 	public void portOpen() throws InterruptedException, SerialPortException
 	{
@@ -639,7 +580,7 @@ public class BMSMethods extends Thread
 		try {
 			//open relayBoard
 			//checks to see if the port is open already
-			if(relayBoard.isOpened()==false)
+			if(!relayBoard.isOpened())
 			{
 				this.logPrint("Opening relayBoard port!");
 				relayBoard.openPort();		
@@ -663,8 +604,7 @@ public class BMSMethods extends Thread
 	/**
 	 * Method to close the port
 	 * handles errors if the port wasn't open
-	 * 
-	 * @param int if non-zero will suppress the warnings, used in the openPort() method
+	 *
 	 */	
 	public void portClose()
 	{
@@ -681,17 +621,15 @@ public class BMSMethods extends Thread
 			//final result is still all ports closed
 			this.logImportantPrint("Closure of serial port failed, might not have been open, not necessarily bad.");
 		}
-		this.logImportantPrint("Port succesfully closed!");
+		this.logImportantPrint("Port successfully closed!");
 	}
 	
 	/**
 	 * Method used to find the temperature of a room given the URL of the sensor 
 	 * strips the data from a json found in an IP URL from the sensor
 	 * 
-	 * @param String the URL of the room's sensor
+	 * @param inURL the URL of the room's sensor
 	 * @return double temperature of the room
-	 * @throws MalformedURLException
-	 * @throws IOException
 	 * */
 	public double readSensor(String inURL) throws IOException 
 	{
@@ -713,14 +651,14 @@ public class BMSMethods extends Thread
 
 		//set up needed variables to use
 		double out =-1;
-		String pulledJSON ="";
+		StringBuilder pulledJSON = new StringBuilder();
 		String found = "";
 		int cp;
 		
 		//transfer the JSON data from the is to a usable string
 		while((cp = is.read()) != -1)
 		{
-			pulledJSON+=(char)cp;
+			pulledJSON.append((char) cp);
 			
 		}
 				
@@ -743,11 +681,9 @@ public class BMSMethods extends Thread
 
 
 	/**
-	 * Method to turn off all of the board relays
+	 * Method to turn off all the board relays
 	 * employing the writeall command
 	 * probably shouldnt be used that often
-	 * @throws InterruptedException 
-	 * @throws SerialPortException 
 	 * */
 	
 	public void allOFF() throws SerialPortException, InterruptedException
@@ -762,27 +698,25 @@ public class BMSMethods extends Thread
 	
 	/**
 	 * Method used to sort and run the machines based on how much air is needed
-	 * @param currentCapacity the amount of air needed from the machines 
+	 * @param currentRequested the amount of air needed from the machines
 	 * @param hotCold whether you want heat or cold, 0 being cold, 1 being heat
 	 * */
-	public void handleHVACMachines(int currentCapacity, int hotCold) throws SerialPortException, InterruptedException
+	public void handleHVACMachines(int currentRequested, char hotCold) throws SerialPortException, InterruptedException
 	{
 		
-		int fanNumber =52;
 		//set up variables and arrays of the machines
-		int requestedAirflow = currentCapacity;
 		//arrays are both machines followed by their states
 
 		//×++=+=+/=+=×/×/×/×/×/×_×_<×>×>×[×[×[×]×[×[>×>×<×<×_×_×_×_××_/×/×
 		int[][] coolingMachines = {{50, 53} , {0,0}};
 		
 		int[][] heatingMachines = {{51, 54} , {0,0}};
-		System.out.println("Machine Request: "+requestedAirflow);
+		System.out.println("Machine Request: "+currentRequested);
 		
 		//something strange is up with read so this is an "empty" read to reset the issue
 		this.relayRead(50);
 		
-		//adjust the machines' current on/off state and change their respective stats
+		//adjust the machines' current on/off state and change their respective states based on their current state
 		//sets the 2d array collingMachines to the current state of the actual machines
 		if(this.relayRead(50).equalsIgnoreCase("OFF"))
 		{	
@@ -844,7 +778,9 @@ public class BMSMethods extends Thread
 	
 		//handle the purging cycle time
 		int purgeTimer=180;//timer for the purge cycle which is 3 minutes 60s * 3 = 180seconds
-		if(hotCold + previousHVAC == 1)
+
+		//check if current request and previous request are mismatched, if so trigger a purge cycle
+		if((hotCold == 'c' && previousHVAC== 1)||(hotCold == 'h' && previousHVAC== 0))
 		{
 			System.out.println("P U R G I N G");
 			//turn off all units
@@ -852,16 +788,11 @@ public class BMSMethods extends Thread
 			this.relayWrite(53,off);
 			this.relayWrite(51,off);
 			this.relayWrite(54,off);
-		
-			//turn on the fan for the purge cycle
-			//this.relayWrite(fanNumber,on);
-			if(fanNumber==55)
-				fanNumber-=3;
-			else
-				fanNumber+=3;
+
 				
 			currentCoolMachine++;
 			currentHeatMachine++;
+
 			System.out.println("Turning all machines off for the purge cycle");
 			while(purgeTimer>0)
 			{
@@ -869,18 +800,16 @@ public class BMSMethods extends Thread
 				System.out.println("seconds left in purge cycle = "+purgeTimer);
 				purgeTimer-=10;
 			}
-			this.relayWrite(52,off);
-			this.relayWrite(55,off);
 		}
 		
 		System.out.println("----------\nMachine Decisions:");	
 		//machine decisions time
 		//decide if both machines are needed
 		//if this number is ever changed form 50, remember to change it in the main method as well
-		if(requestedAirflow > 50)
+		if(currentRequested > 50)
 		{
 			//main cooling machine decisions
-			if(hotCold == 0)
+			if(hotCold == 'c')
 			{
 
 				this.relayWrite(50, on);
@@ -888,14 +817,15 @@ public class BMSMethods extends Thread
 				System.out.println("Turning on both cooling machines!");
 			}
 			//main heating machine decisions
-			else if(hotCold == 1)
+			else if(hotCold == 'h')
 			{
 				this.relayWrite(51, on);
 				this.relayWrite(54, on);
 				System.out.println("Turning on both heating machines!");
 			}	
-		}	
-		else if(requestedAirflow == 0)
+		}
+		//nothing requested
+		else if(currentRequested == 0)
 		{
 			//all machines off
 			this.relayWrite(50, off);
@@ -911,13 +841,13 @@ public class BMSMethods extends Thread
 				
 		}	
 		//only 1 machine needed
-		else if(requestedAirflow > 0)
+		else if(currentRequested > 0)
 		{
 			int totalCool = coolingMachines[1][0] + coolingMachines[1][1];
 			int totalHeat = heatingMachines[1][0] + heatingMachines[1][1];
 		
 			//check cooling
-			if(hotCold == 0)
+			if(hotCold == 'c')
 			{
 				//turn one machine on
 				if(totalCool == 0)
@@ -954,7 +884,7 @@ public class BMSMethods extends Thread
 				}	
 			}
 			//check heating
-			else if(hotCold == 1)
+			else if(hotCold == 'h')
 			{
 				//turn one machine on
 				if(totalHeat == 0)
@@ -984,16 +914,16 @@ public class BMSMethods extends Thread
 	
 	/**
 	 * Method used to calculate dump zones, and when to open/close them
-	 * @param int the current Airflow being requested
-	 * @param int whether you are asking for hot/cold
+	 * @param currentCapacity the current Airflow being requested
+	 * @param hotCold whether you are asking for hot/cold
 	 * */
-	public void handleHVACDumpZones(int currentCapacity, int hotCold) throws SerialPortException, InterruptedException
+	public void handleHVACDumpZones(int currentCapacity, char hotCold) throws SerialPortException, InterruptedException
 	{
 		//adjustment int
 		int dumpActivateLevel = -30;
 		
 		//handle cold
-		if(hotCold == 0)
+		if(hotCold == 'c')
 		{
 			System.out.println("----------\nDumpZones for Cold Air");
 		
@@ -1055,52 +985,9 @@ public class BMSMethods extends Thread
 		}
 
 		//handle heat	
-		else if(hotCold == 1)
+		else if(hotCold == 'h')
 		{
-		/*	System.out.println("DumpZones for Heating");
-			
-			//41 requested, opening
-			if((currentCapacity < dumpActivateLevel) || (this.relayRead(41).equals("on")))
-			{
-				this.openDamper(41);
-				currentCapacity += 7;
-				System.out.println("Opening Edit(41), capacity= "+currentCapacity);
-			}	
-			//41 not requested, closing
-			else
-			{
-				this.closeDamper(41);
-				System.out.println("Edit(41) not requested, final capacity= "+currentCapacity);
-			}
-			
-			//39 requested, opening
-			if((currentCapacity < dumpActivateLevel) || (this.relayRead(39).equals("on")))
-			{
-				this.openDamper(39);
-				currentCapacity +=7;
-				System.out.println("Opening Lounge(39), capacity= "+currentCapacity);
-			}	
-			//39 not requested, closing
-			else
-			{
-				this.closeDamper(39);
-				System.out.println("Lounge(39) not requested, capacity= "+currentCapacity);
-			}
-			//44 requested, opening
-			if((currentCapacity < dumpActivateLevel) || (this.relayRead(44).equals("on")))
-			{
-				this.openDamper(44);
-				currentCapacity += 7;
-				System.out.println("Opening Hallway(44), capacity= "+currentCapacity);
-			}	
-			//44 not requested, closing
-			else
-			{
-				this.closeDamper(44);
-				System.out.println("Hallway(44) not requested, final capacity= "+currentCapacity);
-			}
-			
-			*/
+
 			//47 requested, opening
 			if((currentCapacity < dumpActivateLevel) || (this.relayRead(47).equals("on")))
 			{
@@ -1116,7 +1003,7 @@ public class BMSMethods extends Thread
 			}
 
 		}//hot else if end
-		else if(hotCold == -1)
+		else if(hotCold == 'n')
 		{
 			
 			System.out.println("Leaving MRs open to circulate air and prevent overpressure when the machines are winding down");
@@ -1133,22 +1020,21 @@ public class BMSMethods extends Thread
 		
 	/**
 	 * Method used to set the value of previousState in multiple rooms
-	 * @param Room[] list the list of rooms you want to update previousState in
-	 * @param int in the value of previousState you want to set the rooms to
+	 * @param list list the list of rooms you want to update previousState in
+	 * @param in in the value of previousState you want to set the rooms to
 	 * */
-	public void massSetPreviousState(Room[] list, int in)
+	public void massSetPreviousState(Room[] list, char in)
 	{
-		for(int i=0;i<list.length;i++)
-			list[i].setPreviousState(in);
+        for (Room room : list) room.setPreviousState(in);
 	}
 	
 	/**
 	 * Method used to cull from a room list where all previousStates are equal to the int given
-	 * @param Room[] list of rooms you want to use
-	 * @param int all rooms with a previousState value of the param will be culled
+	 * @param list list of rooms you want to use
+	 * @param cull all rooms with a previousState value of the param will be culled
 	 * @return Room[] list given as a param minus rooms that had previousState eaual to the other param
 	 * */
-	public Room[] removeFromListPrevious(Room[] list, int cull)
+	public Room[] removeFromListPrevious(Room[] list, char cull)
 	{
 		//arraylist to cull all previousState = the param cull
 		ArrayList<Room> totalList = new ArrayList<Room>();
@@ -1156,7 +1042,7 @@ public class BMSMethods extends Thread
 		for(Room i : list)
 		{
 			if(i.getPreviousState()!=cull)
-			totalList.add(i);
+				totalList.add(i);
 		}
 		
 		//use the arraylist to make a new array with the exact length of the 
@@ -1168,14 +1054,14 @@ public class BMSMethods extends Thread
 		
 		return  culledList;
 	}	
-	
+
 	/**
 	 * Method used to see if a room needs conditioning
 	 * 0 is cooling
 	 * 1 is heating will only display heating if every other room does not need cooling
 	 * -1 is every room is satisfied
-	 * 
-	 * @param Room[] list of all the rooms
+	 *
+	 * @param list list of all the rooms
 	 * @return int aforementioned result if a room needs something
 	 * */
 	public int checkForConditioning(Room[] list)
@@ -1183,9 +1069,9 @@ public class BMSMethods extends Thread
 		int out = -1;
 		int cool = 0;
 		int heat = 0;
-		
+
 		for(int i : collectRequests(list))
-		{	
+		{
 			if(i==0)
 				cool++;
 			if(i==1)
@@ -1196,15 +1082,15 @@ public class BMSMethods extends Thread
 		else if(heat>0)
 			out+=2;
 		return out;
-	}	
-	
+	}
+
 	/**
 	 * Method used to see if a room still needs conditioning looking at the cutoffTemps, not targetTemp
 	 * 0 is cooling
 	 * 1 is heating will only display heating if every other room does not need cooling
 	 * -1 is every room is satisfied
-	 * 
-	 * @param Room[] list of all the rooms
+	 *
+	 * @param list list of all the rooms
 	 * @return int aforementioned result if a room needs something
 	 * */
 	public int checkForConditioningStill(Room[] list)
@@ -1213,16 +1099,16 @@ public class BMSMethods extends Thread
 		int out = -1;
 		int cool = 0;
 		int heat = 0;
-		
+
 		//check every room in the Room[] to see what they need
 		for(int i : collectCutoffs(list))
-		{	
+		{
 			if(i==0)
 				cool++;
 			if(i==1)
 				heat++;
 		}
-		
+
 		//logic to output heat or cool or nothing
 		//if neither cool nor heat are requested then nothing happens to out, which was initialized as -1
 		//if any room needs cool then heat is ignored
@@ -1232,16 +1118,16 @@ public class BMSMethods extends Thread
 			out+=2;
 		return out;
 	}
-	
+
 	/**
-	 * Method used to grab all of the room's coolHeat value
-	 * 
-	 * @param Room[] list of rooms
+	 * Method used to grab all the room's coolHeat value
+	 *
+	 * @param list list of rooms
 	 * @return int [] all coolHeats from the rooms, 0 is cool 1, is heat
 	 * */
-	public int[] collectCoolHeat(Room[] list)
+	public char[] collectCoolHeat(Room[] list)
 	{
-		int[] out = new int[list.length];
+		char[] out = new char[list.length];
 		for(int i=0; i<list.length; i++)
 		{
 			out[i] =list[i].getCoolHeat();
@@ -1253,15 +1139,15 @@ public class BMSMethods extends Thread
 	/**
 	 * Method used to check all of the room's request values
 	 * 
-	 * @param Room[] list of rooms
+	 * @param list list of rooms
 	 * @return int [] all of the requestState from the rooms
 	 * */
-	public int[] collectRequests(Room[] list)
+	public char[] collectRequests(Room[] list)
 	{
-		int[] out = new int[list.length];
+		char[] out = new char[list.length];
 		for(int i=0; i<list.length; i++)
 		{
-			out[i] =list[i].checkRequest();
+			out[i] = list[i].checkRequest();
 		}
 
 		return out;
@@ -1270,7 +1156,7 @@ public class BMSMethods extends Thread
 	/**
 	 * Method used to check all of the room's request values
 	 * 
-	 * @param Room[] list of rooms
+	 * @param list list of rooms
 	 * @return int [] all of the cuttoff results from the given rooms
 	 * */
 	public int[] collectCutoffs(Room[] list)
@@ -1288,7 +1174,7 @@ public class BMSMethods extends Thread
 	 * Method to add all capacities of the given rooms
 	 * uses percentAirflow from Room
 	 * @return int total percent you want to find
-	 * @param Room[] list of all of the rooms you want to see
+	 * @param list list of all of the rooms you want to see
 	 * */
 	public int collectAirflow(Room[] list)
 	{
@@ -1302,8 +1188,6 @@ public class BMSMethods extends Thread
 	
 	/**
 	 * Method to update all room's data
-	 * @throws InterruptedException 
-	 * @throws SerialPortException 
 	 * */
 	public void massRefresh(Room[] list) throws SerialPortException, InterruptedException
 	{
@@ -1315,7 +1199,7 @@ public class BMSMethods extends Thread
 	
 	/**
 	 * Method used to see which rooms are requesting cold
-	 *@param Room[] list of all rooms
+	 *@param list list of all rooms
 	 *@return Room[] list of rooms who are requesting cold
 	 * */
 	public Room[] requestingCold(Room[] list)
@@ -1326,7 +1210,7 @@ public class BMSMethods extends Thread
 		for(Room i : list)
 		{
 			if(i.checkRequest()==0)
-			coldList.add(i);
+				coldList.add(i);
 		}
 		
 		//use the arraylist to make a new array with the exact length of the 
@@ -1342,7 +1226,7 @@ public class BMSMethods extends Thread
 	/**
 	 * Method used to see which rooms are requesting heat
 	 * Takes a list of rooms and cuts out all of the rooms who are not requesting heat, excluding the MRS
-	 *@param Room[] list of all rooms
+	 *@param list list of all rooms
 	 *@return Room[] list of rooms who are requesting heat
 	 * */
 	public Room[] requestingHeat(Room[] list)
@@ -1352,8 +1236,8 @@ public class BMSMethods extends Thread
 		
 		for(Room i : list)
 		{	//add in all room requesting heat except for the machine rooms, they will never receive heat
-			if(i.checkRequest()==1 && !i.getRoomName().equalsIgnoreCase("MR1") && !i.getRoomName().equalsIgnoreCase("MR2"))
-			heatList.add(i);
+			if(i.checkRequest()==1 && !i.roomName.equalsIgnoreCase("MR1") && !i.roomName.equalsIgnoreCase("MR2"))
+				heatList.add(i);
 		}
 		
 		//use the arraylist to make a new array with the exact length of the 
@@ -1371,18 +1255,18 @@ public class BMSMethods extends Thread
 	 * Used in conjunction to keep the rooms cooling after they initially request cold 
 	 * through the other method requestingCold()
 	 * 
-	 * @param Room[] list of the rooms you want to check
+	 * @param list list of the rooms you want to check
 	 * @return Room[] list of all rooms that are still above their cutoffTemp
 	 * */
 	public Room[] requestingCutoffCooling(Room[] list)
 	{
 		//arraylist to sort out the rooms asking for cold
-		ArrayList<Room> stillCold = new ArrayList<Room>();
+		ArrayList<Room> stillCold = new ArrayList<>();
 		
 		for(Room i : list)
 		{
 			if(i.checkCutoff()==0)
-			stillCold.add(i);
+				stillCold.add(i);
 		}
 		
 		//use the arraylist to make a new array with the exact length of the 
@@ -1400,7 +1284,7 @@ public class BMSMethods extends Thread
 	 * Used in conjunction to keep the rooms heating after they initially request heat 
 	 * through the other method requestingHeat()
 	 * 
-	 * @param Room[] list of the rooms you want to check
+	 * @param list list of the rooms you want to check
 	 * @return Room[] list of all rooms that are still below their cutoffTemp
 	 * */
 	public Room[] requestingCutoffHeating(Room[] list)
@@ -1411,7 +1295,7 @@ public class BMSMethods extends Thread
 		for(Room i : list)
 		{
 			if(i.checkCutoff()==1)
-			stillHeat.add(i);
+				stillHeat.add(i);
 		}
 		
 		//use the arraylist to make a new array with the exact length of the 
@@ -1425,8 +1309,9 @@ public class BMSMethods extends Thread
 	}
 	
 	/**
-	 * Method used to find if a room is satisfied
-	 * @param Room[] list of rooms you want to check
+	 * Method used to find if a room is satisfied.
+	 * This is done by checking if
+	 * @param list list of rooms you want to check
 	 * @return Room[] list of rooms who are satisfied
 	 * */
 	public Room[] requestingNothing(Room[] list)
@@ -1436,7 +1321,7 @@ public class BMSMethods extends Thread
 		
 		for(Room i : list)
 		{
-			if(i.checkCutoff()==-1)
+			if(i.checkCutoff() == 'n')
 				fineList.add(i);
 		}
 		
@@ -1453,7 +1338,7 @@ public class BMSMethods extends Thread
 	/**
 	 * Method used to remove the MRs from an array by specific name
 	 * Removes the 2 MRs then remakes an array without them, which is then returned
-	 * @param Room[] array of rooms to work on
+	 * @param list array of rooms to work on
 	 * @return Room[] array of rooms given minus MR1 and MR2
 	 **/
 	public Room[] removeMRs(Room[] list)
@@ -1464,7 +1349,7 @@ public class BMSMethods extends Thread
 		//go through all of the list and if the room is specifically "MR1" or "MR2" then add it to the arraylist
 		for(Room i : list)
 		{
-			if(!i.getRoomName().equalsIgnoreCase("Machine Room 1") && !i.getRoomName().equalsIgnoreCase("Machine Room 2"))
+			if(!i.roomName.equalsIgnoreCase("Machine Room 1") && !i.roomName.equalsIgnoreCase("Machine Room 2"))
 			{	
 				sansMRList.add(i);
 			}
@@ -1483,7 +1368,7 @@ public class BMSMethods extends Thread
 	 * Method used to find all of the rooms with the first  characters beign exactly "Mach"
 	 * Used specifically to find Machine Rooms, which are named as, no other room should start with the word machine for this to work
 	 * 
-	 * @param	Room[] list of rooms used to find the machine rooms inside of
+	 * @param	list list of rooms used to find the machine rooms inside of
 	 * @return	Room[] list of all of the machine rooms in the list given
 	 * 
 	 **/
@@ -1495,9 +1380,9 @@ public class BMSMethods extends Thread
 		//go through the list given to find the MRs be looking for specifically "M" then "R"
 		for(Room i : list)
 		{
-			if(i.getRoomName().length()>3)
+			if(i.roomName.length()>3)
 			{	
-				String mach = i.getRoomName().substring(0,4);
+				String mach = i.roomName.substring(0,4);
 				if(mach.contentEquals("Mach"))
 				{
 					onlyMRs.add(i);
@@ -1516,110 +1401,105 @@ public class BMSMethods extends Thread
 	/**
 	 * Method to print a room array simply
 	 * Intended to be used in conjunction with the 4 different prints: RoomNames, CurrentTemps, TargetTemps, PreviousStates, and tempDifference
-	 * @param Room[] list of rooms you want printed
+	 * @param list list of rooms you want printed
 	 * @return String all of the roomNames from list
 	 * */
 	public String printRoomNames(Room[] list)
 	{
-		String out = "";
+		StringBuilder out = new StringBuilder();
 		//iterate through each element in the array given and print the roomName
 		for(Room i : list)
 		{	
-				out += " "+i.getRoomName();
+				out.append(" ").append(i.roomName);
 		}
-		return out;
+		return out.toString();
 	}
 	
 	/**
 	 * Method used to find the current temps of a list of rooms
 	 * Intended to be used in conjunction with the 4 different prints: RoomNames, CurrentTemps, TargetTemps, PreviousStates, and tempDifference
-	 * @param Room[] list of rooms you want to get the currentTemps of
+	 * @param list list of rooms you want to get the currentTemps of
 	 * @return String return a line of all of the currentTemp of the given lsit
 	 * */
 	public String printCurrentTemps(Room[] list)
 	{
-		String out ="";
+		StringBuilder out = new StringBuilder();
 		for(Room i : list)
-			out+=" "+df2.format(i.getCurrentTemp());
-		return out;
+			out.append(" ").append(df2.format(i.getCurrentTemp()));
+		return out.toString();
 	}
 	
 	/**
 	 * Method used to find targetTemps fo the list of rooms given
 	 * Intended to be used in conjunction with the 4 different prints: RoomNames, CurrentTemps, TargetTemps, PreviousStates, and tempDifference
-	 * @param Room[] list of rooms you want to get target Temps of
-	 * @return String return a line of all of the list's TargetTemp
+	 * @param list list of rooms you want to get target Temps of
+	 * @return String return a line of all the list's TargetTemp
 	 * */
 	public String printTargetTemps(Room[] list)
 	{
-		String out ="";
+		StringBuilder out = new StringBuilder();
 		for(Room i : list)
-			out+=" "+df2.format(i.getTargetTemp());
-		return out;
+			out.append(" ").append(df2.format(i.getTargetTemp()));
+		return out.toString();
 	}	
 
 	/**
 	 * Method used to find previousStates of the list of rooms given	 
 	 * Intended to be used in conjunction with the 4 different prints: RoomNames, CurrentTemps, TargetTemps, PreviousStates, and tempDifference
-	 * @param Room[] list of rooms you want to get data from
+	 * @param list list of rooms you want to get data from
 	 * @return String returns a line of all of the list's PreviousState
 	 * */
 	public String printPreviousStates(Room[] list)
 	{
-		String out ="";
+		StringBuilder out = new StringBuilder();
 		//go through each room and add the previousState to the out line
 		for(Room i : list)
 		{
-			//formatting stuff so it looks nicer
-			if(i.getPreviousState()>=0)
-				out+=" ";
-			out+="    "+i.getPreviousState();
+			out.append("    ").append(i.getPreviousState());
 		}	
-		return out;
+		return out.toString();
 	}
 	
 	/**
 	 * Method used to find hotCOld of the list of rooms given	 
 	 * Intended to be used in conjunction with the 4 different prints: RoomNames, CurrentTemps, TargetTemps, PreviousStates, and tempDifference
-	 * @param Room[] list of rooms you want to get data from
+	 * @param list list of rooms you want to get data from
 	 * @return String returns a line of all of the list's hotCOld
 	 * */
 	public String printCurrentRequest(Room[] list)
 	{
-		String out ="";
+		StringBuilder out = new StringBuilder();
 		//go through each room and add the current hotCold to the out line
 		for(Room i : list)
 		{
-			out+="     "+i.getCoolHeat();
+			out.append("     ").append(i.getCoolHeat());
 		}	
-		return out;
+		return out.toString();
 	}
 	
 	/**
 	 * Method used to show the temperature difference for the rooms who need HVAC
 	 * Intended to be used in conjunction with the 4 different prints: RoomNames, CurrentTemps, TargetTemps, PreviousStates, and tempDifference
-	 * @param Room[] list of rooms you want to know about
-	 * @return String all of the differences in one line
+	 * @param list list of rooms you want to know about
+	 * @return String all the differences in one line
 	 * */
 	public String tempDifference(Room[] list)
 	{
 		//return this string, build it up in the for each loop be printing out the difference in the desired and current temps
-		String out ="";
+		StringBuilder out = new StringBuilder();
 		for(Room i : list)
 		{	double x = i.getCurrentTemp()-i.getTargetCutoffTemp();
 			if(x>0)
-				out+=" ";
-			out+=" "+ df2sans0.format(x);
+				out.append(" ");
+			out.append(" ").append(df2sans0.format(x));
 		}
-		return out;
+		return out.toString();
 	}
 
 	/**
 	 * Method to close a Room list for HVAC
-	 * @param Room[] list of rooms you want to close for HVAC
+	 * @param list list of rooms you want to close for HVAC
 	 * @return int number of rooms closed
-	 * @throws InterruptedException 
-	 * @throws SerialPortException 
 	 * */
 	public void closeRoomForHVAC(Room[] list) throws SerialPortException, InterruptedException
 	{
@@ -1633,9 +1513,7 @@ public class BMSMethods extends Thread
 	/**
 	 * Method to open a Room list for HVAC
 	 * opens the damper for the rooms
-	 * @param Room[] list of rooms you want to open for HVAC
-	 * @throws InterruptedException 
-	 * @throws SerialPortException 
+	 * @param list list of rooms you want to open for HVAC
 	 * */
 	public void openRoomForHVAC(Room[] list) throws SerialPortException, InterruptedException
 	{
@@ -1650,8 +1528,8 @@ public class BMSMethods extends Thread
 	 * Method to add 2 Room arrays together
 	 * additionally trims the repeats
 	 * additionally sorts the room names by roomName in alphabetical order
-	 * @param Room[] first list of rooms
-	 * @param Room[] second list of rooms
+	 * @param list1 first list of rooms
+	 * @param list2 second list of rooms
 	 * @return Room[] a combined list of the above rooms, sorts them by room name
 	 * */
 	public Room[] addRoomLists(Room[] list1, Room[] list2)
@@ -1661,23 +1539,17 @@ public class BMSMethods extends Thread
 		
 		//combine them list1 then lsit2 into 1 array
 		Room[] out = new Room[totalLength];
-		for(int i=0;i<list1.length;i++)
-		{
-			out[i]=list1[i];
-		}	
-		for(int j=0;j<list2.length;j++)
-		{
-			out[j+list1.length] = list2[j];
-		}
+        System.arraycopy(list1, 0, out, 0, list1.length);
+        System.arraycopy(list2, 0, out, list1.length, list2.length);
 		
 		
 		Room temp;
-		//sort the array by roomname
+		//sort the array by room name
 		for(int k=0;k<out.length;k++)
 		{
 			for(int l=k+1;l<out.length;l++)
 			{
-				if((out[k].getRoomName()).compareTo(out[l].getRoomName()) > 0)
+				if(out[k].roomName.compareTo(out[l].roomName) > 0)
 				{
 					temp = out[k];
 					out[k] = out[l];
@@ -1694,9 +1566,9 @@ public class BMSMethods extends Thread
 		
 		for(Room i : out)
 		{
-			if(i.getRoomName() != previous)
-			sortedList.add(i);
-			previous = i.getRoomName();
+			if(!Objects.equals(i.roomName, previous))
+				sortedList.add(i);
+			previous = i.roomName;
 		}		
 		
 		//convert the arraylist into an new array with no dupes
@@ -1714,8 +1586,8 @@ public class BMSMethods extends Thread
 	 * Takes a list of Rooms and prints out a bunch of statuses from the building
 	 * Log can be found at Documents\BMS Logs\Temperature Logs
 	 * 
-	 * @param Room[] list of all of the rooms in the building to log
-	 * @param int coolHeat, the current state of the building, with 0 being cool and 1 being heat, -1 is satisfied
+	 * @param list list of all of the rooms in the building to log
+	 * @param coolHeat coolHeat, the current state of the building, with 0 being cool and 1 being heat, -1 is satisfied
 	 * */
 	public void logBuildingStatus(Room[] list, int coolHeat) throws SerialPortException, InterruptedException
 	{
@@ -1730,35 +1602,35 @@ public class BMSMethods extends Thread
 		DateFormat dateShort = new SimpleDateFormat("yyyy MM dd");
 		String shortDate = dateShort.format(date);
 	
-		//handle the string that is added into the log, all of the current stats of the building
-		//year, month, day, hour:minute, coolheat, 50, 53, 51, 54, cr1 temp, cr1 damper,-,-,-,-,-, edit, -, -, -
+		//handle the string that is added into the log, all the current stats of the building
+		//year, month, day, hour:minute, coolHeat, 50, 53, 51, 54, cr1 temp, cr1 damper,-,-,-,-,-, edit, -, -, -
 	
 		//empty string for output to file
-		String out="";
+		StringBuilder out= new StringBuilder();
 	
 		//add the current day into the log
-		out+=currentDate;
+		out.append(currentDate);
 	
-		//empty relayRead becuase somehting is up
+		//empty relayRead because something is up
 		this.relayRead(50);
 	
 		//add in coolHeat then the status of each machine
-		out+= coolHeat+","+this.relayRead(50)+","+this.relayRead(53)+","+this.relayRead(51)+","+this.relayRead(54)+",";
+		out.append(coolHeat).append(",").append(this.relayRead(50)).append(",").append(this.relayRead(53)).append(",").append(this.relayRead(51)).append(",").append(this.relayRead(54)).append(",");
 		
 		//add in each rooms name, currentTemp, damperState
 		for(Room i : list)
 		{
-			out+=i.getCurrentTemp()+","+i.getDamperState()+",";
+			out.append(i.getCurrentTemp()).append(",").append(i.getDamperState()).append(",");
 		}
 	
 		//strip the last comma out of the output
-		out = out.substring(0,out.length()-1);
+		out = new StringBuilder(out.substring(0, out.length() - 1));
 	
 		//add outside dump zones to the log
-		out += ", "+this.relayRead(34)+", "+this.relayRead(35);
+		out.append(", ").append(this.relayRead(34)).append(", ").append(this.relayRead(35));
 		
 		//newline for the next entry
-		out+="\n";
+		out.append("\n");
 	
 		//set up a writer, that makes a new log file each day
 		File target = new File("C:\\Users\\BMS Machine\\Documents\\BMS Logs\\Temperature Logs\\"+ shortDate+" templog.txt");
@@ -1770,7 +1642,7 @@ public class BMSMethods extends Thread
 			if(target.exists())
 			{
 				writer = new BufferedWriter(new FileWriter(target, true));
-				writer.append(out);
+				writer.append(out.toString());
 			}
 			else
 			{
@@ -1783,7 +1655,7 @@ public class BMSMethods extends Thread
 						     +"edit_temp,edit_damper,hall_temp,hall_damper,kitchen_temp,kitchen_damper,"
 						     +"phone_temp,phone_damper, "
 						     + "outside_dump_1, outside_dump_2\n");
-				writer.write(out);
+				writer.write(out.toString());
 			}
 			writer.close();	
 		}//end try
@@ -1805,28 +1677,22 @@ public class BMSMethods extends Thread
 			this.relayWrite(53, off);
 			this.relayWrite(54, off);	
 		}
-		catch (SerialPortException e)
+		catch (SerialPortException | InterruptedException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
+
+    }
 	
 	
 	public void printInfo(Room[] primary, Room[] secondary)
 	{
 		System.out.println("          CR1,  CR2,  CR3, BTH1, BTH2, BTH3,  MR1,  MR2, Edit, Kich, Hall, Phone");
-		System.out.println("current"+this.printCurrentTemps(primary)   +""+this.printCurrentTemps(secondary));
-		System.out.println("target "+this.printTargetTemps(primary)    +""+this.printTargetTemps(secondary));
-		System.out.println("diff   "+this.tempDifference(primary) 	   +""+this.tempDifference(secondary));
-		System.out.println("states "+this.printPreviousStates(primary) +""+this.printPreviousStates(secondary));		
-		System.out.println("hotCold"+this.printCurrentRequest(primary)   +""+this.printCurrentRequest(secondary));
+		System.out.println("current"+this.printCurrentTemps(primary)   +this.printCurrentTemps(secondary));
+		System.out.println("target "+this.printTargetTemps(primary)    +this.printTargetTemps(secondary));
+		System.out.println("diff   "+this.tempDifference(primary) 	   +this.tempDifference(secondary));
+		System.out.println("states "+this.printPreviousStates(primary) +this.printPreviousStates(secondary));
+		System.out.println("hotCold"+this.printCurrentRequest(primary)   +this.printCurrentRequest(secondary));
 	}
 
 	
@@ -1845,7 +1711,7 @@ public class BMSMethods extends Thread
 
 	public double findLowestTemp(Room[] allRooms)
 	{
-		double out=100;
+		double out = 100;
 		
 		for(Room i : allRooms)
 		{
@@ -1855,6 +1721,23 @@ public class BMSMethods extends Thread
 		
 		return out;
 	}
-	
+
+	/**
+	 * Method used to add up a room list's total airflow
+	 * @param input list of rooms you want to add up
+	 * @return the total airflow of the list
+	 */
+	public int addUpRequests(Room[] input)
+	{
+		int out =0;
+
+		for( Room i : input)
+		{
+			out += i.getPercentAirflow();
+		}
+		return out;
+	}
+
+
 }//big end
 
