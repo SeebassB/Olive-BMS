@@ -49,7 +49,7 @@ public class BMSMainController
 
 
 		//handle the general set up
-
+        V2UITesting gui = new V2UITesting(bms, primaryRoomList, secondaryRoomList);
 
 		//main thread management loop
 		while(mainStatusFlag != -1)//while hvacThreadStatus is not -1 which signifies
@@ -58,8 +58,9 @@ public class BMSMainController
 			switch(mainStatusFlag)//regular operation
 			{
 				case 0:
-					cond.runConditioning(bms,primaryRoomList,secondaryRoomList);
-					Thread.sleep(5 * 60 * 1000);//sleep this main thread for X time
+					//UPDATE GUI
+                    cond.runConditioning(bms,primaryRoomList,secondaryRoomList);
+                    Thread.sleep(5 * 60 * 1000);//sleep this main thread for X time
 					break;
 
 				case 1:

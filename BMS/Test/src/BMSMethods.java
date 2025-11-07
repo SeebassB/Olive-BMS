@@ -707,7 +707,7 @@ public class BMSMethods
 		//set up variables and arrays of the machines
 		//arrays are both machines followed by their states
 
-		//×++=+=+/=+=×/×/×/×/×/×_×_<×>×>×[×[×[×]×[×[>×>×<×<×_×_×_×_××_/×/×
+		//ï¿½++=+=+/=+=ï¿½/ï¿½/ï¿½/ï¿½/ï¿½/ï¿½_ï¿½_<ï¿½>ï¿½>ï¿½[ï¿½[ï¿½[ï¿½]ï¿½[ï¿½[>ï¿½>ï¿½<ï¿½<ï¿½_ï¿½_ï¿½_ï¿½_ï¿½ï¿½_/ï¿½/ï¿½
 		int[][] coolingMachines = {{50, 53} , {0,0}};
 		
 		int[][] heatingMachines = {{51, 54} , {0,0}};
@@ -1691,9 +1691,9 @@ public class BMSMethods
 		System.out.println("current"+this.printCurrentTemps(primary)   +this.printCurrentTemps(secondary));
 		System.out.println("target "+this.printTargetTemps(primary)    +this.printTargetTemps(secondary));
 		System.out.println("diff   "+this.tempDifference(primary) 	   +this.tempDifference(secondary));
-		System.out.println("states "+this.printPreviousStates(primary) +this.printPreviousStates(secondary));
-		System.out.println("hotCold"+this.printCurrentRequest(primary)   +this.printCurrentRequest(secondary));
-	}
+		System.out.println("prev   "+this.printPreviousStates(primary) +this.printPreviousStates(secondary));
+        System.out.println("hotCold"+this.printCurrentRequest(primary)   +this.printCurrentRequest(secondary));
+    }
 
 	
 	public double findHighestTemp(Room[] allRooms)
@@ -1708,6 +1708,7 @@ public class BMSMethods
 		
 		return out;
 	}
+
 
 	public double findLowestTemp(Room[] allRooms)
 	{

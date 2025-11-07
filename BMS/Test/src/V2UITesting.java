@@ -9,8 +9,8 @@ public class V2UITesting
 {
 
     private int cr1CoolHeat            = -1;
-    private int cr1CurrentTempStatus   = 10;
-    private int cr1TargetTempStatus    = 10;
+    private double cr1CurrentTempStatus   = 10;
+    private double cr1TargetTempStatus    = 10;
     private int cr1LightStatus         = 0;
     private int cr1PowerStatus         = 0;
 
@@ -22,12 +22,15 @@ public class V2UITesting
 
 
 
-    public V2UITesting()
+    public V2UITesting(BMSMethods bms, Room[] primary, Room[] secondary)
     {
         //general formatting things
         Border lineBorder3 = BorderFactory.createLineBorder(Color.BLACK, 3);
         Border lineBorder2 = BorderFactory.createLineBorder(Color.BLACK, 2);
 
+
+        cr1CurrentTempStatus = primary[0].getCurrentTemp();
+        cr1TargetTempStatus = primary[0].getTargetTemp();
 
         //set up the frame
         JFrame frame = new JFrame("Olive Building Management System");

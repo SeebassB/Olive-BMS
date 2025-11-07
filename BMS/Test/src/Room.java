@@ -32,7 +32,7 @@ public class Room
 		coolHeat         = cH;
 		targetCutoffTemp = targetTemp - (Math.pow(-1, cH))*1.5; //calculate cutoffTemp
 		percentAirflow   = pAir;
-		requestState     = 'n';
+		requestState     = 'c';
 		sensorURL        = inURL;
 		damperNumber     = dampNum;
 		damperState      = dampIn;
