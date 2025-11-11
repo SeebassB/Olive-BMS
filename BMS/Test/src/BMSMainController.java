@@ -60,7 +60,12 @@ public class BMSMainController
 				case 0:
 					//UPDATE GUI
                     cond.runConditioning(bms,primaryRoomList,secondaryRoomList);
-                    Thread.sleep(5 * 60 * 1000);//sleep this main thread for X time
+					gui.setBmsInput(bms);//update the GUI's bms to reflect changes in the building
+					Thread.sleep(1 * 60 * 1000);//sleep this main thread for X time   gui.setBmsInput(bms);
+					gui.setBmsInput(bms);
+					Thread.sleep(1 * 60 * 1000);  gui.setBmsInput(bms);
+					gui.setBmsInput(bms);
+					Thread.sleep(1 * 60 * 1000);   gui.setBmsInput(bms);
 					break;
 
 				case 1:

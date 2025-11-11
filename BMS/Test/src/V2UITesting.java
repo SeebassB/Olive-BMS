@@ -8,6 +8,7 @@ import javax.swing.border.Border;
 public class V2UITesting
 {
 
+    private BMSMethods bmsInput = new BMSMethods();
     private int cr1CoolHeat            = -1;
     private double cr1CurrentTempStatus   = 10;
     private double cr1TargetTempStatus    = 10;
@@ -20,10 +21,14 @@ public class V2UITesting
     private int bth1LightStatus        = 0;
     private int bth1PowerStatus        = 0;
 
-
+    public void setBmsInput(BMSMethods bms)
+    {
+        bmsInput = bms;
+    }
 
     public V2UITesting(BMSMethods bms, Room[] primary, Room[] secondary)
     {
+        bmsInput = bms;
         //general formatting things
         Border lineBorder3 = BorderFactory.createLineBorder(Color.BLACK, 3);
         Border lineBorder2 = BorderFactory.createLineBorder(Color.BLACK, 2);
