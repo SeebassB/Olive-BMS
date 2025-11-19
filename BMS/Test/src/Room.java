@@ -44,6 +44,12 @@ public class Room
 	//gets and sets-----------------------------------------------------------------------------------
 
 	//get and set for currentTemp
+
+	public String getRoomName()
+	{
+		return roomName;
+	}
+
 	public void setCurrentTemp(double in)
 	{
 		currentTemp = in;
@@ -54,7 +60,7 @@ public class Room
 	}
 
 	//set and get for targetTemp
-	public void setTargetTemp(int in)
+	public void setTargetTemp(double in)
 	{
 		targetTemp = in;
 		fixTargetCutoffTemp();
@@ -147,7 +153,7 @@ public class Room
 	///////////////////////////////////////////////////////////////////////////////////
 	//METHODS FOR THE ROOMS
 	
-	//refresh all of the important stats
+	//refresh all important stats
 	public void refresh() 
 	{
 		updateTemp();

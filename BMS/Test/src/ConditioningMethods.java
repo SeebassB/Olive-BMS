@@ -26,8 +26,8 @@ public class ConditioningMethods
 			Room[] needHeatingStill = bms.requestingCutoffHeating(primaryRoomList);
 			Room[] needTotalHeating = bms.addRoomLists(needHeating, needHeatingStill);
 			Room[] needNothing      = bms.requestingNothing(primaryRoomList);
-			Room[] roomsOpenForThisCycle   = new Room[0]; //rooms that will open for this cycle
-			Room[] roomsClosedForThisCycle = new Room[0]; //rooms that will close for this cycle
+			Room[] roomsOpenForThisCycle; //rooms that will open for this cycle
+			Room[] roomsClosedForThisCycle; //rooms that will close for this cycle
 			Room[] machineRooms     = bms.findMRs(primaryRoomList);
 
 			//keep track of airflow requirements

@@ -595,6 +595,7 @@ public class BMSMethods
 			// catches any port issues
 			e.printStackTrace();
 			this.warningPrint("PORT NOT OPENED CORRECTLY ISSUE PROBLEM");
+			System.exit(2);
 		}
 
 		//success message
@@ -1739,6 +1740,32 @@ public class BMSMethods
 		return out;
 	}
 
+	public Room findRoom(String name)
+	{
+		for(Room r : addRoomLists(BMSMainController.primaryRoomList, BMSMainController.secondaryRoomList))
+		{
+			if(r.getRoomName().equals(name))
+				return r;
+		}
+		return null;
+	}
 
+
+	public void setAllRoomTemps(Room[] list, int input)
+	{
+		for(Room r : list)
+		{
+			r.setTargetTemp((double)input);
+		}
+	}
+
+
+	public void setAllRoomsRequest(Room[] list, char request)
+	{
+		for(Room r : list)
+		{
+			r.setRequestState(request);
+		}
+	}
 }//big end
 

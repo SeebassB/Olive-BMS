@@ -1,5 +1,8 @@
+import jssc.SerialPortException;
+
 import java.awt.*;
 import java.awt.event.*;
+import java.io.Serial;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -8,7 +11,6 @@ import javax.swing.border.Border;
 public class V2UITesting
 {
 
-    private BMSMethods bmsInput = new BMSMethods();
     private int cr1CoolHeat            = -1;
     private double cr1CurrentTempStatus   = 10;
     private double cr1TargetTempStatus    = 10;
@@ -21,14 +23,10 @@ public class V2UITesting
     private int bth1LightStatus        = 0;
     private int bth1PowerStatus        = 0;
 
-    public void setBmsInput(BMSMethods bms)
-    {
-        bmsInput = bms;
-    }
 
     public V2UITesting(BMSMethods bms, Room[] primary, Room[] secondary)
     {
-        bmsInput = bms;
+
         //general formatting things
         Border lineBorder3 = BorderFactory.createLineBorder(Color.BLACK, 3);
         Border lineBorder2 = BorderFactory.createLineBorder(Color.BLACK, 2);
@@ -39,12 +37,12 @@ public class V2UITesting
 
         //set up the frame
         JFrame frame = new JFrame("Olive Building Management System");
-        frame.setIconImage(new ImageIcon("V2Testing//IglooLogo.png").getImage());
+        frame.setIconImage(new ImageIcon("Test//IglooLogo.png").getImage());
 
-        ImageIcon onBulbOriginal = new ImageIcon("V2Testing//OnBulb.png");
+        ImageIcon onBulbOriginal = new ImageIcon("Test//OnBulb.png");
         ImageIcon onBulb = new ImageIcon(onBulbOriginal.getImage().getScaledInstance(80,80, Image.SCALE_SMOOTH));
 
-        ImageIcon offBulbOriginal = new ImageIcon("V2Testing//OffBulb.png");
+        ImageIcon offBulbOriginal = new ImageIcon("Test//OffBulb.png");
         ImageIcon offBulb = new ImageIcon(offBulbOriginal.getImage().getScaledInstance(80,80, Image.SCALE_SMOOTH));
 
         //frame attributes
@@ -150,7 +148,17 @@ public class V2UITesting
 
                 //all all on button action listener
                 allAllOnButton.addActionListener(_ -> {
-                cr1PowerStatus = 1;
+                try
+                {
+                    bms.launchAll();
+                    bms.setAllRoomTemps(bms.removeMRs(primary), 74);//set all rooms except MR to 74
+                    bms.setAllRoomsRequest(bms.removeMRs(primary), 'c');//set all rooms except MR to cool
+                    //bms.logPrint();
+                }
+                catch (SerialPortException | InterruptedException e)
+                {
+                    throw new RuntimeException(e);
+                }
                 allAllOnButton.setBackground(new Color(22, 99, 45));
                 allAllOffButton.setBackground(Color.DARK_GRAY);
                 System.out.println("ALL POWER OFF");
@@ -158,7 +166,16 @@ public class V2UITesting
 
                 //all all off button action listener
                 allAllOffButton.addActionListener(_ -> {
-                cr1PowerStatus = 0;
+                try
+                {
+                    //studio shutdown, turn off everything, set request to none
+                    bms.shutdownAll();
+                    bms.setAllRoomsRequest(bms.removeMRs(primary), 'n');
+                }
+                catch (SerialPortException | InterruptedException e)
+                {
+                    throw new RuntimeException(e);
+                }
                 allAllOnButton.setBackground(Color.DARK_GRAY);
                 allAllOffButton.setBackground(new Color(99, 22, 30));
                 System.out.println("ALL POWER ON");
@@ -241,9 +258,9 @@ public class V2UITesting
             cr1ConditioningBox.add(cr1ConditioningOffButton);
 
 
-                //heat button action listener
+                //cr1 heat button action listener
                 cr1HeatButton.addActionListener(_ -> {
-                    cr1CoolHeat = 1;
+                    bms.findRoom("Control Room 1").setCoolHeat('h');
                     cr1HeatButton.setBackground(Color.WHITE);
                     cr1CoolButton.setBackground(Color.GRAY);
                     cr1ConditioningOffButton.setBackground(Color.GRAY);
@@ -252,7 +269,7 @@ public class V2UITesting
 
                 //cool button action listener
                 cr1CoolButton.addActionListener(_ -> {
-                    cr1CoolHeat = 0;
+                    bms.findRoom("Control Room 1").setCoolHeat('c');
                     cr1HeatButton.setBackground(Color.GRAY);
                     cr1CoolButton.setBackground(Color.WHITE);
                     cr1ConditioningOffButton.setBackground(Color.GRAY);
@@ -261,7 +278,7 @@ public class V2UITesting
 
                 //off button action listener
                 cr1ConditioningOffButton.addActionListener(_ -> {
-                    cr1CoolHeat = -1;
+                    bms.findRoom("Control Room 1").setCoolHeat('n');
                     cr1HeatButton.setBackground(Color.GRAY);
                     cr1CoolButton.setBackground(Color.GRAY);
                     cr1ConditioningOffButton.setBackground(Color.WHITE);
@@ -333,7 +350,6 @@ public class V2UITesting
             cr1TemperatureInfoBox.add(cr1ConditioningStatus);
 
 
-
         //temp controls box----------------------------------------------------------------
         JPanel cr1TempControlBox = new JPanel();
         cr1TempControlBox.setLayout(null);
@@ -372,10 +388,17 @@ public class V2UITesting
         cr1TempDownButton.setBounds(100, 10,80,80);
         cr1TempControlBox.add(cr1TempDownButton);
 
+            //cr1 temp down button action listener
+            cr1TempDownButton.addActionListener(_ -> {
+                bms.findRoom("Control Room 1").setTargetTemp(bms.findRoom("Control Room 1").getTargetTemp()-1);
+                System.out.println("Current st1 target temperature: " + bms.findRoom("Control Room 1").getTargetTemp());
+            });
 
-
-
-
+            //cr1 temp up button action listener
+            cr1TempUpButton.addActionListener(_ -> {
+                bms.findRoom("Control Room 1").setTargetTemp(bms.findRoom("Control Room 1").getTargetTemp()+1);
+                System.out.println("Current st1 target temperature: " + bms.findRoom("Control Room 1").getTargetTemp());
+            });
 
         //light box
         JPanel cr1LightsBox = new JPanel();
@@ -410,15 +433,29 @@ public class V2UITesting
 
                 //st1 lights on button action listener
                 cr1LightsOnButton.addActionListener(_ -> {
-                cr1LightStatus = 1;
-                cr1LightsOnButton.setBackground(new Color(153, 144, 14));
-                cr1LightsOffButton.setBackground(Color.DARK_GRAY);
-                System.out.println("Current st1 light setting: " + cr1LightStatus);
+                    try
+                    {
+                        bms.launchStudio1();
+                    }
+                    catch (SerialPortException | InterruptedException e)
+                    {
+                        throw new RuntimeException(e);
+                    }
+                    cr1LightsOnButton.setBackground(new Color(153, 144, 14));
+                    cr1LightsOffButton.setBackground(Color.DARK_GRAY);
+                    System.out.println("Current st1 light setting: " + cr1LightStatus);
                 });
 
                 //st1 lights off button action listener
                 cr1LightsOffButton.addActionListener(_ -> {
-                cr1LightStatus = 0;
+                    try
+                    {
+                        bms.shutdownStudio1();
+                    }
+                    catch (SerialPortException | InterruptedException e)
+                    {
+                        throw new RuntimeException(e);
+                    }
                 cr1LightsOnButton.setBackground(Color.DARK_GRAY);
                 cr1LightsOffButton.setBackground(new Color(27, 59, 135));
                 System.out.println("Current st1 light setting: " + cr1LightStatus);
@@ -649,4 +686,10 @@ class ShapeDrawing extends JComponent {
             g2.dispose();
         }
     }
+
+    public void initialization()
+    {
+
+    }
+
 }
