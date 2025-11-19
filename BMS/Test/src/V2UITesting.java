@@ -108,18 +108,43 @@ public class V2UITesting
 
                 //all lights on button action listener
                 allLightsOnButton.addActionListener(_ -> {
-                cr1LightStatus = 0;
-                allLightsOnButton.setBackground(new Color(153, 144, 14));
-                allLightsOffButton.setBackground(Color.DARK_GRAY);
-                System.out.println("ALL LIGHTS OFF");
+                    try
+                    {
+                        bms.relayWrite(bms.CR1_Lights, "on");//CR1_Lights = 8
+                        Thread.sleep(500);
+                        bms.relayWrite(bms.CR2_Lights, "on");//CR2_Lights
+                        Thread.sleep(500);
+                        bms.relayWrite(bms.CR3_Lights, "on");
+                        //LOG IT
+                    }
+
+                    catch (SerialPortException | InterruptedException e)
+                    {
+                        throw new RuntimeException(e);
+                    }
+                    allLightsOnButton.setBackground(new Color(153, 144, 14));
+                    allLightsOffButton.setBackground(Color.DARK_GRAY);
+                    System.out.println("ALL LIGHTS ON");
                 });
 
                 //all lights off button action listener
                 allLightsOffButton.addActionListener(_ -> {
-                cr1LightStatus = 0;
+                try
+                {
+                    bms.relayWrite(bms.CR1_Lights, "off");//CR1_Lights = 8
+                    Thread.sleep(500);
+                    bms.relayWrite(bms.CR2_Lights, "off");//CR2_Lights
+                    Thread.sleep(500);
+                    bms.relayWrite(bms.CR3_Lights, "off");
+                    //LOG IT
+                }
+                catch (SerialPortException | InterruptedException e)
+                {
+                    throw new RuntimeException(e);
+                }
                 allLightsOnButton.setBackground(Color.DARK_GRAY);
                 allLightsOffButton.setBackground(new Color(27, 59, 135));
-                System.out.println("ALL LIGHTS ON");
+                System.out.println("ALL LIGHTS OFF");
                 });
 
         //all on/off box
