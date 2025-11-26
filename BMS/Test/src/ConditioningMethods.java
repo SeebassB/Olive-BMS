@@ -5,17 +5,20 @@ import jssc.SerialPortException;
 public class ConditioningMethods
 {
 
-	public void runConditioning(BMSMethods bms, Room[] primaryRoomList, Room[] secondaryRoomList) {
+	public void runConditioning(BMSMethods bms) {
 		try
 		{
-		
+			Room[] primaryRoomList = bms.primary;
+			Room[] secondaryRoomList = bms.secondary;
+
+
 			//refreshes all rooms info in order to have currentTemps and damper states
 			bms.massRefresh(primaryRoomList);
-			bms.massRefresh(secondaryRoomList);
+			bms.massRefresh(primaryRoomList);
 		
 			//print all temps to see what's going on
 			System.out.println("+-+-+-+-+START+-+-+-+-+");
-			bms.printInfo(primaryRoomList, secondaryRoomList);
+			bms.printInfo();
 		
 
 			//get all the starting lists
@@ -81,7 +84,7 @@ public class ConditioningMethods
 				System.out.println("Every room is satisfied!");
 				//open the MRs and close all other rooms
 				roomsOpenForThisCycle = machineRooms;
-				roomsClosedForThisCycle = bms.addRoomLists(bms.removeMRs(primaryRoomList), secondaryRoomList);
+				roomsClosedForThisCycle = bms.addRoomLists(bms.removeMRs(), secondaryRoomList);
 
 			}//all satisfied end
 		

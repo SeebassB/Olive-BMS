@@ -13,7 +13,6 @@ public class Room
 	char coolHeat;//does the client want the room heated or cooled, 0 is cool and 1 is heat
 	final int percentAirflow; //percentage of airflow that the room can take
 	final String sensorURL;//URL of the sensor for the room
-	final BMSMethods bms;//gives access to the BMSMethods methods, used in finding relay stuff
 
 	//variables found and altered as the program runs
 	double currentTemp;//current temperature of the room
@@ -24,7 +23,7 @@ public class Room
 	char previousState;
 	
 	//constructor
-	public Room(String inName, char cH,int pAir, String inURL, int dampNum, BMSMethods BMSin, String dampIn) throws SerialPortException, InterruptedException
+	public Room(String inName, char cH,int pAir, String inURL, int dampNum) throws SerialPortException, InterruptedException
 	{
 		roomName         = inName;
 		currentTemp      = 72;
@@ -35,8 +34,6 @@ public class Room
 		requestState     = 'c';
 		sensorURL        = inURL;
 		damperNumber     = dampNum;
-		damperState      = dampIn;
-		bms              = BMSin;
 		previousState    = 'n';
 		refresh();
 	}
@@ -106,7 +103,7 @@ public class Room
 	public void setDamperState(String in) throws SerialPortException, InterruptedException
 	{
 		damperState = in;
-		bms.relayWrite(damperNumber,in);
+		BMSMethods.relayWrite(damperNumber,in);
 	}
 	public String getDamperState()
 	{
@@ -162,7 +159,7 @@ public class Room
 		
 		try 
 		{
-			setDamperState(bms.relayRead(damperNumber));
+			setDamperState(BMSMethods.relayRead(damperNumber));
 		} 
 		catch (SerialPortException | InterruptedException e)
 		{
@@ -240,7 +237,7 @@ public class Room
 	{
 		try 
 		{
-			setCurrentTemp(bms.readSensor(sensorURL));
+			setCurrentTemp(BMSMethods.readSensor(sensorURL));
 		} 
 		catch (MalformedURLException e) 
 		{
@@ -262,7 +259,7 @@ public class Room
 		updateTemp();
 		fixTargetCutoffTemp();
 		setDamperState("on");
-		bms.openDamper(damperNumber);
+		BMSMethods.openDamper(damperNumber);
 		System.out.println(roomName+" ready to accept HVAC.");
 	}
 	
@@ -272,7 +269,7 @@ public class Room
 	public void closeHVAC() throws SerialPortException, InterruptedException
 	{
 		setDamperState("off");
-		bms.closeDamper(damperNumber);
+		BMSMethods.closeDamper(damperNumber);
 		System.out.println(roomName+" is closed");
 	}
 

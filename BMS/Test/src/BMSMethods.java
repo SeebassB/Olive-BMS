@@ -68,10 +68,10 @@ public class BMSMethods
 	final int Damp_Out_Straight = 34;//Damper for the outside dumping, the straight pipe
 	final int Damp_Out_Angle    = 35;//damper for the outside dumping, the angled pipe
 	
-	SerialPort relayBoard = new SerialPort("COM3");
+	static SerialPort relayBoard = new SerialPort("COM3");
 	
-	final String on = "on";
-	final String off = "off";
+	final static String on = "on";
+	final static String off = "off";
     private static final DecimalFormat df2 = new DecimalFormat("00.00");
     private static final DecimalFormat df2sans0 = new DecimalFormat("0.00");
 
@@ -82,25 +82,55 @@ public class BMSMethods
 	int doubleOff =1;
 	int previousHVAC = -1;
 
-
+	static Room[] primary;
+	static Room[] secondary;
 	
 	
 	//----------------------------------------------------------------------------------------------
-	
+
+	public BMSMethods() throws SerialPortException, InterruptedException
+	{
+
+		primary = new Room[]
+		{
+			//  Room Name, HotCold, percentage, IP, damper number, BMS, damperPosition
+			new Room("CR 1", 'n', 17, "http://192.168.1.241/getData.json", Damp_CR1),//0
+			new Room("CR 2", 'n', 21, "http://192.168.1.126/getData.json", Damp_CR2),//1
+			new Room("CR 3", 'n', 17, "http://192.168.1.209/getData.json", Damp_CR3),//2
+
+			new Room("Booth 1",  'n',  16, "http://192.168.1.208/getData.json", Damp_BTH1),//3
+			new Room("Booth 2",  'n',  16, "http://192.168.1.212/getData.json", Damp_BTH2),//4
+			new Room("Booth 3",  'n',  16, "http://192.168.1.214/getData.json", Damp_BTH3),//5
+
+			new Room("Machine Room 1", 'c', 13, "http://192.168.1.206/getData.json", Damp_MR1),//6
+			new Room("Machine Room 2", 'c', 13, "http://192.168.1.206/getData.json", Damp_MR2),//7
+			new Room("Edit",           'n', 9,  "http://192.168.1.251/getData.json", Damp_Office) //8
+		};
+
+		secondary = new Room[]
+		{
+			//  Room Name, HotCold, percentage, IP, damper number, BMS, damperPosition
+			new Room("Kitchen",     'n', 13, "http://192.168.1.213/getData.json", Damp_Lounge),//0
+			new Room("Hallway",     'n', 13, "http://192.168.1.250/getData.json", Damp_Hall),//1
+			new Room("Phone Booth", 'n', 9,  "http://192.168.1.252/getData.json", Damp_Phone) //2
+		};
+
+	}
+
 	/**
 	 * Used to log almost everything into a log file
 	 * log files can be found at C:\\Users\\%USERNAME&\\Documents\\BMS Logs
 	 * Each day a new log is created
 	 * @param in information to log
 	 * */
-	public void logPrint(String in)
+	public static void logPrint(String in)
 	{	
 		try
 		{	
 			//debug print so that whatever is logged is also printed out into the console
 			//this.debugPrint("LOG: "+in);
 			
-			//setup a date for the timestamp on the log file and log file name
+			//set up a date for the timestamp on the log file and log file name
 			DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 			DateFormat currentDay = new SimpleDateFormat("yyyy-MM-dd");
 			Date date = new Date();
@@ -131,8 +161,8 @@ public class BMSMethods
 		}//end try
 		catch( IOException e)
 		{
-			this.debugPrint(e.toString()+"\n");
-			this.debugPrint("writer is having issues");
+			debugPrint(e.toString()+"\n");
+			debugPrint("writer is having issues");
 		}
 	}
 	
@@ -147,9 +177,9 @@ public class BMSMethods
 		try
 		{	
 			//anything logged into important log is automatically logged into the normal log
-			this.logPrint(in);
+			logPrint(in);
 			//debug print so that whatever is logged is also printed out into the console
-			this.debugPrint("IMPORTANT LOG: "+in);
+			debugPrint("IMPORTANT LOG: "+in);
 			
 			//setup a date for the timestamp on the log file and log file name
 			DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -182,8 +212,8 @@ public class BMSMethods
 		}//end try
 		catch( IOException e)
 		{
-			this.debugPrint(e.toString()+"\n");
-			this.debugPrint("writer is having issues");
+			debugPrint(e.toString()+"\n");
+			debugPrint("writer is having issues");
 		}
 	}
 	
@@ -191,7 +221,7 @@ public class BMSMethods
 	 *	System.out.printlns the input
 	 *	@param in inputs what you want to print
 	 */
-	public void debugPrint(String in)
+	public static void debugPrint(String in)
 	{
 		//just a print out to see stuff in the console
 		System.out.println(in);
@@ -207,7 +237,7 @@ public class BMSMethods
 		//append in WARNING: so it reads in both the log and the option pane
 
 			in = "WARNING: "+in;
-			this.logPrint(in);
+			logPrint(in);
 			//option pane stuff
 			JFrame f = new JFrame();
 			JOptionPane.showMessageDialog(f,in);
@@ -221,7 +251,7 @@ public class BMSMethods
 	 * @param inRelay         which relay you want to write
 	 * @param onoff           which state you want the relay to be
 	 * */
-	public void relayWrite(int inRelay, String onoff) throws SerialPortException, InterruptedException
+	public static void relayWrite(int inRelay, String onoff) throws SerialPortException, InterruptedException
 	{
 		
 		//process the inRelay number since it has to be formatted into X0 if less than 10
@@ -237,7 +267,7 @@ public class BMSMethods
 		Thread.sleep(100);
 		relayBoard.purgePort(SerialPort.PURGE_RXCLEAR & SerialPort.PURGE_TXCLEAR);		
 		
-		this.logPrint("Relay "+number+" set to "+onoff+". ");
+		logPrint("Relay "+number+" set to "+onoff+". ");
 	}	
 	
 	/**
@@ -252,7 +282,7 @@ public class BMSMethods
 		Thread.sleep(100);
 		relayBoard.purgePort(SerialPort.PURGE_RXCLEAR & SerialPort.PURGE_TXCLEAR);		
 		
-		this.logPrint("raw input "+rawIn+". ");
+		logPrint("raw input "+rawIn+". ");
 	}
 	
 	/**
@@ -262,7 +292,7 @@ public class BMSMethods
 	 * @param inRelay which relay you want to write
 	 * @return String the result of a formatOutput() relay read XX
 	 * */
-	public String relayRead(int inRelay) throws SerialPortException, InterruptedException
+	public static String relayRead(int inRelay) throws SerialPortException, InterruptedException
 	{
 		
 		//process the inRelay number since it has to be formatted into X0 if less than 10
@@ -282,8 +312,8 @@ public class BMSMethods
 		
 		String relayReadResult = relayBoard.readString();
 		//System.out.println("RESULT IN METHOD\n"+relayReadResult+"\n---------------");
-		String out = this.formatOutput(relayReadResult);
-		this.logPrint("Relay "+number+" reads "+out +"  .");
+		String out = formatOutput(relayReadResult);
+		logPrint("Relay "+number+" reads "+out +"  .");
 		
 		return out;
 	}	
@@ -296,7 +326,7 @@ public class BMSMethods
 	 * @param  inFromBoard output from the board that you want formatted into an int
 	 * @return String    just the number cut away from all the other echoed chars
 	 */
-	public String formatOutput(String inFromBoard) throws InterruptedException
+	public static String formatOutput(String inFromBoard) throws InterruptedException
 	{
 		//set up the output and return -1 if in error
 		String out = "-1";
@@ -327,10 +357,11 @@ public class BMSMethods
 		}
 		catch(StringIndexOutOfBoundsException e)
 		{
-			this.debugPrint("formating failed");
+			debugPrint("formating failed");
 		}	
 		return out;	
 	}
+
 	/*
 	 * Launch all studios
 	 * Calls each launchStudio#()
@@ -360,27 +391,27 @@ public class BMSMethods
 	 */
 	public void launchStudio1() throws SerialPortException, InterruptedException
 	{
-		this.logPrint("Studio 1 Starting up");
+		logPrint("Studio 1 Starting up");
 		try
 		{
-		this.relayWrite(CR1_Lights,         off);
-			Thread.sleep(1000);
-		this.relayWrite( CR1_Middle_Speaker, off);
-			Thread.sleep(1000);
-		this.relayWrite(CR1_Left_Speaker,   off);
-			Thread.sleep(1000);
-		this.relayWrite(CR1_Right_Speaker,  off);
-			Thread.sleep(1000);
-		this.relayWrite(BTH1_Power,         off);
-			Thread.sleep(1000);
-		this.relayWrite(CR1_Desk,           off);
-			Thread.sleep(1000);
-		this.logImportantPrint("Studio 1 started up with no issues!");
+			relayWrite(CR1_Lights,         off);
+				Thread.sleep(1000);
+			relayWrite( CR1_Middle_Speaker, off);
+				Thread.sleep(1000);
+			relayWrite(CR1_Left_Speaker,   off);
+				Thread.sleep(1000);
+			relayWrite(CR1_Right_Speaker,  off);
+				Thread.sleep(1000);
+			relayWrite(BTH1_Power,         off);
+				Thread.sleep(1000);
+			relayWrite(CR1_Desk,           off);
+				Thread.sleep(1000);
+			logImportantPrint("Studio 1 started up with no issues!");
 		}
 		catch( InterruptedException | SerialPortException e)
 		{
-			this.logImportantPrint("Studio 1 Launch Interrupted!");
-			this.logPrint(e.toString());
+			logImportantPrint("Studio 1 Launch Interrupted!");
+			logPrint(e.toString());
 		}
 		
 	}
@@ -391,27 +422,27 @@ public class BMSMethods
 	 */
 	public void shutdownStudio1() throws SerialPortException, InterruptedException
 	{
-		this.logPrint("Studio 1 powering down");
+		logPrint("Studio 1 powering down");
 		try
 		{
-		this.relayWrite(CR1_Lights,         on);
-			Thread.sleep(1000);
-		this.relayWrite(CR1_Middle_Speaker, on);
-			Thread.sleep(1000);
-		this.relayWrite(CR1_Left_Speaker,   on);
-			Thread.sleep(1000);
-		this.relayWrite(CR1_Right_Speaker,  on);
-			Thread.sleep(1000);
-		this.relayWrite(BTH1_Power,         on);
-			Thread.sleep(1000);
-		this.relayWrite(CR1_Desk,           on);
-			Thread.sleep(1000);
-			this.logImportantPrint("Studio 1 shutdown with no issues!");
+			relayWrite(CR1_Lights,         on);
+				Thread.sleep(1000);
+			relayWrite(CR1_Middle_Speaker, on);
+				Thread.sleep(1000);
+			relayWrite(CR1_Left_Speaker,   on);
+				Thread.sleep(1000);
+			relayWrite(CR1_Right_Speaker,  on);
+				Thread.sleep(1000);
+			relayWrite(BTH1_Power,         on);
+				Thread.sleep(1000);
+			relayWrite(CR1_Desk,           on);
+				Thread.sleep(1000);
+			logImportantPrint("Studio 1 shutdown with no issues!");
 		}
 		catch( InterruptedException | SerialPortException e)
 		{
-			this.logPrint("Studio 1 shutdown Interrupted!");
-			this.logPrint(e.toString());
+			logPrint("Studio 1 shutdown Interrupted!");
+			logPrint(e.toString());
 		}
 		
 	}
@@ -422,27 +453,27 @@ public class BMSMethods
 	 */
 	public void launchStudio2() throws SerialPortException, InterruptedException
 	{
-		this.logPrint("Studio 2 Starting up");
+		logPrint("Studio 2 Starting up");
 		try
 		{
-			this.relayWrite(CR2_Lights,         off);
+			relayWrite(CR2_Lights,         off);
 				Thread.sleep(1000);
-			this.relayWrite(CR2_Middle_Speaker, off);
+			relayWrite(CR2_Middle_Speaker, off);
 				Thread.sleep(1000);
-			this.relayWrite(CR2_Left_Speaker,   off);
+			relayWrite(CR2_Left_Speaker,   off);
 				Thread.sleep(1000);
-			this.relayWrite(CR2_Right_Speaker,  off);
+			relayWrite(CR2_Right_Speaker,  off);
 				Thread.sleep(1000);
-			this.relayWrite(BTH2_Power,         off);
+			relayWrite(BTH2_Power,         off);
 				Thread.sleep(1000);
-			this.relayWrite(CR2_Desk,           off);
+			relayWrite(CR2_Desk,           off);
 				Thread.sleep(1000);
-			this.logImportantPrint("Studio 2 started up with no issues!");
+			logImportantPrint("Studio 2 started up with no issues!");
 		}
 		catch( InterruptedException | SerialPortException e)
 		{
-			this.logPrint("Studio 2 Launch Interrupted!");
-			this.logPrint(e.toString());
+			logPrint("Studio 2 Launch Interrupted!");
+			logPrint(e.toString());
 		}
 		
 	}
@@ -453,27 +484,27 @@ public class BMSMethods
 	 */	
 	public void shutdownStudio2() throws SerialPortException, InterruptedException
 	{
-		this.logPrint("Studio 2 Powering down");
+		logPrint("Studio 2 Powering down");
 		try
 		{
-		this.relayWrite(CR2_Lights,         on);
-			Thread.sleep(1000);
-		this.relayWrite(CR2_Middle_Speaker, on);
-			Thread.sleep(1000);
-		this.relayWrite(CR2_Left_Speaker,   on);
-			Thread.sleep(1000);
-		this.relayWrite(CR2_Right_Speaker,  on);
-			Thread.sleep(1000);
-		this.relayWrite(BTH2_Power,         on);
-			Thread.sleep(1000);
-		this.relayWrite(CR2_Desk,           on);
-			Thread.sleep(1000);
-			this.logImportantPrint("Studio 2 shutdown with no issues!");
+			relayWrite(CR2_Lights,         on);
+				Thread.sleep(1000);
+			relayWrite(CR2_Middle_Speaker, on);
+				Thread.sleep(1000);
+			relayWrite(CR2_Left_Speaker,   on);
+				Thread.sleep(1000);
+			relayWrite(CR2_Right_Speaker,  on);
+				Thread.sleep(1000);
+			relayWrite(BTH2_Power,         on);
+				Thread.sleep(1000);
+			relayWrite(CR2_Desk,           on);
+				Thread.sleep(1000);
+			logImportantPrint("Studio 2 shutdown with no issues!");
 		}
 		catch( InterruptedException | SerialPortException e)
 		{
-			this.logPrint("Studio 2 Shutdown Interrupted!");
-			this.logPrint(e.toString());
+			logPrint("Studio 2 Shutdown Interrupted!");
+			logPrint(e.toString());
 		}
 		
 	}	
@@ -484,27 +515,27 @@ public class BMSMethods
 	 */
 	public void launchStudio3() throws SerialPortException, InterruptedException
 	{
-		this.logPrint("Studio 3 Starting up");
+		logPrint("Studio 3 Starting up");
 		try
 		{
-			this.relayWrite(CR3_Lights,         off);
+			relayWrite(CR3_Lights,         off);
 				Thread.sleep(1000);
-			this.relayWrite(CR3_Middle_Speaker, off);
+			relayWrite(CR3_Middle_Speaker, off);
 				Thread.sleep(1000);
-			this.relayWrite(CR3_Left_Speaker,   off);
+			relayWrite(CR3_Left_Speaker,   off);
 				Thread.sleep(1000);
-			this.relayWrite(CR3_Right_Speaker,  off);
+			relayWrite(CR3_Right_Speaker,  off);
 				Thread.sleep(1000);
-			this.relayWrite(BTH3_Power,         off);
+			relayWrite(BTH3_Power,         off);
 				Thread.sleep(1000);
-			this.relayWrite(CR3_Desk,           off);
+			relayWrite(CR3_Desk,           off);
 				Thread.sleep(1000);
-			this.logImportantPrint("Studio 3 started up with no issues!");
+			logImportantPrint("Studio 3 started up with no issues!");
 		}
 		catch( InterruptedException | SerialPortException e)
 		{
-			this.logPrint("Studio 3 Launch Interrupted!");
-			this.logPrint(e.toString());
+			logPrint("Studio 3 Launch Interrupted!");
+			logPrint(e.toString());
 		}
 		
 	}
@@ -515,27 +546,27 @@ public class BMSMethods
 	 */	
 	public void shutdownStudio3() throws SerialPortException, InterruptedException
 	{
-		this.logPrint("Studio 3 Powering down");
+		logPrint("Studio 3 Powering down");
 		try
 		{
-		this.relayWrite(CR3_Lights,         on);
-			Thread.sleep(1000);
-		this.relayWrite(CR3_Middle_Speaker, on);
-			Thread.sleep(1000);
-		this.relayWrite(CR3_Left_Speaker,   on);
-			Thread.sleep(1000);
-		this.relayWrite(CR3_Right_Speaker,  on);
-			Thread.sleep(1000);
-		this.relayWrite(BTH3_Power,         on);
-			Thread.sleep(1000);
-		this.relayWrite(CR3_Desk,           on);
-			Thread.sleep(1000);
-			this.logImportantPrint("Studio 3 shutdown with no issues!");
+			relayWrite(CR3_Lights,         on);
+				Thread.sleep(1000);
+			relayWrite(CR3_Middle_Speaker, on);
+				Thread.sleep(1000);
+			relayWrite(CR3_Left_Speaker,   on);
+				Thread.sleep(1000);
+			relayWrite(CR3_Right_Speaker,  on);
+				Thread.sleep(1000);
+			relayWrite(BTH3_Power,         on);
+				Thread.sleep(1000);
+			relayWrite(CR3_Desk,           on);
+				Thread.sleep(1000);
+			logImportantPrint("Studio 3 shutdown with no issues!");
 		}
 		catch( InterruptedException | SerialPortException e)
 		{
-			this.logPrint("Studio 3 Shutdown Interrupted!");
-			this.logPrint(e.toString());
+			logPrint("Studio 3 Shutdown Interrupted!");
+			logPrint(e.toString());
 		}
 		
 	}
@@ -547,10 +578,10 @@ public class BMSMethods
 	 * @throws InterruptedException boilerplate
 	 * @throws SerialPortException relayWrite might have a serial exception
 	 */
-	public void openDamper(int inDamper) throws SerialPortException, InterruptedException
+	public static void openDamper(int inDamper) throws SerialPortException, InterruptedException
 	{
-		this.relayWrite(inDamper,on);
-		this.logPrint("Opened Damper "+inDamper+".");
+		relayWrite(inDamper,"on");
+		logPrint("Opened Damper "+inDamper+".");
 	}
 	
 	/**
@@ -559,10 +590,10 @@ public class BMSMethods
 	 * 
 	 * @param inDamper which damper to open by number
 	 */
-	public void closeDamper(int inDamper) throws SerialPortException, InterruptedException
+	public static void closeDamper(int inDamper) throws SerialPortException, InterruptedException
 	{
-		this.relayWrite(inDamper,off);
-		this.logPrint("Closed Damper "+inDamper+".");
+		relayWrite(inDamper,"off");
+		logPrint("Closed Damper "+inDamper+".");
 	}
 	
 	/** 
@@ -575,19 +606,19 @@ public class BMSMethods
 		//assumes the 2 ports are the correct ones
 		
 		//this.portRectifier();
-		this.logPrint("Opening the ports!");
+		logPrint("Opening the ports!");
 		
 		try {
 			//open relayBoard
 			//checks to see if the port is open already
 			if(!relayBoard.isOpened())
 			{
-				this.logPrint("Opening relayBoard port!");
+				logPrint("Opening relayBoard port!");
 				relayBoard.openPort();		
 			}	
 			else
 			{
-				this.logPrint("relayBoard was already open!");
+				logPrint("relayBoard was already open!");
 			}				
 		}//end try 
 		catch (SerialPortException e) 
@@ -609,7 +640,7 @@ public class BMSMethods
 	 */	
 	public void portClose()
 	{
-		this.logPrint("Closing the port!");
+		logPrint("Closing the port!");
 		try 
 		{
 			//close the ports
@@ -632,7 +663,7 @@ public class BMSMethods
 	 * @param inURL the URL of the room's sensor
 	 * @return double temperature of the room
 	 * */
-	public double readSensor(String inURL) throws IOException 
+	public static double readSensor(String inURL) throws IOException
 	{
 		
 		InputStream is;
@@ -680,20 +711,6 @@ public class BMSMethods
 		return out;
 	}
 
-
-	/**
-	 * Method to turn off all the board relays
-	 * employing the writeall command
-	 * probably shouldnt be used that often
-	 * */
-	
-	public void allOFF() throws SerialPortException, InterruptedException
-	{
-		this.relayWrite("relay writeall off");
-		System.out.println("ALL OFF");
-	}
-
-	
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 	//room methods
 	
@@ -715,11 +732,11 @@ public class BMSMethods
 		System.out.println("Machine Request: "+currentRequested);
 		
 		//something strange is up with read so this is an "empty" read to reset the issue
-		this.relayRead(50);
+		relayRead(50);
 		
 		//adjust the machines' current on/off state and change their respective states based on their current state
 		//sets the 2d array collingMachines to the current state of the actual machines
-		if(this.relayRead(50).equalsIgnoreCase("OFF"))
+		if(relayRead(50).equalsIgnoreCase("OFF"))
 		{	
 			coolingMachines[1][0] = 0;
 			System.out.println("Cooling Machine 50 is off");
@@ -731,7 +748,7 @@ public class BMSMethods
 
 		}
 		//second cooling machine
-		if(this.relayRead(53).equalsIgnoreCase("OFF"))
+		if(relayRead(53).equalsIgnoreCase("OFF"))
 		{	
 			coolingMachines[1][1] = 0;		
 			System.out.println("Cooling Machine 53 is off");
@@ -744,7 +761,7 @@ public class BMSMethods
 
 		}	
 		//first heating machine
-		if(this.relayRead(51).equalsIgnoreCase("OFF"))
+		if(relayRead(51).equalsIgnoreCase("OFF"))
 		{	
 			heatingMachines[1][0] = 0;			
 			System.out.println("Heating Machine 51 is off");
@@ -757,7 +774,7 @@ public class BMSMethods
 
 		}	
 		//second heating machine
-		if(this.relayRead(54).equalsIgnoreCase("OFF"))
+		if(relayRead(54).equalsIgnoreCase("OFF"))
 		{	
 			heatingMachines[1][1] = 0;			
 			System.out.println("Heating Machine 54 is off");
@@ -773,7 +790,7 @@ public class BMSMethods
 		//if either cool machine is on then the previous state is cool or 0
      	if(coolingMachines[1][0]+coolingMachines[1][1]>0)
 	     	previousHVAC=0;
-		//if eather heat machine in on then the previous state is heat or 1
+		//if either heat machine in on then the previous state is heat or 1
     	if(heatingMachines[1][0]+heatingMachines[1][1]>0)
      		previousHVAC=1;
 	
@@ -785,10 +802,10 @@ public class BMSMethods
 		{
 			System.out.println("P U R G I N G");
 			//turn off all units
-			this.relayWrite(50,off);
-			this.relayWrite(53,off);
-			this.relayWrite(51,off);
-			this.relayWrite(54,off);
+			relayWrite(50,off);
+			relayWrite(53,off);
+			relayWrite(51,off);
+			relayWrite(54,off);
 
 				
 			currentCoolMachine++;
@@ -813,15 +830,15 @@ public class BMSMethods
 			if(hotCold == 'c')
 			{
 
-				this.relayWrite(50, on);
-				this.relayWrite(53, on);
+				relayWrite(50, on);
+				relayWrite(53, on);
 				System.out.println("Turning on both cooling machines!");
 			}
 			//main heating machine decisions
 			else if(hotCold == 'h')
 			{
-				this.relayWrite(51, on);
-				this.relayWrite(54, on);
+				relayWrite(51, on);
+				relayWrite(54, on);
 				System.out.println("Turning on both heating machines!");
 			}	
 		}
@@ -829,10 +846,10 @@ public class BMSMethods
 		else if(currentRequested == 0)
 		{
 			//all machines off
-			this.relayWrite(50, off);
-			this.relayWrite(51, off);
-			this.relayWrite(53,off);
-			this.relayWrite(54,off);
+			relayWrite(50, off);
+			relayWrite(51, off);
+			relayWrite(53,off);
+			relayWrite(54,off);
 			currentCoolMachine++;
 			currentHeatMachine++;
 			System.out.println("Turning off all machines");
@@ -853,7 +870,7 @@ public class BMSMethods
 				//turn one machine on
 				if(totalCool == 0)
 				{
-					this.relayWrite(coolingMachines[0][currentCoolMachine%2], on);
+					relayWrite(coolingMachines[0][currentCoolMachine%2], on);
 					System.out.println("Turning on 1 cooling machine, number= "+coolingMachines[0][currentCoolMachine%2]);
 				}
 				//leave as is because 1 machine is already on
@@ -864,14 +881,14 @@ public class BMSMethods
 				//turn one machine off since both are running and only 1 is needed
 				else if(totalCool == 2)
 				{
-					this.relayWrite(coolingMachines[0][currentCoolMachine%2], off);
+					relayWrite(coolingMachines[0][currentCoolMachine%2], off);
 					System.out.println("Turning off 1 machine, both were running, turning off "+coolingMachines[0][currentCoolMachine%2]);
 					currentCoolMachine++;
 					Thread.sleep(1000 * 60 * 2);//2m
 					//temporary cooldown to prevent the extra pressure from the winding down machines from making noise in the pipes
 					System.out.println("Opening MRs to allow for extra airflow temporarily");
-					this.openDamper(48);
-					this.openDamper(49);
+					openDamper(48);
+					openDamper(49);
 					doubleOff = 3;
 					mr48++;
 					mr49++;
@@ -890,7 +907,7 @@ public class BMSMethods
 				//turn one machine on
 				if(totalHeat == 0)
 				{
-					this.relayWrite(heatingMachines[0][currentHeatMachine%2], on);
+					relayWrite(heatingMachines[0][currentHeatMachine%2], on);
 					System.out.println("Turning on 1 heating machine, number= "+heatingMachines[0][currentHeatMachine%2]);
 				}
 				//leave as is cause 1 machine is already on
@@ -901,7 +918,7 @@ public class BMSMethods
 				//turn one machine off since both were one already
 				else if(totalHeat == 2)
 				{
-					this.relayWrite(heatingMachines[0][currentHeatMachine%2], off);
+					relayWrite(heatingMachines[0][currentHeatMachine%2], off);
 					System.out.println("Turning off 1 machine, both were running, turning off "+heatingMachines[0][currentHeatMachine%2]);
 					currentHeatMachine++;
 				}	
@@ -958,28 +975,28 @@ public class BMSMethods
 			//35 requested - OUTSIDE DUMP 1
 			if(currentCapacity < dumpActivateLevel)
 			{
-				this.openDamper(35);			
+				openDamper(35);
 				currentCapacity += 13;
 				System.out.println("Requesting OUTSIDE 1 open, capacity= "+currentCapacity);
 			}	
 			//35 not requested - OUTSIDE DUMP 1
 			else
 			{
-				this.closeDamper(35);
+				closeDamper(35);
 				System.out.println("OUTSIDE DUMP 1 not requested");
 			}	
 			
 			//34 requested - OUTSIDE DUMP 2
 			if(currentCapacity < dumpActivateLevel)
 			{
-				this.openDamper(34);			
+				openDamper(34);
 				currentCapacity += 13;
 				System.out.println("Requesting OUTSIDE 2 open, capacity= "+currentCapacity);
 			}	
 			//34 not requested - OUTSIDE DUMP 2
 			else
 			{
-				this.closeDamper(34);
+				closeDamper(34);
 				System.out.println("OUTSIDE 2 not requested as dump zone");
 			}	
 			
@@ -989,17 +1006,17 @@ public class BMSMethods
 		else if(hotCold == 'h')
 		{
 
-			//47 requested, opening
-			if((currentCapacity < dumpActivateLevel) || (this.relayRead(47).equals("on")))
+			//Damp_Phone requested, opening
+			if((currentCapacity < dumpActivateLevel) || (relayRead(Damp_Phone).equals("on")))
 			{
-				this.openDamper(47);
+				openDamper(Damp_Phone);
 				currentCapacity += 9;
 				System.out.println("Opening Phone Booth(47), capacity= "+currentCapacity);
 			}	
 			//44 not requested, closing
 			else
 			{
-				this.closeDamper(47);
+				closeDamper(Damp_Phone);
 				System.out.println("Phone Booth(47) not requested, final capacity= "+currentCapacity);
 			}
 
@@ -1192,10 +1209,10 @@ public class BMSMethods
 	 * */
 	public void massRefresh(Room[] list) throws SerialPortException, InterruptedException
 	{
-		for(int i=0; i<list.length; i++)
+        for (Room room : list)
 		{
-			list[i].refresh();
-		}	
+            room.refresh();
+        }
 	}
 	
 	/**
@@ -1339,16 +1356,15 @@ public class BMSMethods
 	/**
 	 * Method used to remove the MRs from an array by specific name
 	 * Removes the 2 MRs then remakes an array without them, which is then returned
-	 * @param list array of rooms to work on
 	 * @return Room[] array of rooms given minus MR1 and MR2
 	 **/
-	public Room[] removeMRs(Room[] list)
+	public Room[] removeMRs()
 	{
 		//make an arraylist to hold the non machine room rooms
 		ArrayList<Room> sansMRList = new ArrayList<Room>();
 		
-		//go through all of the list and if the room is specifically "MR1" or "MR2" then add it to the arraylist
-		for(Room i : list)
+		//go through all lists and if the room is specifically "MR1" or "MR2" then add it to the arraylist
+		for(Room i : primary)
 		{
 			if(!i.roomName.equalsIgnoreCase("Machine Room 1") && !i.roomName.equalsIgnoreCase("Machine Room 2"))
 			{	
@@ -1500,7 +1516,6 @@ public class BMSMethods
 	/**
 	 * Method to close a Room list for HVAC
 	 * @param list list of rooms you want to close for HVAC
-	 * @return int number of rooms closed
 	 * */
 	public void closeRoomForHVAC(Room[] list) throws SerialPortException, InterruptedException
 	{
@@ -1613,10 +1628,10 @@ public class BMSMethods
 		out.append(currentDate);
 	
 		//empty relayRead because something is up
-		this.relayRead(50);
+		relayRead(50);
 	
 		//add in coolHeat then the status of each machine
-		out.append(coolHeat).append(",").append(this.relayRead(50)).append(",").append(this.relayRead(53)).append(",").append(this.relayRead(51)).append(",").append(this.relayRead(54)).append(",");
+		out.append(coolHeat).append(",").append(relayRead(50)).append(",").append(relayRead(53)).append(",").append(this.relayRead(51)).append(",").append(this.relayRead(54)).append(",");
 		
 		//add in each rooms name, currentTemp, damperState
 		for(Room i : list)
@@ -1628,7 +1643,7 @@ public class BMSMethods
 		out = new StringBuilder(out.substring(0, out.length() - 1));
 	
 		//add outside dump zones to the log
-		out.append(", ").append(this.relayRead(34)).append(", ").append(this.relayRead(35));
+		out.append(", ").append(relayRead(34)).append(", ").append(relayRead(35));
 		
 		//newline for the next entry
 		out.append("\n");
@@ -1673,10 +1688,10 @@ public class BMSMethods
 		//simply turns off all HVAC machines
 		try 
 		{
-			this.relayWrite(50, off);
-			this.relayWrite(51, off);
-			this.relayWrite(53, off);
-			this.relayWrite(54, off);	
+			relayWrite(50, off);
+			relayWrite(51, off);
+			relayWrite(53, off);
+			relayWrite(54, off);
 		}
 		catch (SerialPortException | InterruptedException e)
 		{
@@ -1686,7 +1701,7 @@ public class BMSMethods
     }
 	
 	
-	public void printInfo(Room[] primary, Room[] secondary)
+	public void printInfo()
 	{
 		System.out.println("          CR1,  CR2,  CR3, BTH1, BTH2, BTH3,  MR1,  MR2, Edit, Kich, Hall, Phone");
 		System.out.println("current"+this.printCurrentTemps(primary)   +this.printCurrentTemps(secondary));
@@ -1742,7 +1757,7 @@ public class BMSMethods
 
 	public Room findRoom(String name)
 	{
-		for(Room r : addRoomLists(BMSMainController.primaryRoomList, BMSMainController.secondaryRoomList))
+		for(Room r : addRoomLists(primary, secondary))
 		{
 			if(r.getRoomName().equals(name))
 				return r;
