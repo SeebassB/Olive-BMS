@@ -196,8 +196,8 @@ public class BMSMethods
 			File target = new File("C:\\Users\\BMS Machine\\Documents\\BMS Logs\\"+smalldate+" important log.txt");
 			BufferedWriter writer = null;
 
-			//if the file exists, then you dont need to make a new one
-			//if it dosn't make a new file with the date in it's title
+			//if the file exists, then you don't need to make a new one
+			//if it doesn't make a new file with the date in it's title
 			if(target.exists())
 			{
 				writer = new BufferedWriter(new FileWriter(target, true));
