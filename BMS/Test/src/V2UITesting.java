@@ -10,10 +10,26 @@ import javax.swing.border.Border;
 
 public class V2UITesting
 {
+    private final BMSMethods bms;
+     private JLabel cr1CurrentTemp;
+
+     public void refreshTemps()
+     {
+         System.out.println("s");
+         SwingUtilities.invokeLater(() ->
+         {
+            Room cr1 = bms.findRoom("CR 1");
+            cr1CurrentTemp.setText(String.valueOf(cr1.getCurrentTemp()));
+            System.out.println("REFRESHED");
+         });
+
+
+     }
 
 
     public V2UITesting(BMSMethods bms)
     {
+        this.bms = bms;
 
         //general formatting things
         Border lineBorder3 = BorderFactory.createLineBorder(Color.BLACK, 3);
@@ -311,7 +327,7 @@ public class V2UITesting
         frame.add(cr1InformationBoxLabel);
 
             //current temp display
-            JLabel cr1CurrentTemp = new JLabel(String.valueOf(bms.findRoom("CR 1").getCurrentTemp()));
+            cr1CurrentTemp = new JLabel(String.valueOf(bms.findRoom("CR 1").getCurrentTemp()));
             cr1CurrentTemp.setHorizontalAlignment(SwingConstants.CENTER);
             cr1CurrentTemp.setOpaque(true);
             cr1CurrentTemp.setBorder(lineBorder2);

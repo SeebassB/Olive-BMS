@@ -9,17 +9,18 @@ public class Room
 
 	//variables that are given once and never change
 	final String roomName;//name of the room
-	double targetTemp;//target temperature of the room
 	char coolHeat;//does the client want the room heated or cooled, 0 is cool and 1 is heat
 	final int percentAirflow; //percentage of airflow that the room can take
 	final String sensorURL;//URL of the sensor for the room
+    final int damperNumber;//number of relay for the damper of the room
+
 
 	//variables found and altered as the program runs
-	double currentTemp;//current temperature of the room
+    double targetTemp;//target temperature of the room
+    double currentTemp;//current temperature of the room
 	double targetCutoffTemp;//temperature where the system will stop heating/cooling
 	String damperState;//whether the damper is open or closed
-	char requestState;//how the room is feeling, -1 is satisfied, 0 is cooling, 1 is heating
-	final int damperNumber;//number of relay for the damper of the room
+	char requestState;//how the room is feeling, n is satisfied, c is cooling, h is heating
 	char previousState;
 	
 	//constructor
@@ -92,6 +93,13 @@ public class Room
         targetCutoffTemp = targetTemp - (Math.pow(-1, coolHeat))*1.5;
 	}
 
+    public void fixRequest()
+    {
+        if(coolHeat == 'c' && )
+
+
+    }
+
 	//get for percentAirflow
 	public int getPercentAirflow()
 	{
@@ -153,7 +161,7 @@ public class Room
 	public void refresh() 
 	{
 		updateTemp();
-		
+		fixRequest();
 		fixTargetCutoffTemp();
 		
 		try 
@@ -205,6 +213,8 @@ public class Room
 	 * */
 	public char checkRequest()
 	{
+       // System.out.println("checkRequest "+roomName);
+       // System.out.println("Target= "+targetTemp + " and then cutoff = "+targetCutoffTemp);
 		//check cooling
 		if(coolHeat == 'c')
 		{

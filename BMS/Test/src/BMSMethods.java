@@ -1194,7 +1194,7 @@ public class BMSMethods
 		
 		for(Room i : list)
 		{
-			if(i.checkRequest()==0)
+			if(i.checkRequest()=='c')
 				coldList.add(i);
 		}
 		
@@ -1221,7 +1221,7 @@ public class BMSMethods
 		
 		for(Room i : list)
 		{	//add in all room requesting heat except for the machine rooms, they will never receive heat
-			if(i.checkRequest()==1 && !i.roomName.equalsIgnoreCase("MR1") && !i.roomName.equalsIgnoreCase("MR2"))
+			if(i.checkRequest()=='h')
 				heatList.add(i);
 		}
 		
@@ -1250,7 +1250,7 @@ public class BMSMethods
 		
 		for(Room i : list)
 		{
-			if(i.checkCutoff()==0)
+			if(i.checkCutoff()=='c')
 				stillCold.add(i);
 		}
 		
@@ -1279,7 +1279,7 @@ public class BMSMethods
 		
 		for(Room i : list)
 		{
-			if(i.checkCutoff()==1)
+			if(i.checkCutoff()=='h')
 				stillHeat.add(i);
 		}
 		

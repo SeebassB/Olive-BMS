@@ -35,13 +35,18 @@ public class BMSMainController
 		while(mainStatusFlag != -1)//while hvacThreadStatus is not -1 which signifies
 		{
 
+            gui.refreshTemps();
 			switch(mainStatusFlag)//regular operation
 			{
 				case 0:
 					//UPDATE GUI
                     cond.runConditioning(bms);
-                    Thread.sleep(3 * 60 * 1000);//sleep this main thread for X time   gui.setBmsInput(bms);
-					break;
+                    Thread.sleep(1 * 60 * 1000);//sleep this main thread for X time   gui.setBmsInput(bms);
+					gui.refreshTemps();
+                    Thread.sleep(1 * 60 * 1000);//sleep this main thread for X time   gui.setBmsInput(bms);
+                    gui.refreshTemps();
+                    Thread.sleep(1 * 60 * 1000);//sleep this main thread for X time   gui.setBmsInput(bms);
+                    break;
 
 				case 1:
 					System.out.println("Entering pause");

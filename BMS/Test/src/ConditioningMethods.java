@@ -1,5 +1,6 @@
 import jssc.SerialPortException;
 
+import java.util.Arrays;
 
 
 public class ConditioningMethods
@@ -8,8 +9,8 @@ public class ConditioningMethods
 	public void runConditioning(BMSMethods bms) {
 		try
 		{
-			Room[] primaryRoomList = bms.primary;
-			Room[] secondaryRoomList = bms.secondary;
+			Room[] primaryRoomList = BMSMethods.primary;
+			Room[] secondaryRoomList = BMSMethods.secondary;
 
 
 			//refreshes all rooms info in order to have currentTemps and damper states
@@ -23,6 +24,7 @@ public class ConditioningMethods
 
 			//get all the starting lists
 			Room[] needCooling      = bms.requestingCold(primaryRoomList);
+            System.out.println("needCooling"+ bms.printRoomNames(needCooling));
 			Room[] needCoolingStill = bms.requestingCutoffCooling(primaryRoomList);
 			Room[] needTotalCooling = bms.addRoomLists(needCooling, needCoolingStill);
 			Room[] needHeating      = bms.requestingHeat(primaryRoomList);
@@ -30,7 +32,7 @@ public class ConditioningMethods
 			Room[] needTotalHeating = bms.addRoomLists(needHeating, needHeatingStill);
 			Room[] needNothing      = bms.requestingNothing(primaryRoomList);
 			Room[] roomsOpenForThisCycle; //rooms that will open for this cycle
-			Room[] roomsClosedForThisCycle; //rooms that will close for this cycle
+            Room[] roomsClosedForThisCycle; //rooms that will close for this cycle
 			Room[] machineRooms     = bms.findMRs(primaryRoomList);
 
 			//keep track of airflow requirements
