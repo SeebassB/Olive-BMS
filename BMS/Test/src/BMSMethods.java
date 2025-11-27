@@ -3,7 +3,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -165,7 +164,7 @@ public class BMSMethods
 			debugPrint("writer is having issues");
 		}
 	}
-	
+
 	/**
 	 * Used to log only the important stuff
 	 * The default log will still log everything, this one will just filter out the not important stuff 
@@ -269,22 +268,7 @@ public class BMSMethods
 		
 		logPrint("Relay "+number+" set to "+onoff+". ");
 	}	
-	
-	/**
-	 * Used to write any command manually into the board
-	 * Logs each relay write
-	 * 
-	 * @param rawIn literal input into the board */
-	public void relayWrite(String rawIn) throws SerialPortException, InterruptedException
-	{
-		//send the command to the port, then tell the log it happened
-		relayBoard.writeString(rawIn+"\r");
-		Thread.sleep(100);
-		relayBoard.purgePort(SerialPort.PURGE_RXCLEAR & SerialPort.PURGE_TXCLEAR);		
-		
-		logPrint("raw input "+rawIn+". ");
-	}
-	
+
 	/**
 	 * Used to read the position of a relay from the relay board
 	 * Logs each relay read
@@ -326,7 +310,7 @@ public class BMSMethods
 	 * @param  inFromBoard output from the board that you want formatted into an int
 	 * @return String    just the number cut away from all the other echoed chars
 	 */
-	public static String formatOutput(String inFromBoard) throws InterruptedException
+	public static String formatOutput(String inFromBoard)
 	{
 		//set up the output and return -1 if in error
 		String out = "-1";
@@ -389,7 +373,7 @@ public class BMSMethods
 	 * Startup Studio 1 at the beginning of the day
 	 * Basically calls relayWrite() for all of Studio 1 with a delay in between
 	 */
-	public void launchStudio1() throws SerialPortException, InterruptedException
+	public void launchStudio1()
 	{
 		logPrint("Studio 1 Starting up");
 		try
@@ -420,7 +404,7 @@ public class BMSMethods
 	 * Shutdown Studio 1 at the end of the day
 	 * Basically calls relayWrite() for all of Studio 1 with a delay in between
 	 */
-	public void shutdownStudio1() throws SerialPortException, InterruptedException
+	public void shutdownStudio1()
 	{
 		logPrint("Studio 1 powering down");
 		try
@@ -451,7 +435,7 @@ public class BMSMethods
 	 * Startup Studio 2 at the beginning of the day
 	 * Basically calls relayWrite() for all of Studio 2 with a delay in between
 	 */
-	public void launchStudio2() throws SerialPortException, InterruptedException
+	public void launchStudio2()
 	{
 		logPrint("Studio 2 Starting up");
 		try
@@ -482,7 +466,7 @@ public class BMSMethods
 	 * Shutdown Studio 2 at the end of the day
 	 * Basically calls relayWrite() for all of Studio 2 with a delay in between
 	 */	
-	public void shutdownStudio2() throws SerialPortException, InterruptedException
+	public void shutdownStudio2()
 	{
 		logPrint("Studio 2 Powering down");
 		try
@@ -513,7 +497,7 @@ public class BMSMethods
 	 * Startup Studio 3 at the beginning of the day
 	 * Basically calls relayWrite() for all of Studio 3 with a delay in between
 	 */
-	public void launchStudio3() throws SerialPortException, InterruptedException
+	public void launchStudio3()
 	{
 		logPrint("Studio 3 Starting up");
 		try
@@ -544,7 +528,7 @@ public class BMSMethods
 	 * Shutdown Studio 3 at the end of the day
 	 * Basically calls relayWrite() for all of Studio 3 with a delay in between
 	 */	
-	public void shutdownStudio3() throws SerialPortException, InterruptedException
+	public void shutdownStudio3()
 	{
 		logPrint("Studio 3 Powering down");
 		try
@@ -599,7 +583,7 @@ public class BMSMethods
 	/** 
 	 * Method used to open the port
 	 * */
-	public void portOpen() throws InterruptedException, SerialPortException
+	public void portOpen()
 	{
 		//method used to open ports
 		//assumes the ports are in order, which is why it runs the portRectifier() first
@@ -649,7 +633,7 @@ public class BMSMethods
 		catch (SerialPortException e) 
 		{
 			//will probably happen a bunch since the port might be open
-			//if this comes up the its because the port was already closed/not open
+			//if this comes up it is because the port was already closed/not open
 			//final result is still all ports closed
 			this.logImportantPrint("Closure of serial port failed, might not have been open, not necessarily bad.");
 		}
@@ -1055,7 +1039,7 @@ public class BMSMethods
 	public Room[] removeFromListPrevious(Room[] list, char cull)
 	{
 		//arraylist to cull all previousState = the param cull
-		ArrayList<Room> totalList = new ArrayList<Room>();
+		ArrayList<Room> totalList = new ArrayList<>();
 		
 		for(Room i : list)
 		{
@@ -1136,23 +1120,6 @@ public class BMSMethods
 			out+=2;
 		return out;
 	}
-
-	/**
-	 * Method used to grab all the room's coolHeat value
-	 *
-	 * @param list list of rooms
-	 * @return int [] all coolHeats from the rooms, 0 is cool 1, is heat
-	 * */
-	public char[] collectCoolHeat(Room[] list)
-	{
-		char[] out = new char[list.length];
-		for(int i=0; i<list.length; i++)
-		{
-			out[i] =list[i].getCoolHeat();
-		}
-
-		return out;
-	}
 	
 	/**
 	 * Method used to check all of the room's request values
@@ -1223,7 +1190,7 @@ public class BMSMethods
 	public Room[] requestingCold(Room[] list)
 	{
 		//arraylist to sort out the rooms asking for cold
-		ArrayList<Room> coldList = new ArrayList<Room>();
+		ArrayList<Room> coldList = new ArrayList<>();
 		
 		for(Room i : list)
 		{
@@ -1250,7 +1217,7 @@ public class BMSMethods
 	public Room[] requestingHeat(Room[] list)
 	{
 		//arraylist to sort out the rooms asking for cold
-		ArrayList<Room> heatList = new ArrayList<Room>();
+		ArrayList<Room> heatList = new ArrayList<>();
 		
 		for(Room i : list)
 		{	//add in all room requesting heat except for the machine rooms, they will never receive heat
@@ -1308,7 +1275,7 @@ public class BMSMethods
 	public Room[] requestingCutoffHeating(Room[] list)
 	{
 		//arraylist to sort out the rooms asking for heat
-		ArrayList<Room> stillHeat = new ArrayList<Room>();
+		ArrayList<Room> stillHeat = new ArrayList<>();
 		
 		for(Room i : list)
 		{
@@ -1335,7 +1302,7 @@ public class BMSMethods
 	public Room[] requestingNothing(Room[] list)
 	{
 		//arraylist to sort out the rooms asking for nothing
-		ArrayList<Room> fineList = new ArrayList<Room>();
+		ArrayList<Room> fineList = new ArrayList<>();
 		
 		for(Room i : list)
 		{
@@ -1361,7 +1328,7 @@ public class BMSMethods
 	public Room[] removeMRs()
 	{
 		//make an arraylist to hold the non machine room rooms
-		ArrayList<Room> sansMRList = new ArrayList<Room>();
+		ArrayList<Room> sansMRList = new ArrayList<>();
 		
 		//go through all lists and if the room is specifically "MR1" or "MR2" then add it to the arraylist
 		for(Room i : primary)
@@ -1392,7 +1359,7 @@ public class BMSMethods
 	public Room[] findMRs(Room[] list)
 	{
 		//make an arraylist to hold the machine rooms to return
-		ArrayList<Room> onlyMRs = new ArrayList<Room>();
+		ArrayList<Room> onlyMRs = new ArrayList<>();
 		
 		//go through the list given to find the MRs be looking for specifically "M" then "R"
 		for(Room i : list)
