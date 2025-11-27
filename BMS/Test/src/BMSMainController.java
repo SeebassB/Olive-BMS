@@ -20,9 +20,10 @@ public class BMSMainController
 
 		BMSMethods bms = new BMSMethods();
 		System.out.println("asdasdadsadas");
-		bms.printInfo();
-		bms.portOpen();
 
+		bms.portOpen();
+        bms.massRefresh(bms.addRoomLists(BMSMethods.primary, BMSMethods.secondary));
+        bms.printInfo();
 
 		//open up the bms and port
 		ConditioningMethods cond = new ConditioningMethods();
@@ -39,7 +40,7 @@ public class BMSMainController
 				case 0:
 					//UPDATE GUI
                     cond.runConditioning(bms);
-					Thread.sleep(3 * 60 * 1000);//sleep this main thread for X time   gui.setBmsInput(bms);
+                    Thread.sleep(3 * 60 * 1000);//sleep this main thread for X time   gui.setBmsInput(bms);
 					break;
 
 				case 1:

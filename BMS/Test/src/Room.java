@@ -35,7 +35,6 @@ public class Room
 		sensorURL        = inURL;
 		damperNumber     = dampNum;
 		previousState    = 'n';
-		refresh();
 	}
 
 	//gets and sets-----------------------------------------------------------------------------------
