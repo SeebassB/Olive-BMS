@@ -1,8 +1,5 @@
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import jssc.SerialPortException;
 
@@ -10,15 +7,23 @@ public class BMSMainController
 {
 
 
+	static BMSMethods bms;
 
-    static int mainStatusFlag = 0;
+    static {
+        try {
+            bms = new BMSMethods();
+        } catch (SerialPortException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static String mainStatusFlag = "nothing";
 
 
     public static void main(String[] args) throws SerialPortException, InterruptedException, MalformedURLException, IOException
 	{
 
 
-		BMSMethods bms = new BMSMethods();
 		System.out.println("asdasdadsadas");
 		bms.printInfo();
 		bms.portOpen();
@@ -31,29 +36,28 @@ public class BMSMainController
         V2UITesting gui = new V2UITesting(bms);
 
 		//main thread management loop
-		while(mainStatusFlag != -1)//while hvacThreadStatus is not -1 which signifies
+		while(!mainStatusFlag.equalsIgnoreCase( "QUIT"))//while hvacThreadStatus is not -1 which signifies
 		{
-
+			bms.refreshAllRooms();
 			switch(mainStatusFlag)//regular operation
 			{
-				case 0:
+				case "normal":
 					//UPDATE GUI
                     cond.runConditioning(bms);
 					Thread.sleep(3 * 60 * 1000);//sleep this main thread for X time   gui.setBmsInput(bms);
 					break;
 
-				case 1:
+				case "pause":
 					System.out.println("Entering pause");
-					while(mainStatusFlag != -1)
+					while(mainStatusFlag != "ESCAPE")
 					{
 						Thread.sleep(1 * 60 * 1000);//sleep for a minute
 					}
 					System.out.println("Exiting pause");
 					break;
 
-				case 2:
+				case "QUIT":
 					System.out.println("Shutting down");
-					mainStatusFlag = -1;
 			}
 
 
