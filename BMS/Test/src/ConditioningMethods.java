@@ -1,34 +1,37 @@
 import jssc.SerialPortException;
 
-
-
 public class ConditioningMethods
 {
 
-	public void runConditioning(BMSMethods bms, Room[] primaryRoomList, Room[] secondaryRoomList) {
+	public void runConditioning(BMSMethods bms) {
 		try
 		{
-		
+			Room[] primaryRoomList = bms.getPrimary();
+			Room[] secondaryRoomList = bms.getSecondary();
+
+
 			//refreshes all rooms info in order to have currentTemps and damper states
-			bms.massRefresh(primaryRoomList);
-			bms.massRefresh(secondaryRoomList);
-		
+			bms.refreshAllRooms();
+
 			//print all temps to see what's going on
 			System.out.println("+-+-+-+-+START+-+-+-+-+");
-			bms.printInfo(primaryRoomList, secondaryRoomList);
+			bms.printInfo();
 		
 
 			//get all the starting lists
-			Room[] needCooling      = bms.requestingCold(primaryRoomList);
-			Room[] needCoolingStill = bms.requestingCutoffCooling(primaryRoomList);
-			Room[] needTotalCooling = bms.addRoomLists(needCooling, needCoolingStill);
-			Room[] needHeating      = bms.requestingHeat(primaryRoomList);
-			Room[] needHeatingStill = bms.requestingCutoffHeating(primaryRoomList);
+			Room[] needCooling      = bms.requestingCold();//gather all C
+			Room[] needCoolingStill = bms.removeFromListPrevious(bms.requestingCutoffCooling(), 'n');//remove from c all prev n
+			Room[] needTotalCooling = bms.addRoomLists(needCooling, needCoolingStill);//combine above 2
+
+
+			Room[] needHeating      = bms.requestingHeat();
+			Room[] needHeatingStill = bms.removeFromListPrevious(bms.requestingCutoffHeating(primaryRoomList), 'n');
 			Room[] needTotalHeating = bms.addRoomLists(needHeating, needHeatingStill);
+
 			Room[] needNothing      = bms.requestingNothing(primaryRoomList);
-			Room[] roomsOpenForThisCycle   = new Room[0]; //rooms that will open for this cycle
-			Room[] roomsClosedForThisCycle = new Room[0]; //rooms that will close for this cycle
-			Room[] machineRooms     = bms.findMRs(primaryRoomList);
+			Room[] roomsOpenForThisCycle; //rooms that will open for this cycle
+			Room[] roomsClosedForThisCycle; //rooms that will close for this cycle
+			Room[] machineRooms = bms.findMRs();
 
 			//keep track of airflow requirements
 			char currentConditioningRequest = 'n';
@@ -37,7 +40,7 @@ public class ConditioningMethods
 
 			System.out.println("----------Entering Room Decisions----------");
 			//if the system is requesting cool
-			if(needCooling.length > 0)//-------------------------------------------------COOLING----------------------
+			if(needTotalCooling.length > 0)//-------------------------------------------------COOLING----------------------
 			{
 				//print out that the cooling is determined an starting
 				System.out.println("COOLING REQUESTED");
@@ -46,33 +49,31 @@ public class ConditioningMethods
 				//gather lists of rooms to open and close
 
 				//generate the open rooms list
-				roomsOpenForThisCycle = needCooling; //open the rooms asking for cold
-				//add rooms that are below target, above cutoff, and currently cooling
-				bms.addRoomLists(roomsOpenForThisCycle, bms.removeFromListPrevious(needCoolingStill, 'n'));
-				bms.massSetPreviousState(needCooling, 'c'); //set the rooms asking for cold's previous state to 0 (cooling)
+				roomsOpenForThisCycle = needTotalCooling; //open the rooms asking for cold
+				bms.massSetPreviousState(needCooling, 'C'); //set the rooms asking for cold's previous state to 0 (cooling)
+				bms.massSetPreviousState(needCoolingStill, 'c');
 
 				//generate the closed rooms list
 				roomsClosedForThisCycle = bms.addRoomLists(needNothing, needTotalHeating); //close the rooms that are not asking for anything
+				bms.massSetPreviousState(roomsClosedForThisCycle, 'n');
 
-			}//cool if end
-		
-			//heat if start
-			else if(needHeating.length > 0)
+			}
+
+			else if(needHeating.length > 0)//heating
 			{
 				//log the heating cycle
 				System.out.println("HEATING REQUESTED AND NO COOLING REQUEST");
-
 				currentConditioningRequest = 'h';
 
-				//gather preliminary lists of rooms to open and close
-				roomsOpenForThisCycle = needHeating;//get the rooms requesting heat
-				//add rooms that are above the target, below the cutoff, and currently heating
-				bms.addRoomLists(roomsOpenForThisCycle, bms.removeFromListPrevious(needHeatingStill, 'n'));
-				bms.massSetPreviousState(needHeating, 'h');
+				//generate the open rooms list
+				roomsOpenForThisCycle = needTotalHeating;//get the rooms requesting heat
+				bms.massSetPreviousState(needHeating, 'H');
+				bms.massSetPreviousState(needHeatingStill, 'h');
 
 				//generate the closed rooms list
 				roomsClosedForThisCycle = bms.addRoomLists(needNothing, needTotalCooling);
-			
+				bms.massSetPreviousState(roomsClosedForThisCycle, 'n');
+
 			}//heat if end
 
 			//handle if all rooms are satisfied, opens the MRs to let air flow, turns off all other rooms
@@ -81,15 +82,19 @@ public class ConditioningMethods
 				System.out.println("Every room is satisfied!");
 				//open the MRs and close all other rooms
 				roomsOpenForThisCycle = machineRooms;
-				roomsClosedForThisCycle = bms.addRoomLists(bms.removeMRs(primaryRoomList), secondaryRoomList);
+				bms.massSetPreviousState(roomsOpenForThisCycle, 'n');
+				roomsClosedForThisCycle = bms.addRoomLists(bms.removeMRs(), secondaryRoomList);
+				bms.massSetPreviousState(roomsClosedForThisCycle, 'n');
 
 			}//all satisfied end
-		
+
+
 			//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ROOM DECISIONS ENDED///////////////////////////////////////
 			System.out.println("----------Exiting Room Decisions----------");
 
 			//get the total airflow needed this cycle
-			int airflowRequestedByRooms = bms.addUpRequests(roomsOpenForThisCycle);
+			int airflowRequestedByRooms = bms.findTotalAirflowRequested(roomsOpenForThisCycle);
+
 			//handle turning the machines on/off depending on which rooms request and heat/cool
 			bms.handleHVACMachines(airflowRequestedByRooms, currentConditioningRequest);
 		
@@ -108,14 +113,11 @@ public class ConditioningMethods
 			//open dampers according to the rooms in openThisTime
 			System.out.println("----------");
 			System.out.println("Open Rooms");
-			bms.openRoomForHVAC(roomsOpenForThisCycle);
+			bms.openRoomsForHVAC(roomsOpenForThisCycle);
 			//close dampers not in use, found in closeThisTime
 			System.out.println("----------\nClosed Rooms");
 			bms.closeRoomForHVAC(roomsClosedForThisCycle);
 			bms.massSetPreviousState(roomsClosedForThisCycle, 'n');
-
-		
-
 
 		
 			//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\MACHINE ROOM HANDLING ENDED///////////////////////////////////////
@@ -126,17 +128,13 @@ public class ConditioningMethods
 			bms.logBuildingStatus(bms.addRoomLists(roomsOpenForThisCycle, roomsClosedForThisCycle), currentConditioningRequest);
 		
 		}
-		catch (SerialPortException e)
+		catch (SerialPortException | InterruptedException e)
 		{
-			System.out.println("PORT PROBLEM IN RUN");
 			e.printStackTrace();
+			System.err.println("ConditioningMethods has failed");
 		}
-		catch (InterruptedException e)
-		{
-			System.out.println("INTERRUPTION IN RUN");
-			e. printStackTrace();
-		}
-		
-	}
+
+		BMSMainController.mainStatusFlag = "normal";
+	}//runConditioningEnd
 	
 }
