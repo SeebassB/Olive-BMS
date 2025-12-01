@@ -1,7 +1,5 @@
 import jssc.SerialPortException;
 
-
-
 public class ConditioningMethods
 {
 
