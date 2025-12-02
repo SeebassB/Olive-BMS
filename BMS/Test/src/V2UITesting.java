@@ -401,13 +401,13 @@ public class V2UITesting
             //cr1 temp down button action listener
             cr1TempDownButton.addActionListener(_ -> {
                 bms.findRoom("CR 1").setTargetTemp(bms.findRoom("CR 1").getTargetTemp()-1);
-                System.out.println("Current st1 target temperature: " + bms.findRoom("Control Room 1").getTargetTemp());
+                System.out.println("Current st1 target temperature: " + bms.findRoom("CR 1").getTargetTemp());
             });
 
             //cr1 temp up button action listener
             cr1TempUpButton.addActionListener(_ -> {
                 bms.findRoom("CR 1").setTargetTemp(bms.findRoom("CR 1").getTargetTemp()+1);
-                System.out.println("Current st1 target temperature: " + bms.findRoom("Control Room 1").getTargetTemp());
+                System.out.println("Current st1 target temperature: " + bms.findRoom("CR 1").getTargetTemp());
             });
 
         //light box

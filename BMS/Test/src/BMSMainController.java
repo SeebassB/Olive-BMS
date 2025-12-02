@@ -17,7 +17,7 @@ public class BMSMainController
         }
     }
 
-    static String mainStatusFlag = "nothing";
+    static String mainStatusFlag = "normal";
 
 
     public static void main(String[] args) throws SerialPortException, InterruptedException, MalformedURLException, IOException
@@ -25,9 +25,10 @@ public class BMSMainController
 
 
 		System.out.println("asdasdadsadas");
-		bms.printInfo();
-		bms.portOpen();
 
+		bms.portOpen();
+        bms.refreshAllRooms();
+        bms.printInfo();
 
 		//open up the bms and port
 		ConditioningMethods cond = new ConditioningMethods();
@@ -38,13 +39,15 @@ public class BMSMainController
 		//main thread management loop
 		while(!mainStatusFlag.equalsIgnoreCase( "QUIT"))//while hvacThreadStatus is not -1 which signifies
 		{
-			bms.refreshAllRooms();
+			System.out.println("before teh switch = "+mainStatusFlag);
+            bms.refreshAllRooms();
 			switch(mainStatusFlag)//regular operation
 			{
 				case "normal":
 					//UPDATE GUI
                     cond.runConditioning(bms);
-					Thread.sleep(3 * 60 * 1000);//sleep this main thread for X time   gui.setBmsInput(bms);
+					bms.printInfo();
+                    Thread.sleep(3 * 60 * 1000);//sleep this main thread for X time   gui.setBmsInput(bms);
 					break;
 
 				case "pause":
