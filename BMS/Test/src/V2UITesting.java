@@ -3,6 +3,7 @@ import jssc.SerialPortException;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.Serial;
+import java.util.LinkedList;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -13,6 +14,63 @@ public class V2UITesting
 
 
 
+
+    public JButton createButton(String text, int x, int y, int width, int height, Border border, Font font, Color background, Color foreground)
+    {
+        JButton button = new JButton(text);
+        button.setBounds(x, y, width, height);
+        button.setBorder(border);
+        button.setFont(font);
+        button.setBackground(background);
+        button.setForeground(foreground);
+
+        button.setOpaque(true);
+
+        return button;
+    }
+
+     //   @overload
+    public JButton createButton(ImageIcon icon, int x, int y, int width, int height, Border border, Font font, Color background, Color foreground)
+    {
+        JButton button = new JButton(icon);
+        button.setBounds(x, y, width, height);
+        button.setBorder(border);
+        button.setFont(font);
+        button.setBackground(background);
+        button.setForeground(foreground);
+        button.setHorizontalTextPosition(SwingConstants.CENTER);
+
+
+        button.setOpaque(true);
+
+        return button;
+    }
+    public JLabel createLabel(String text, int x, int y, int width, int height, Border border, Font font, Color background, Color foreground)
+    {
+        JLabel label = new JLabel(text);
+        label.setBounds(x, y, width, height);
+        label.setBorder(border);
+        label.setFont(font);
+        label.setBackground(background);
+        label.setForeground(foreground);
+        label.setHorizontalTextPosition(SwingConstants.CENTER);
+
+        label.setOpaque(true);
+
+        return label;
+    }
+
+    public JPanel createPanel(int x, int y, int width, int height, Color color ,Border border)
+    {
+        JPanel panel = new JPanel();
+        panel.setBounds(x, y, width, height);
+        panel.setBorder(border);
+        panel.setBackground(color);
+        panel.setLayout(null);
+
+        return panel;
+    }
+
     public V2UITesting(BMSMethods bms)
     {
 
@@ -20,14 +78,17 @@ public class V2UITesting
         Border lineBorder3 = BorderFactory.createLineBorder(Color.BLACK, 3);
         Border lineBorder2 = BorderFactory.createLineBorder(Color.BLACK, 2);
 
+        Font serif = new Font("Serif", Font.BOLD, 16);
+
+
         //set up the frame
         JFrame frame = new JFrame("Olive Building Management System");
-        frame.setIconImage(new ImageIcon("Test//IglooLogo.png").getImage());
+        frame.setIconImage(new ImageIcon("BMS//Test//IglooLogo.png").getImage());
 
-        ImageIcon onBulbOriginal = new ImageIcon("Test//OnBulb.png");
+        ImageIcon onBulbOriginal = new ImageIcon("BMS//Test//OnBulb.png");
         ImageIcon onBulb = new ImageIcon(onBulbOriginal.getImage().getScaledInstance(80,80, Image.SCALE_SMOOTH));
 
-        ImageIcon offBulbOriginal = new ImageIcon("Test//OffBulb.png");
+        ImageIcon offBulbOriginal = new ImageIcon("BMS//Test//OffBulb.png");
         ImageIcon offBulb = new ImageIcon(offBulbOriginal.getImage().getScaledInstance(80,80, Image.SCALE_SMOOTH));
 
         //frame attributes
@@ -55,148 +116,82 @@ public class V2UITesting
 
         int allControlYLevel = 30;
 
-        //all label
-        JLabel allRoomLabel = new JLabel("ALL ROOMS");
-        allRoomLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        allRoomLabel.setOpaque(true);
-        allRoomLabel.setBackground(Color.GRAY);
-        allRoomLabel.setFont(new Font("Serif", Font.BOLD, 16));
-        allRoomLabel.setBorder(lineBorder2);
-        allRoomLabel.setBounds(755,allControlYLevel+25,120,40);
-        frame.add(allRoomLabel);
-
-        //all control box
-        JPanel allControlBox = new JPanel();
-        allControlBox.setLayout(null);
-        allControlBox.setBackground(new Color(232, 207, 67));
-        allControlBox.setBounds(880, allControlYLevel, 190, 100);
-        allControlBox.setBorder(lineBorder3);
-        frame.add(allControlBox);
 
 
+
+        //all lights
+        JPanel allLightsBox = createPanel(880, 30, 190, 100, new Color(232, 207, 67), lineBorder3);
+        frame.add(allLightsBox);
+
+        //label
+        frame.add(createLabel("ALL ROOMS", 755, 55, 120, 40, lineBorder2, serif, Color.GRAY, Color.BLACK));
 
             //all lights on button
-            JButton allLightsOnButton = new JButton(onBulb);
-            allLightsOnButton.setOpaque(true);
-            allLightsOnButton.setBackground(Color.GRAY);
-            allLightsOnButton.setForeground(Color.RED);
-            allLightsOnButton.setBounds(10, 10,80,80);
-            allControlBox.add(allLightsOnButton);
+            JButton allLightsOnButton = createButton(onBulb, 10, 10, 80, 80, lineBorder2, serif, Color.GRAY, Color.RED);
+            allLightsBox.add(allLightsOnButton);
 
             //all lights off button
-            JButton allLightsOffButton = new JButton(offBulb);
-            allLightsOffButton.setOpaque(true);
-            allLightsOffButton.setBackground(Color.GRAY);
-            allLightsOffButton.setForeground(Color.RED);
-            allLightsOffButton.setBounds(100, 10,80,80);
-            allControlBox.add(allLightsOffButton);
+            JButton allLightsOffButton = createButton(offBulb, 100, 10, 80, 80, lineBorder2, serif, Color.GRAY, Color.RED);
+            allLightsBox.add(allLightsOffButton);
 
                 //all lights on button action listener
-                allLightsOnButton.addActionListener(_ -> {
-                    try
-                    {
-                        bms.relayWrite(bms.CR1_Lights, "on");//CR1_Lights = 8
-                        Thread.sleep(500);
-                        bms.relayWrite(bms.CR2_Lights, "on");//CR2_Lights
-                        Thread.sleep(500);
-                        bms.relayWrite(bms.CR3_Lights, "on");
-                        //LOG IT
-                    }
+                allLightsOnButton.addActionListener(_ ->
+                {
 
-                    catch (SerialPortException | InterruptedException e)
-                    {
-                        throw new RuntimeException(e);
-                    }
+                    bms.allLightsOn();
+
                     allLightsOnButton.setBackground(new Color(153, 144, 14));
                     allLightsOffButton.setBackground(Color.DARK_GRAY);
                     System.out.println("ALL LIGHTS ON");
                 });
 
                 //all lights off button action listener
-                allLightsOffButton.addActionListener(_ -> {
-                try
+                allLightsOffButton.addActionListener(_ ->
                 {
-                    bms.relayWrite(bms.CR1_Lights, "off");//CR1_Lights = 8
-                    Thread.sleep(500);
-                    bms.relayWrite(bms.CR2_Lights, "off");//CR2_Lights
-                    Thread.sleep(500);
-                    bms.relayWrite(bms.CR3_Lights, "off");
-                    //LOG IT
-                }
-                catch (SerialPortException | InterruptedException e)
-                {
-                    throw new RuntimeException(e);
-                }
-                allLightsOnButton.setBackground(Color.DARK_GRAY);
-                allLightsOffButton.setBackground(new Color(27, 59, 135));
-                System.out.println("ALL LIGHTS OFF");
+                    bms.allLightsOff();
+
+                    allLightsOnButton.setBackground(Color.DARK_GRAY);
+                    allLightsOffButton.setBackground(new Color(27, 59, 135));
+                    System.out.println("ALL LIGHTS OFF");
                 });
 
-        //all on/off box
-        JPanel allOnOffBox = new JPanel();
-        allOnOffBox.setLayout(null);
-        allOnOffBox.setBackground(new Color(59,204,177));
-        allOnOffBox.setBounds(1080, allControlYLevel, 190, 100);
-        allOnOffBox.setBorder(lineBorder3);
-        frame.add(allOnOffBox);
+        //all power box
+        JPanel allPowerBox = createPanel(1080, 30, 190, 100, new Color(59,204,177), lineBorder3);
+        frame.add(allPowerBox);
 
-            //all lights on button
-            JButton allAllOnButton = new JButton("STUDIO ON");
-            allAllOnButton.setOpaque(true);
-            allAllOnButton.setBackground(Color.GRAY);
-            allAllOnButton.setForeground(Color.RED);
-            allAllOnButton.setBounds(10, 10,80,80);
-            allOnOffBox.add(allAllOnButton);
+            //all power on button
+            JButton allPowerOnButton = createButton("<html>STUDIO<br>ON</html>", 10, 10, 80, 80, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            allPowerBox.add(allPowerOnButton);
 
-            //all lights off button
-            JButton allAllOffButton = new JButton("TURN STUDIO OFF");
-            allAllOffButton.setOpaque(true);
-            allAllOffButton.setBackground(Color.GRAY);
-            allAllOffButton.setForeground(Color.RED);
-            allAllOffButton.setBounds(100, 10,80,80);
-            allOnOffBox.add(allAllOffButton);
+            //all power off button
+            JButton allPowerOffButton = createButton("<html>TURN<br>STUDIO<br>OFF</html>", 100, 10, 80, 80, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            allPowerBox.add(allPowerOffButton);
 
                 //all all on button action listener
-                allAllOnButton.addActionListener(_ -> {
-                try
-                {
+                allPowerOnButton.addActionListener(_ -> {
+
                     bms.launchAll();
                     bms.setAllRoomTemps(bms.removeMRs(), 74);//set all rooms except MR to 74
                     bms.setAllRoomsRequest(bms.removeMRs(), 'c');//set all rooms except MR to cool
                     //bms.logPrint();
-                }
-                catch (SerialPortException | InterruptedException e)
-                {
-                    throw new RuntimeException(e);
-                }
-                allAllOnButton.setBackground(new Color(22, 99, 45));
-                allAllOffButton.setBackground(Color.DARK_GRAY);
+
+                allPowerOnButton.setBackground(new Color(22, 99, 45));
+                allPowerOffButton.setBackground(Color.DARK_GRAY);
                 System.out.println("ALL POWER OFF");
                 });
 
                 //all all off button action listener
-                allAllOffButton.addActionListener(_ -> {
-                try
-                {
+                allPowerOffButton.addActionListener(_ -> {
                     //studio shutdown, turn off everything, set request to none
                     bms.shutdownAll();
                     bms.setAllRoomsRequest(bms.removeMRs(), 'n');
-                }
-                catch (SerialPortException | InterruptedException e)
-                {
-                    throw new RuntimeException(e);
-                }
-                allAllOnButton.setBackground(Color.DARK_GRAY);
-                allAllOffButton.setBackground(new Color(99, 22, 30));
+                    allPowerOnButton.setBackground(Color.DARK_GRAY);
+                    allPowerOffButton.setBackground(new Color(99, 22, 30));
                 System.out.println("ALL POWER ON");
                 });
 
         //all control outline box
-        JPanel allControlBoxOutline = new JPanel();
-        allControlBoxOutline.setLayout(null);
-        allControlBoxOutline.setBounds(750, allControlYLevel-5, 525, 110);
-        allControlBoxOutline.setBackground(null);
-        allControlBoxOutline.setBorder(lineBorder2);
+        JPanel allControlBoxOutline = createPanel(750, 25, 525, 110, null, lineBorder2);
         frame.add(allControlBoxOutline);
 
 
@@ -206,65 +201,35 @@ public class V2UITesting
 
 
         //room name label
-        JLabel cr1NameLabel = new JLabel("<html>Control<br>Room 1</html>");
-        cr1NameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        cr1NameLabel.setOpaque(true);
-        cr1NameLabel.setBackground(Color.GRAY);
-        cr1NameLabel.setFont(new Font("Serif", Font.BOLD, 16));
-        cr1NameLabel.setBorder(lineBorder2);
-        cr1NameLabel.setBounds(10,cr1YLevel+20,80,60);
+        JLabel cr1NameLabel = createLabel("<html>Control<br>Room 1</html>", 10, cr1YLevel+20, 80, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
         frame.add(cr1NameLabel);
 
 
         //conditioning control box-------------------------------------------------------------
 
         //conditioning box label
-        JLabel cr1ConditioningBoxLabel = new JLabel("AC");
-        cr1ConditioningBoxLabel.setForeground(Color.BLACK);
-        cr1ConditioningBoxLabel.setFont(new Font("Serif", Font.BOLD, 20));
-        cr1ConditioningBoxLabel.setBounds(104 , cr1YLevel-54,80,80);
+        JLabel cr1ConditioningBoxLabel = createLabel("AC", 104, cr1YLevel-54, 80, 80, null, serif, null, Color.BLACK);
+        cr1ConditioningBoxLabel.setOpaque(false);
         frame.add(cr1ConditioningBoxLabel);
 
         //cr1 conditioning control box
-        JPanel cr1ConditioningBox = new JPanel();
-        cr1ConditioningBox.setLayout(null);
-        cr1ConditioningBox.setBackground(new Color(255, 101, 66));
-        cr1ConditioningBox.setBounds(100, cr1YLevel, 280, 100);
-        cr1ConditioningBox.setBorder(lineBorder3);
+        JPanel cr1ConditioningBox = createPanel(100, cr1YLevel, 280, 100, new Color(255, 101, 66), lineBorder3);
         frame.add(cr1ConditioningBox);
 
 
             //heat button
-            JButton cr1HeatButton = new JButton("Heat");
-            cr1HeatButton.setFont(new Font("Serif", Font.BOLD, 28));
+            JButton cr1HeatButton = createButton("Heat", 10, 10, 80, 80, lineBorder2, serif, Color.GRAY, new Color(163,80,43));
             cr1HeatButton.setFocusPainted(false);
-            cr1HeatButton.setOpaque(true);
-            cr1HeatButton.setBorder(lineBorder2);
-            cr1HeatButton.setBackground(Color.GRAY);
-            cr1HeatButton.setForeground(new Color(163,80,43));
-            cr1HeatButton.setBounds(10, 10,80,80);
             cr1ConditioningBox.add(cr1HeatButton);
 
             //cool button
-            JButton cr1CoolButton = new JButton("Cool");
-            cr1CoolButton.setFont(new Font("Serif", Font.BOLD, 28));
+            JButton cr1CoolButton = createButton("Cool", 100, 10, 80, 80, lineBorder2, serif, Color.GRAY, new Color(53, 43, 163));
             cr1CoolButton.setFocusPainted(false);
-            cr1CoolButton.setOpaque(true);
-            cr1CoolButton.setBorder(lineBorder2);
-            cr1CoolButton.setBackground(Color.GRAY);
-            cr1CoolButton.setForeground(new Color(53, 43, 163));
-            cr1CoolButton.setBounds(100, 10,80,80);
             cr1ConditioningBox.add(cr1CoolButton);
 
             //off button
-            JButton cr1ConditioningOffButton = new JButton("OFF");
-            cr1ConditioningOffButton.setFont(new Font("Serif", Font.BOLD, 28));
+            JButton cr1ConditioningOffButton = createButton("OFF", 190, 10, 80, 80, lineBorder2, serif, Color.GRAY, Color.LIGHT_GRAY);
             cr1ConditioningOffButton.setFocusPainted(false);
-            cr1ConditioningOffButton.setOpaque(true);
-            cr1ConditioningOffButton.setBorder(lineBorder2);
-            cr1ConditioningOffButton.setBackground(Color.GRAY);
-            cr1ConditioningOffButton.setForeground(Color.LIGHT_GRAY);
-            cr1ConditioningOffButton.setBounds(190, 10,80,80);
             cr1ConditioningBox.add(cr1ConditioningOffButton);
 
 
@@ -297,47 +262,27 @@ public class V2UITesting
 
 
         //information box
-        JPanel cr1TemperatureInfoBox = new JPanel();
-        cr1TemperatureInfoBox.setLayout(null);
-        cr1TemperatureInfoBox.setBackground(new Color(59, 138, 81));
-        cr1TemperatureInfoBox.setBounds(390, cr1YLevel, 280, 100);
-        cr1TemperatureInfoBox.setBorder(lineBorder3);
+        JPanel cr1TemperatureInfoBox = createPanel(390, cr1YLevel, 280, 100, new Color(59, 138, 81), lineBorder3);
         frame.add(cr1TemperatureInfoBox);
 
         //information box label
-        JLabel cr1InformationBoxLabel = new JLabel("STATUS");
-        cr1InformationBoxLabel.setForeground(Color.BLACK);
-        cr1InformationBoxLabel.setFont(new Font("Serif", Font.BOLD, 15));
-        cr1InformationBoxLabel.setBounds(396 , cr1YLevel-52,120,80);
+        JLabel cr1InformationBoxLabel = createLabel("STATUS", 396, cr1YLevel-52, 120, 80, null, serif, null, Color.BLACK);
+        cr1InformationBoxLabel.setOpaque(false);
         frame.add(cr1InformationBoxLabel);
 
             //current temp display
-            JLabel cr1CurrentTemp = new JLabel(String.valueOf(bms.findRoom("CR 1").getCurrentTemp()));
+            JLabel cr1CurrentTemp = createLabel(String.valueOf(bms.findRoom("CR 1").getCurrentTemp()), 10, 10, 80, 50, lineBorder2, serif, Color.GRAY, Color.BLACK);
             cr1CurrentTemp.setHorizontalAlignment(SwingConstants.CENTER);
-            cr1CurrentTemp.setOpaque(true);
-            cr1CurrentTemp.setBorder(lineBorder2);
-            cr1CurrentTemp.setBackground(Color.GRAY);
-            cr1CurrentTemp.setForeground(Color.RED);
-            cr1CurrentTemp.setBounds(10, 10,80,50);
             cr1TemperatureInfoBox.add(cr1CurrentTemp);
 
             //current temp text
-            JLabel cr1CurrentLabel = new JLabel("Current");
-            cr1CurrentLabel.setOpaque(true);
+            JLabel cr1CurrentLabel = createLabel("Current", 10, 58, 80, 32, lineBorder2, serif, Color.GRAY, Color.BLACK);
             cr1CurrentLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            cr1CurrentLabel.setBorder(lineBorder2);
-            cr1CurrentLabel.setBounds(10, 10+48,80,32);
-            cr1CurrentLabel.setBackground(Color.GRAY);
             cr1TemperatureInfoBox.add(cr1CurrentLabel);
 
             //cr1 target temp display
-            JLabel cr1TargetTemp = new JLabel(String.valueOf(bms.findRoom("CR 1").getTargetTemp()));
+            JLabel cr1TargetTemp = createLabel(String.valueOf(bms.findRoom("CR 1").getTargetTemp()), 100, 10, 80, 50, lineBorder2, serif, Color.GRAY, Color.BLACK);
             cr1TargetTemp.setHorizontalAlignment(SwingConstants.CENTER);
-            cr1TargetTemp.setOpaque(true);
-            cr1TargetTemp.setBackground(Color.GRAY);
-            cr1TargetTemp.setBorder(lineBorder2);
-            cr1TargetTemp.setForeground(Color.RED);
-            cr1TargetTemp.setBounds(100, 10,80,50);
             cr1TemperatureInfoBox.add(cr1TargetTemp);
 
             //current temp text
@@ -350,7 +295,7 @@ public class V2UITesting
             cr1TemperatureInfoBox.add(cr1TargetTempLabel);
 
             //cr1 current conditioning display
-            JLabel cr1ConditioningStatus = new JLabel("COOL");
+            JLabel cr1ConditioningStatus = new JLabel("NONE");
             cr1ConditioningStatus.setHorizontalAlignment(SwingConstants.CENTER);
             cr1ConditioningStatus.setOpaque(true);
             cr1ConditioningStatus.setBackground(Color.GRAY);
@@ -400,13 +345,17 @@ public class V2UITesting
 
             //cr1 temp down button action listener
             cr1TempDownButton.addActionListener(_ -> {
-                bms.findRoom("CR 1").setTargetTemp(bms.findRoom("CR 1").getTargetTemp()-1);
+                double tempTemp = bms.findRoom("CR 1").getTargetTemp()-1;
+                bms.findRoom("CR 1").setTargetTemp(tempTemp);
+                cr1TargetTemp.setText(String.valueOf(tempTemp));
                 System.out.println("Current st1 target temperature: " + bms.findRoom("CR 1").getTargetTemp());
             });
 
             //cr1 temp up button action listener
             cr1TempUpButton.addActionListener(_ -> {
-                bms.findRoom("CR 1").setTargetTemp(bms.findRoom("CR 1").getTargetTemp()+1);
+                double tempTemp = bms.findRoom("CR 1").getTargetTemp()+1;
+                bms.findRoom("CR 1").setTargetTemp(tempTemp);
+                cr1TargetTemp.setText(String.valueOf(tempTemp));
                 System.out.println("Current st1 target temperature: " + bms.findRoom("CR 1").getTargetTemp());
             });
 
@@ -538,34 +487,63 @@ public class V2UITesting
 
         //booth 1 conditioning control box-------------------------------------------------------------
 
+
         //bth1 conditioning control box
-        JPanel bth1ConditioningBox = new JPanel();
-        bth1ConditioningBox.setLayout(null);
-        bth1ConditioningBox.setBackground(new Color(255, 101, 66));
-        bth1ConditioningBox.setBounds(100, bth1YLevel, 280, 100);
-        bth1ConditioningBox.setBorder(lineBorder3);
+        JPanel bth1ConditioningBox = createPanel(100, bth1YLevel, 280, 100, new Color(255, 101, 66), lineBorder3);
         frame.add(bth1ConditioningBox);
 
 
+        //heat button
+        JButton bth1HeatButton = createButton("Heat", 10, 10, 80, 80, lineBorder2, serif, Color.GRAY, new Color(163,80,43));
+        bth1HeatButton.setFocusPainted(false);
+        bth1ConditioningBox.add(bth1HeatButton);
 
+        //cool button
+        JButton bth1CoolButton = createButton("Cool", 100, 10, 80, 80, lineBorder2, serif, Color.GRAY, new Color(53, 43, 163));
+        bth1CoolButton.setFocusPainted(false);
+        bth1ConditioningBox.add(bth1CoolButton);
+
+        //off button
+        JButton bth1ConditioningOffButton = createButton("OFF", 190, 10, 80, 80, lineBorder2, serif, Color.GRAY, Color.LIGHT_GRAY);
+        bth1ConditioningOffButton.setFocusPainted(false);
+        bth1ConditioningBox.add(bth1ConditioningOffButton);
+
+
+        //cr1 heat button action listener
+        bth1HeatButton.addActionListener(_ -> {
+            bms.findRoom("Booth 1").setCoolHeat('h');
+            bth1HeatButton.setBackground(Color.WHITE);
+            bth1CoolButton.setBackground(Color.GRAY);
+            bth1ConditioningOffButton.setBackground(Color.GRAY);
+            System.out.println("Current bth1 conditioning set to heat");
+        });
+
+        //cool button action listener
+        bth1CoolButton.addActionListener(_ -> {
+            bms.findRoom("Booth 1").setCoolHeat('c');
+            bth1HeatButton.setBackground(Color.GRAY);
+            bth1CoolButton.setBackground(Color.WHITE);
+            bth1ConditioningOffButton.setBackground(Color.GRAY);
+            System.out.println("Current bth1 conditioning set to cool ");
+        });
+
+        //off button action listener
+        bth1ConditioningOffButton.addActionListener(_ -> {
+            bms.findRoom("Booth 1").setCoolHeat('n');
+            bth1HeatButton.setBackground(Color.GRAY);
+            bth1CoolButton.setBackground(Color.GRAY);
+            bth1ConditioningOffButton.setBackground(Color.WHITE);
+            System.out.println("Current bth1 conditioning set to none");
+        });
 
 
         //booth 1 temp status box
-        JPanel bth1TemperatureInfoBox = new JPanel();
-        bth1TemperatureInfoBox.setLayout(null);
-        bth1TemperatureInfoBox.setBackground(new Color(59, 138, 81));
-        bth1TemperatureInfoBox.setBounds(390, bth1YLevel, 280, 100);
-        bth1TemperatureInfoBox.setBorder(lineBorder3);
+        JPanel bth1TemperatureInfoBox = createPanel(390, bth1YLevel, 280, 100, new Color(59, 138, 81), lineBorder3);
         frame.add(bth1TemperatureInfoBox);
 
             //current temp display
-            JLabel bth1CurrentTemp = new JLabel("##");
+            JLabel bth1CurrentTemp = createLabel("##", 10, 10, 80, 50, lineBorder2, serif, Color.GRAY, Color.BLACK);
             bth1CurrentTemp.setHorizontalAlignment(SwingConstants.CENTER);
-            bth1CurrentTemp.setOpaque(true);
-            bth1CurrentTemp.setBorder(lineBorder2);
-            bth1CurrentTemp.setBackground(Color.GRAY);
-            bth1CurrentTemp.setForeground(Color.RED);
-            bth1CurrentTemp.setBounds(10, 10,80,50);
             bth1TemperatureInfoBox.add(bth1CurrentTemp);
 
             //current temp text
@@ -605,6 +583,85 @@ public class V2UITesting
             bth1ConditioningStatus.setForeground(Color.RED);
             bth1ConditioningStatus.setBounds(190, 10,80,80);
             bth1TemperatureInfoBox.add(bth1ConditioningStatus);
+
+
+
+
+
+            //CR2-------------------------------------------------------------------------------------
+
+        int cr2YLevel = 400;
+
+        //room name label
+        JLabel cr2NameLabel = createLabel("<html>Control<br>Room 2</html>", 10, cr2YLevel+25, 80, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+        frame.add(cr2NameLabel);
+
+
+        //conditioning control box-------------------------------------------------------------
+
+
+        //cr1 conditioning control box
+        JPanel cr2ConditioningBox = createPanel(100, cr2YLevel, 280, 100, new Color(255, 101, 66), lineBorder3);
+        frame.add(cr2ConditioningBox);
+
+
+        //heat button
+        JButton cr2HeatButton = createButton("Heat", 10, 10, 80, 80, lineBorder2, serif, Color.GRAY, new Color(163,80,43));
+        cr2HeatButton.setFocusPainted(false);
+        cr2ConditioningBox.add(cr2HeatButton);
+
+        //cool button
+        JButton cr2CoolButton = createButton("Cool", 100, 10, 80, 80, lineBorder2, serif, Color.GRAY, new Color(53, 43, 163));
+        cr2CoolButton.setFocusPainted(false);
+        cr2ConditioningBox.add(cr2CoolButton);
+
+        //off button
+        JButton cr2ConditioningOffButton = createButton("OFF", 190, 10, 80, 80, lineBorder2, serif, Color.GRAY, Color.LIGHT_GRAY);
+        cr2ConditioningOffButton.setFocusPainted(false);
+        cr2ConditioningBox.add(cr2ConditioningOffButton);
+
+
+        //cr1 heat button action listener
+        cr2HeatButton.addActionListener(_ -> {
+            bms.findRoom("CR 2").setCoolHeat('h');
+            cr2HeatButton.setBackground(Color.WHITE);
+            cr2CoolButton.setBackground(Color.GRAY);
+            cr2ConditioningOffButton.setBackground(Color.GRAY);
+            System.out.println("Current st2 conditioning set to heat");
+        });
+
+        //cool button action listener
+        cr2CoolButton.addActionListener(_ -> {
+            bms.findRoom("CR 2").setCoolHeat('c');
+            cr2HeatButton.setBackground(Color.GRAY);
+            cr2CoolButton.setBackground(Color.WHITE);
+            cr2ConditioningOffButton.setBackground(Color.GRAY);
+            System.out.println("Current st2 conditioning set to cool ");
+        });
+
+        //off button action listener
+        cr2ConditioningOffButton.addActionListener(_ -> {
+            bms.findRoom("CR 2").setCoolHeat('n');
+            cr2HeatButton.setBackground(Color.GRAY);
+            cr2CoolButton.setBackground(Color.GRAY);
+            cr2ConditioningOffButton.setBackground(Color.WHITE);
+            System.out.println("Current st2 conditioning set to none");
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -695,10 +752,4 @@ class ShapeDrawing extends JComponent {
             g2.dispose();
         }
     }
-
-    public void initialization()
-    {
-
-    }
-
 }

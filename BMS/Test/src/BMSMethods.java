@@ -354,7 +354,7 @@ public class BMSMethods
 	 * Launch all studios
 	 * Calls each launchStudio#()
 	 * */
-	public void launchAll() throws SerialPortException, InterruptedException
+	public void launchAll()
 	{
 		launchStudio1();
 		launchStudio2();
@@ -365,13 +365,13 @@ public class BMSMethods
 	 * Shutdown all studios
 	 * Calls each shutdownStudio#() method
 	 * */
-	public void shutdownAll() throws SerialPortException, InterruptedException
+	public void shutdownAll()
 	{
-		shutdownStudio1();
-		shutdownStudio2();
-		shutdownStudio3();
-		System.out.println("All Studios shutdown!");
-	}
+        shutdownStudio1();
+        shutdownStudio2();
+        shutdownStudio3();
+        System.out.println("All Studios shutdown!");
+    }
 	
 	/**
 	 * Startup Studio 1 at the beginning of the day
@@ -1585,5 +1585,53 @@ public class BMSMethods
 			r.setRequestState(request);
 		}
 	}
+
+	//GUI METHODS
+
+	public void allLightsOn()
+	{
+		try
+		{
+			relayWrite(CR1_Lights, "on");//CR1_Lights = 8
+			Thread.sleep(500);
+			relayWrite(BTH1_Power, "on");
+			Thread.sleep(500);
+			relayWrite(CR2_Lights, "on");//CR2_Lights
+			Thread.sleep(500);
+			relayWrite(BTH2_Power, "on");
+			Thread.sleep(500);
+			relayWrite(CR3_Lights, "on");
+			//LOG
+			System.out.println("allLightsOn");
+		}
+		catch (SerialPortException | InterruptedException e)
+		{
+			System.err.println("allLightsOn error");
+			throw new RuntimeException(e);
+		}
+
+	}
+
+	public void allLightsOff()
+	{
+		try
+		{
+			BMSMethods.relayWrite(CR1_Lights, "off");//CR1_Lights = 8
+			Thread.sleep(500);
+			BMSMethods.relayWrite(CR2_Lights, "off");//CR2_Lights
+			Thread.sleep(500);
+			BMSMethods.relayWrite(CR3_Lights, "off");
+			//LOG
+			System.out.println("allLightsOff");
+
+		}
+		catch (SerialPortException | InterruptedException e)
+		{
+            System.err.println("allLightsOff error");
+			throw new RuntimeException(e);
+        }
+    }
+
+
 }//big end
 
