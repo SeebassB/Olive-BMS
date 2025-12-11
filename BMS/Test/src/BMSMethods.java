@@ -226,7 +226,7 @@ public class BMSMethods
 	 */
 	public static void debugPrint(String in)
 	{
-		//just a print out to see stuff in the console
+		//just a print to see stuff in the console
 		System.out.println(in);
 	}
 	
