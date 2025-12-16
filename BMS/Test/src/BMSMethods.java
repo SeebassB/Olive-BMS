@@ -164,7 +164,7 @@ public class BMSMethods
 		}//end try
 		catch( IOException e)
 		{
-			debugPrint(e.toString()+"\n");
+			debugPrint(String.valueOf(e));
 			debugPrint("writer is having issues");
 		}
 	}
@@ -1494,7 +1494,7 @@ public class BMSMethods
 		}//end try
 		catch( IOException e)
 		{
-			System.out.println(e.toString()+"\n");
+			System.out.println(e +"\n");
 			System.out.println("writer is having issues");
 		}
 		System.out.println("Updated the temperature log");
