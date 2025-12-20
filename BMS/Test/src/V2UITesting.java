@@ -9,16 +9,42 @@ import javax.swing.border.Border;
 
 public class V2UITesting
 {
+    //all
+    JPanel allLightsBox;
+    JToggleButton allLightsButton;
+    JToggleButton allPowerButton;
 
-    public void update()
-    {
+    //cr1
+    JButton cr1HeatButton;
+    JButton cr1CoolButton;
+    JButton cr1ConditioningOffButton;
 
+    JLabel cr1CurrentTemp;
+    JLabel cr1TargetTemp;
+    JLabel cr1ConditioningStatus;
 
+    JToggleButton cr1LightsButton;
+    JToggleButton cr1PowerButton;
 
-    }
+    //bth1
+    JButton bth1HeatButton;
+    JButton bth1CoolButton;
+    JButton bth1ConditioningOffButton;
 
+    JLabel bth1CurrentTemp;
+    JLabel bth1TargetTemp;
 
+    //cr2
+    JButton cr2HeatButton;
+    JButton cr2CoolButton;
+    JButton cr2ConditioningOffButton;
 
+    JLabel cr2CurrentTemp;
+    JLabel cr2TargetTemp;
+    JLabel cr2ConditioningStatus;
+
+    JToggleButton cr2LightsButton;
+    JToggleButton cr2PowerButton;
 
     public V2UITesting(BMSMethods bms)
     {
@@ -76,15 +102,15 @@ public class V2UITesting
         frame.add(GUIHelperMethods.createLabel("ALL ROOMS", 10, allYLevel, 80, 60, lineBorder2, serif, Color.GRAY, Color.BLACK));
 
         //all lights
-        JPanel allLightsBox = GUIHelperMethods.createPanel(100, allYLevel, 150, 80, lineBorder3, new Color(232, 207, 67));
+        allLightsBox = GUIHelperMethods.createPanel(100, allYLevel, 150, 80, lineBorder3, new Color(232, 207, 67));
         frame.add(allLightsBox);
 
             //all lights on button
-            JToggleButton allLightsButton = GUIHelperMethods.createToggleButton("LIGHTS", 10, 10,  60, 60, lineBorder2, serif, Color.GRAY, null);
+            allLightsButton = GUIHelperMethods.createToggleButton("LIGHTS", 10, 10,  60, 60, lineBorder2, serif, Color.GRAY, null);
             allLightsBox.add(allLightsButton);
 
             //all lights off button
-            JToggleButton allPowerButton = GUIHelperMethods.createToggleButton("POWER+LIGHTS", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, null);
+            allPowerButton = GUIHelperMethods.createToggleButton("POWER+LIGHTS", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, null);
             allLightsBox.add(allPowerButton);
 
                 allLightsButton.addItemListener(e ->
@@ -152,17 +178,17 @@ public class V2UITesting
         frame.add(cr1ConditioningBox);
 
             //heat button
-            JButton cr1HeatButton = GUIHelperMethods.createButton("Heat", 10, 10, 60, 60, lineBorder2, serif, Color.GRAY, new Color(163,80,43));
+            cr1HeatButton = GUIHelperMethods.createButton("Heat", 10, 10, 60, 60, lineBorder2, serif, Color.GRAY, new Color(163,80,43));
             cr1HeatButton.setFocusPainted(false);
             cr1ConditioningBox.add(cr1HeatButton);
 
             //cool button
-            JButton cr1CoolButton = GUIHelperMethods.createButton("Cool", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, new Color(53, 43, 163));
+            cr1CoolButton = GUIHelperMethods.createButton("Cool", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, new Color(53, 43, 163));
             cr1CoolButton.setFocusPainted(false);
             cr1ConditioningBox.add(cr1CoolButton);
 
             //off button
-            JButton cr1ConditioningOffButton = GUIHelperMethods.createButton("OFF", 150, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.LIGHT_GRAY);
+            cr1ConditioningOffButton = GUIHelperMethods.createButton("OFF", 150, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.LIGHT_GRAY);
             cr1ConditioningOffButton.setFocusPainted(false);
             cr1ConditioningBox.add(cr1ConditioningOffButton);
 
@@ -200,7 +226,7 @@ public class V2UITesting
         frame.add(cr1TemperatureInfoBox);
 
             //current temp display
-            JLabel cr1CurrentTemp = GUIHelperMethods.createLabel(String.valueOf(bms.findRoom("CR 1").getCurrentTemp()), 10, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr1CurrentTemp = GUIHelperMethods.createLabel(String.valueOf(bms.findRoom("CR 1").getCurrentTemp()), 10, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
             cr1TemperatureInfoBox.add(cr1CurrentTemp);
 
             //current temp text
@@ -208,7 +234,7 @@ public class V2UITesting
             cr1TemperatureInfoBox.add(cr1CurrentLabel);
 
             //cr1 target temp display
-            JLabel cr1TargetTemp = GUIHelperMethods.createLabel(String.valueOf(bms.findRoom("CR 1").getTargetTemp()), 80, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr1TargetTemp = GUIHelperMethods.createLabel(String.valueOf(bms.findRoom("CR 1").getTargetTemp()), 80, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
             cr1TemperatureInfoBox.add(cr1TargetTemp);
 
             //current temp text
@@ -216,7 +242,7 @@ public class V2UITesting
             cr1TemperatureInfoBox.add(cr1TargetTempLabel);
 
             //cr1 current conditioning display
-            JLabel cr1ConditioningStatus = GUIHelperMethods.createLabel(Character.toString(bms.findRoom("CR 1").getCoolHeat()), 150, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr1ConditioningStatus = GUIHelperMethods.createLabel(Character.toString(bms.findRoom("CR 1").getCoolHeat()), 150, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
             cr1TemperatureInfoBox.add(cr1ConditioningStatus);
 
 
@@ -257,11 +283,11 @@ public class V2UITesting
 
 
             //cr 1lights on button
-            JToggleButton cr1LightsButton = GUIHelperMethods.createToggleButton("LIGHTS", 10, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr1LightsButton = GUIHelperMethods.createToggleButton("LIGHTS", 10, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
             cr1PowerBox.add(cr1LightsButton);
 
             //lights off button
-            JToggleButton cr1PowerButton = GUIHelperMethods.createToggleButton("POWER", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr1PowerButton = GUIHelperMethods.createToggleButton("POWER", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
             cr1PowerBox.add(cr1PowerButton);
 
                 //st1 lights on button action listener
@@ -314,17 +340,17 @@ public class V2UITesting
         frame.add(bth1ConditioningBox);
 
             //heat button
-            JButton bth1HeatButton = GUIHelperMethods.createButton("Heat", 10, 10, 60, 60, lineBorder2, serif, Color.GRAY, new Color(163,80,43));
+            bth1HeatButton = GUIHelperMethods.createButton("Heat", 10, 10, 60, 60, lineBorder2, serif, Color.GRAY, new Color(163,80,43));
             bth1HeatButton.setFocusPainted(false);
             bth1ConditioningBox.add(bth1HeatButton);
 
             //cool button
-            JButton bth1CoolButton = GUIHelperMethods.createButton("Cool", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, new Color(53, 43, 163));
+            bth1CoolButton = GUIHelperMethods.createButton("Cool", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, new Color(53, 43, 163));
             bth1CoolButton.setFocusPainted(false);
             bth1ConditioningBox.add(bth1CoolButton);
 
             //off button
-            JButton bth1ConditioningOffButton = GUIHelperMethods.createButton("OFF", 150, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.LIGHT_GRAY);
+            bth1ConditioningOffButton = GUIHelperMethods.createButton("OFF", 150, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.LIGHT_GRAY);
             bth1ConditioningOffButton.setFocusPainted(false);
             bth1ConditioningBox.add(bth1ConditioningOffButton);
 
@@ -364,7 +390,7 @@ public class V2UITesting
         frame.add(bth1TemperatureInfoBox);
 
             //bth1 current temp display
-            JLabel bth1CurrentTemp = GUIHelperMethods.createLabel("##", 10, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            bth1CurrentTemp = GUIHelperMethods.createLabel("##", 10, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
             bth1TemperatureInfoBox.add(bth1CurrentTemp);
 
             //bth1 current temp text
@@ -372,7 +398,7 @@ public class V2UITesting
             bth1TemperatureInfoBox.add(bth1CurrentLabel);
 
             //bth1 target temp display
-            JLabel bth1TargetTemp = GUIHelperMethods.createLabel("##", 80, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            bth1TargetTemp = GUIHelperMethods.createLabel("##", 80, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
             bth1TemperatureInfoBox.add(bth1TargetTemp);
 
             //bth1 current temp text
@@ -389,31 +415,31 @@ public class V2UITesting
         bth1TempBox.setLayout(null);
         frame.add(bth1TempBox);
 
-        //temp up
-        JButton bth1TempUpButton = GUIHelperMethods.createButton("↑", 10, 10, 60, 60, lineBorder2, serif, Color.ORANGE, Color.YELLOW);
-        bth1TempUpButton.setFocusPainted(false);
-        bth1TempBox.add(bth1TempUpButton);
+            //temp up
+            JButton bth1TempUpButton = GUIHelperMethods.createButton("↑", 10, 10, 60, 60, lineBorder2, serif, Color.ORANGE, Color.YELLOW);
+            bth1TempUpButton.setFocusPainted(false);
+            bth1TempBox.add(bth1TempUpButton);
 
-        //temp down
-        JButton bth1TempDownButton = GUIHelperMethods.createButton("↓", 80, 10, 60, 60, lineBorder2, serif, new Color(29, 127, 184), Color.YELLOW);
-        bth1TempDownButton.setFocusPainted(false);
-        bth1TempBox.add(bth1TempDownButton);
+            //temp down
+            JButton bth1TempDownButton = GUIHelperMethods.createButton("↓", 80, 10, 60, 60, lineBorder2, serif, new Color(29, 127, 184), Color.YELLOW);
+            bth1TempDownButton.setFocusPainted(false);
+            bth1TempBox.add(bth1TempDownButton);
 
-        //cr1 temp down button action listener
-        bth1TempDownButton.addActionListener(_ -> {
-            double tempTemp = bms.findRoom("Booth 1").getTargetTemp()-1;
-            bms.findRoom("Booth 1").setTargetTemp(tempTemp);
-            bth1TargetTemp.setText(String.valueOf(tempTemp));
-            System.out.println("Current bth1 target temperature: " + bms.findRoom("Booth 1").getTargetTemp());
-        });
+                //cr1 temp down button action listener
+                bth1TempDownButton.addActionListener(_ -> {
+                    double tempTemp = bms.findRoom("Booth 1").getTargetTemp()-1;
+                    bms.findRoom("Booth 1").setTargetTemp(tempTemp);
+                    bth1TargetTemp.setText(String.valueOf(tempTemp));
+                    System.out.println("Current bth1 target temperature: " + bms.findRoom("Booth 1").getTargetTemp());
+                });
 
-        //cr1 temp up button action listener
-        bth1TempUpButton.addActionListener(_ -> {
-            double tempTemp = bms.findRoom("Booth 1").getTargetTemp()+1;
-            bms.findRoom("Booth 1").setTargetTemp(tempTemp);
-            bth1TargetTemp.setText(String.valueOf(tempTemp));
-            System.out.println("Current bth1 target temperature: " + bms.findRoom("Booth 1").getTargetTemp());
-        });
+                //cr1 temp up button action listener
+                bth1TempUpButton.addActionListener(_ -> {
+                    double tempTemp = bms.findRoom("Booth 1").getTargetTemp()+1;
+                    bms.findRoom("Booth 1").setTargetTemp(tempTemp);
+                    bth1TargetTemp.setText(String.valueOf(tempTemp));
+                    System.out.println("Current bth1 target temperature: " + bms.findRoom("Booth 1").getTargetTemp());
+                });
 
 
 
@@ -430,15 +456,15 @@ public class V2UITesting
         frame.add(cr2ConditioningBox);
 
             //heat button
-            JButton cr2HeatButton = GUIHelperMethods.createButton("Heat", 10, 10, 60, 60, lineBorder2, serif, Color.GRAY, new Color(163,80,43));
+            cr2HeatButton = GUIHelperMethods.createButton("Heat", 10, 10, 60, 60, lineBorder2, serif, Color.GRAY, new Color(163,80,43));
             cr2ConditioningBox.add(cr2HeatButton);
 
             //cool button
-            JButton cr2CoolButton = GUIHelperMethods.createButton("Cool", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, new Color(53, 43, 163));
+            cr2CoolButton = GUIHelperMethods.createButton("Cool", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, new Color(53, 43, 163));
             cr2ConditioningBox.add(cr2CoolButton);
 
             //off button
-            JButton cr2ConditioningOffButton = GUIHelperMethods.createButton("OFF", 150, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.LIGHT_GRAY);
+            cr2ConditioningOffButton = GUIHelperMethods.createButton("OFF", 150, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.LIGHT_GRAY);
             cr2ConditioningBox.add(cr2ConditioningOffButton);
 
 
@@ -471,6 +497,98 @@ public class V2UITesting
                     cr2ConditioningOffButton.setBackground(Color.WHITE);
                     System.out.println("Current st2 conditioning set to none");
                 });
+
+
+
+        // cr2 information box
+        JPanel cr2TemperatureInfoBox = GUIHelperMethods.createPanel(330, cr2YLevel, 220, 80, lineBorder3, new Color(59, 138, 81));
+        frame.add(cr2TemperatureInfoBox);
+
+            //current temp display
+            cr2CurrentTemp = GUIHelperMethods.createLabel(String.valueOf(bms.findRoom("CR 2").getCurrentTemp()), 10, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr2TemperatureInfoBox.add(cr2CurrentTemp);
+
+            //current temp text
+            JLabel cr2CurrentLabel = GUIHelperMethods.createLabel("Current", 10, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr2TemperatureInfoBox.add(cr2CurrentLabel);
+
+            //cr2 target temp display
+            cr2TargetTemp = GUIHelperMethods.createLabel(String.valueOf(bms.findRoom("CR 2").getTargetTemp()), 80, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr2TemperatureInfoBox.add(cr2TargetTemp);
+
+            //current temp text
+            JLabel cr2TargetTempLabel = GUIHelperMethods.createLabel("Target", 80, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr2TemperatureInfoBox.add(cr2TargetTempLabel);
+
+            //cr2 current conditioning display
+            cr2ConditioningStatus = GUIHelperMethods.createLabel(Character.toString(bms.findRoom("CR 2").getCoolHeat()), 150, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr2TemperatureInfoBox.add(cr2ConditioningStatus);
+
+
+        //CR2 temp box-------------------------------------------------------------------------------------------
+        JPanel cr2TempBox = GUIHelperMethods.createPanel(560, cr2YLevel, 150, 80, lineBorder3, new Color(62, 94, 173));
+        frame.add(cr2TempBox);
+
+            //temp up
+            JButton cr2TempUpButton = GUIHelperMethods.createButton("↑", 10, 10, 60, 60, lineBorder2, serif, Color.ORANGE, Color.YELLOW);
+            cr1TempUpButton.setFocusPainted(false);
+            cr2TempBox.add(cr2TempUpButton);
+
+            //temp down
+            JButton cr2TempDownButton = GUIHelperMethods.createButton("↓", 80, 10, 60, 60, lineBorder2, serif, new Color(29, 127, 184), Color.YELLOW);
+            cr2TempDownButton.setFocusPainted(false);
+            cr2TempBox.add(cr2TempDownButton);
+
+                //cr2 temp down button action listener
+                cr2TempDownButton.addActionListener(_ ->
+                {
+                    double tempTemp = bms.findRoom("CR 2").getTargetTemp()-1;
+                    bms.findRoom("CR 2").setTargetTemp(tempTemp);
+                    cr2TargetTemp.setText(String.valueOf(tempTemp));
+                    System.out.println("Current st2 target temperature: " + bms.findRoom("CR 2").getTargetTemp());
+                });
+
+                //cr2 temp up button action listener
+                cr2TempUpButton.addActionListener(_ ->
+                {
+                    double tempTemp = bms.findRoom("CR 2").getTargetTemp()+1;
+                    bms.findRoom("CR 2").setTargetTemp(tempTemp);
+                    cr2TargetTemp.setText(String.valueOf(tempTemp));
+                    System.out.println("Current st2 target temperature: " + bms.findRoom("CR 2").getTargetTemp());
+                });
+
+        //cr1 power box
+        JPanel cr2PowerBox = GUIHelperMethods.createPanel(720, cr2YLevel, 150, 80, lineBorder3, new Color(232, 207, 67));
+        frame.add(cr2PowerBox);
+
+
+            //cr 2 lights button
+            cr2LightsButton = GUIHelperMethods.createToggleButton("LIGHTS", 10, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr2PowerBox.add(cr2LightsButton);
+
+            //lights off button
+            cr2PowerButton = GUIHelperMethods.createToggleButton("POWER", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr2PowerBox.add(cr2PowerButton);
+
+                //cr2 lights on button action listener
+                cr1LightsButton.addActionListener(_ ->
+                {
+                    System.out.println("Current cr2 lights are on");
+                });
+
+                //st1 lights off button action listener
+                cr1LightsButton.addActionListener(_ ->
+                {
+
+                    System.out.println("Current cr2 lights are off");
+                });
+
+
+
+
+
+
+
 
 
         //BTH2-------------------------------------------------------------------------------------
@@ -728,12 +846,51 @@ public class V2UITesting
 
 
 
-
-
         frame.setVisible(true);
 
 
     }
+
+
+
+
+
+    public void update(BMSMethods bms) throws SerialPortException, InterruptedException {
+
+
+        //checking lights and all lights toggle
+        int howManyLights = 0;//track for all lights toggle
+
+        if(BMSMethods.relayRead(8).equalsIgnoreCase("on"))//CR1_Lights
+        {
+            howManyLights++;
+            cr1LightsButton.setSelected(true);
+        }
+        else
+        {
+            cr1LightsButton.setSelected(false);
+        }
+
+        if(BMSMethods.relayRead(11).equalsIgnoreCase("on"))//CR2_Lights
+        {
+            howManyLights++;
+            //cr2LightsButton.setSelected(true);
+        }
+        else
+        {
+            //cr2LightsButton.setSelected(false);
+        }
+
+
+
+
+
+    }
+
+
+
+
+
 
 }
 

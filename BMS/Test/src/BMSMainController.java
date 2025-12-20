@@ -41,13 +41,19 @@ public class BMSMainController
 		{
 			System.out.println("before teh switch = "+mainStatusFlag);
             bms.refreshAllRooms();
+			gui.update(bms);
 			switch(mainStatusFlag)//regular operation
 			{
 				case "normal":
 					//UPDATE GUI
                     cond.runConditioning(bms);
 					bms.printInfo();
-                    Thread.sleep(3 * 60 * 1000);//sleep this main thread for X time   gui.setBmsInput(bms);
+					Thread.sleep(1 * 60 * 1000);//sleep this main thread for X time
+					gui.update(bms);
+					Thread.sleep(1 * 60 * 1000);//sleep this main thread for X time
+					gui.update(bms);
+					Thread.sleep(1 * 60 * 1000);//sleep this main thread for X time
+					gui.update(bms);
 					break;
 
 				case "pause":
