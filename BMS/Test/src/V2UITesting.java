@@ -10,7 +10,6 @@ import javax.swing.border.Border;
 public class V2UITesting
 {
     //all
-    JPanel allLightsBox;
     JToggleButton allLightsButton;
     JToggleButton allPowerButton;
 
@@ -33,6 +32,7 @@ public class V2UITesting
 
     JLabel bth1CurrentTemp;
     JLabel bth1TargetTemp;
+    JLabel bth1ConditioningStatus;
 
     //cr2
     JButton cr2HeatButton;
@@ -45,6 +45,45 @@ public class V2UITesting
 
     JToggleButton cr2LightsButton;
     JToggleButton cr2PowerButton;
+
+    //bth2
+    JButton bth2HeatButton;
+    JButton bth2CoolButton;
+    JButton bth2ConditioningOffButton;
+
+    JLabel bth2CurrentTemp;
+    JLabel bth2TargetTemp;
+    JLabel bth2ConditioningStatus;
+
+    //cr3
+    JButton cr3HeatButton;
+    JButton cr3CoolButton;
+    JButton cr3ConditioningOffButton;
+
+    JLabel cr3CurrentTemp;
+    JLabel cr3TargetTemp;
+    JLabel cr3ConditioningStatus;
+
+    JToggleButton cr3LightsButton;
+    JToggleButton cr3PowerButton;
+
+    //bth3
+    JButton bth3HeatButton;
+    JButton bth3CoolButton;
+    JButton bth3ConditioningOffButton;
+
+    JLabel bth3CurrentTemp;
+    JLabel bth3TargetTemp;
+    JLabel bth3ConditioningStatus;
+
+    //edit
+    JButton cr4HeatButton;
+    JButton cr4CoolButton;
+    JButton cr4ConditioningOffButton;
+
+
+
+    //other
 
     public V2UITesting(BMSMethods bms)
     {
@@ -102,7 +141,7 @@ public class V2UITesting
         frame.add(GUIHelperMethods.createLabel("ALL ROOMS", 10, allYLevel, 80, 60, lineBorder2, serif, Color.GRAY, Color.BLACK));
 
         //all lights
-        allLightsBox = GUIHelperMethods.createPanel(100, allYLevel, 150, 80, lineBorder3, new Color(232, 207, 67));
+        JPanel allLightsBox = GUIHelperMethods.createPanel(100, allYLevel, 150, 80, lineBorder3, new Color(232, 207, 67));
         frame.add(allLightsBox);
 
             //all lights on button
