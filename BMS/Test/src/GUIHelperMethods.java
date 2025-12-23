@@ -28,23 +28,6 @@ public class GUIHelperMethods
         return button;
     }
 
-    //   @overload
-    public static JButton createButton(ImageIcon icon, int x, int y, int width, int height, Border border, Font font, Color background, Color foreground)
-    {
-        JButton button = new JButton(icon);
-        button.setBounds(x, y, width, height);
-        button.setBorder(border);
-        button.setFont(font);
-        button.setBackground(background);
-        button.setForeground(foreground);
-
-        button.setHorizontalAlignment(SwingConstants.CENTER);
-        button.setFocusPainted(false);
-        button.setOpaque(true);
-
-        return button;
-    }
-
     public static JToggleButton createToggleButton(String text, int x, int y, int width, int height, Border border, Font font, Color background, Color foreground)
     {
         JToggleButton tButton = new JToggleButton(text);
@@ -87,5 +70,34 @@ public class GUIHelperMethods
 
         return panel;
     }
+
+
+    public static void updateRoomCoolHeatButtons(BMSMethods bms, String roomIn, JButton x, JButton y, JButton z)
+    {
+
+        char currentlyOn = bms.findRoom(roomIn).getCoolHeat();
+
+        x.setBackground(Color.GRAY);
+        y.setBackground(Color.GRAY);
+        z.setBackground(Color.GRAY);
+
+        switch(currentlyOn)
+        {
+            case 'h':
+                x.setForeground(Color.WHITE);
+                break;
+
+            case 'c':
+                y.setForeground(Color.WHITE);
+                break;
+
+            case 'n':
+                z.setForeground(Color.WHITE);
+                break;
+        }
+
+    }
+
+
 
 }
