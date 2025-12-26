@@ -87,6 +87,9 @@ public class V2UITesting
 
     //other
     JLabel kitchenCurrentTemp;
+    JLabel hallwayCurrentTemp;
+    JLabel phoneBoothCurrentTemp;
+    JLabel mrCurrentTemp;
 
 
     public V2UITesting(BMSMethods bms)
@@ -1034,12 +1037,7 @@ public class V2UITesting
                     System.out.println("Current bth3 conditioning set to none");
                 });
 
-//----//
-        //----------
-        //----------------
-        //-------------------------
-        //------------------------------------
-        //-------------------------------------------------
+
 
         //temp info box
         JPanel editTemperatureInfoBox = GUIHelperMethods.createPanel(tempInfoBoxXLevel, editYLevel, 220, 80, lineBorder3, new Color(59, 138, 81));
@@ -1111,25 +1109,37 @@ public class V2UITesting
         JLabel otherNameLabel = GUIHelperMethods.createLabel("<html>OTHER</html>", 10, otherYLevel+15, 80, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
         frame.add(otherNameLabel);
 
-        //cr2 conditioning box
-        JPanel otherConditioningBox = GUIHelperMethods.createPanel(100, otherYLevel, 220, 80, lineBorder3, new Color(100, 101, 66));
+        //other conditioning box
+        JPanel otherConditioningBox = GUIHelperMethods.createPanel(100, otherYLevel, 290, 80, lineBorder3, new Color(100, 101, 66));
         frame.add(otherConditioningBox);
 
         //kitchen
-        JLabel kitchenLabel = GUIHelperMethods.createLabel("Kitchen", 10, 10, 60, 40, lineBorder2, serif, Color.GRAY, new Color(163,80,43));
+        JLabel kitchenLabel = GUIHelperMethods.createLabel("Kitchen", 10, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
         otherConditioningBox.add(kitchenLabel);
 
-        kitchenCurrentTemp = GUIHelperMethods.createLabel(Double.toString(bms.findRoom("Kitchen").getCurrentTemp()), 10, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.GRAY);
+        kitchenCurrentTemp = GUIHelperMethods.createLabel(Double.toString(bms.findRoom("Kitchen").getCurrentTemp()), 10, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
         otherConditioningBox.add(kitchenCurrentTemp);
 
-        //cool button
-        JLabel otherCoolLabel = GUIHelperMethods.createLabel("Hallway", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, new Color(53, 43, 163));
-        otherConditioningBox.add(otherCoolLabel);
+        //hallway
+        JLabel hallwayLabel = GUIHelperMethods.createLabel("Hallway", 80, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
+        otherConditioningBox.add(hallwayLabel);
 
-        //off button
-        JLabel otherConditioningOffLabel = GUIHelperMethods.createLabel("Phone Booth", 150, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.LIGHT_GRAY);
-        otherConditioningBox.add(otherConditioningOffLabel);
+        hallwayCurrentTemp = GUIHelperMethods.createLabel(Double.toString(bms.findRoom("Hallway").getCurrentTemp()), 80, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+        otherConditioningBox.add(hallwayCurrentTemp);
 
+        //phone booth
+        JLabel phoneBoothLabel = GUIHelperMethods.createLabel("Phone Booth", 150, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
+        otherConditioningBox.add(phoneBoothLabel);
+
+        phoneBoothCurrentTemp = GUIHelperMethods.createLabel(Double.toString(bms.findRoom("Phone Booth").getCurrentTemp()), 150, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+        otherConditioningBox.add(phoneBoothCurrentTemp);
+
+        //machine room
+        JLabel mrConditioningLabel = GUIHelperMethods.createLabel("Machine Room", 220, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
+        otherConditioningBox.add(mrConditioningLabel);
+
+        mrCurrentTemp = GUIHelperMethods.createLabel(Double.toString(bms.findRoom("Machine Room 1").getCurrentTemp()), 220, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+        otherConditioningBox.add(mrCurrentTemp);
 
 
         frame.setVisible(true);
@@ -1185,10 +1195,85 @@ public class V2UITesting
 
 
         //CR 2
+        GUIHelperMethods.updateRoomCoolHeatButtons(bms, "CR 2", cr2HeatButton, cr2CoolButton, cr2ConditioningOffButton);
+
+        cr2CurrentTemp.setText(Double.toString(bms.findRoom("CR 2").getCurrentTemp()));
+        cr2TargetTemp.setText(Double.toString(bms.findRoom("CR 2").getTargetTemp()));
+        cr2ConditioningStatus.setText(Character.toString(bms.findRoom("CR 2").getCoolHeat()));
+
+        if(cr2ConditioningStatus.getText().equals("h"))
+            cr2ConditioningStatus.setBackground(Color.ORANGE);
+        else if(cr2ConditioningStatus.getText().equals("c"))
+            cr2ConditioningStatus.setBackground(Color.BLUE);
+        else
+            cr2ConditioningStatus.setBackground(Color.GRAY);
 
 
+        //bth2
+        GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Booth 2", bth2HeatButton, bth2CoolButton, bth2ConditioningOffButton);
+
+        bth2CurrentTemp.setText(Double.toString(bms.findRoom("Booth 2").getCurrentTemp()));
+        bth2TargetTemp.setText(Double.toString(bms.findRoom("Booth 2").getTargetTemp()));
+        bth2ConditioningStatus.setText(Character.toString(bms.findRoom("Booth 2").getCoolHeat()));
+
+        if(bth2ConditioningStatus.getText().equals("h"))
+            bth2ConditioningStatus.setBackground(Color.ORANGE);
+        else if(bth2ConditioningStatus.getText().equals("c"))
+            bth2ConditioningStatus.setBackground(Color.BLUE);
+        else
+            bth2ConditioningStatus.setBackground(Color.GRAY);
 
 
+        //CR3
+        GUIHelperMethods.updateRoomCoolHeatButtons(bms, "CR 3", cr3HeatButton, cr3CoolButton, cr3ConditioningOffButton);
+
+        cr3CurrentTemp.setText(Double.toString(bms.findRoom("CR 3").getCurrentTemp()));
+        cr3TargetTemp.setText(Double.toString(bms.findRoom("CR 3").getTargetTemp()));
+        cr3ConditioningStatus.setText(Character.toString(bms.findRoom("CR 3").getCoolHeat()));
+
+        if(cr3ConditioningStatus.getText().equals("h"))
+            cr3ConditioningStatus.setBackground(Color.ORANGE);
+        else if(cr3ConditioningStatus.getText().equals("c"))
+            cr3ConditioningStatus.setBackground(Color.BLUE);
+        else
+            cr3ConditioningStatus.setBackground(Color.GRAY);
+
+
+        //bth3
+        GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Booth 3", bth3HeatButton, bth3CoolButton, bth3ConditioningOffButton);
+
+        bth3CurrentTemp.setText(Double.toString(bms.findRoom("Booth 3").getCurrentTemp()));
+        bth3TargetTemp.setText(Double.toString(bms.findRoom("Booth 3").getTargetTemp()));
+        bth3ConditioningStatus.setText(Character.toString(bms.findRoom("Booth 3").getCoolHeat()));
+
+        if(bth3ConditioningStatus.getText().equals("h"))
+            bth3ConditioningStatus.setBackground(Color.ORANGE);
+        else if(bth3ConditioningStatus.getText().equals("c"))
+            bth3ConditioningStatus.setBackground(Color.BLUE);
+        else
+            bth3ConditioningStatus.setBackground(Color.GRAY);
+
+        //edit
+        GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Edit", editHeatButton, editCoolButton, editConditioningOffButton);
+
+        editCurrentTemp.setText(Double.toString(bms.findRoom("Edit").getCurrentTemp()));
+        editTargetTemp.setText(Double.toString(bms.findRoom("Edit").getTargetTemp()));
+        editConditioningStatus.setText(Character.toString(bms.findRoom("Edit").getCoolHeat()));
+
+        if(editConditioningStatus.getText().equals("h"))
+            editConditioningStatus.setBackground(Color.ORANGE);
+        else if(editConditioningStatus.getText().equals("c"))
+            editConditioningStatus.setBackground(Color.BLUE);
+        else
+            editConditioningStatus.setBackground(Color.GRAY);
+
+
+        //others
+
+        kitchenCurrentTemp.setText(Double.toString(bms.findRoom("Kitchen").getCurrentTemp()));
+        hallwayCurrentTemp.setText(Double.toString(bms.findRoom("Hallway").getCurrentTemp()));
+        phoneBoothCurrentTemp.setText(Double.toString(bms.findRoom("Phone Booth").getCurrentTemp()));
+        mrCurrentTemp.setText(Double.toString(bms.findRoom("Machine Room 1").getCurrentTemp()));
 
     }
 
