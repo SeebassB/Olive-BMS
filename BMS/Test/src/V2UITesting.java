@@ -157,13 +157,11 @@ public class V2UITesting
                 {
                     if (e.getStateChange() == ItemEvent.SELECTED)
                     {
-                        //bms.allLightsOn();
+                        bms.allLightsOn();
                         System.out.println("Button is ON");
-                        allLightsButton.setEnabled(false);
-                        allLightsButton.setBackground(Color.DARK_GRAY);
-                        allLightsButton.setText("ACTIVATING");
+                        allLightsButton.setBackground(Color.LIGHT_GRAY);
 
-                        timer.addActionListener( _ -> {
+                       /* timer.addActionListener( _ -> {
                             System.out.println("in time stop");
                             allLightsButton.setBackground(Color.GRAY);
                             allLightsButton.setEnabled(true);
@@ -172,21 +170,13 @@ public class V2UITesting
                         });
                         timer.setRepeats(false);
                         timer.start();
+                    */
                     }
+
                     else
                     {
-                        int dialogOut = JOptionPane.showConfirmDialog(null, "Are you sure about that", "WARNING", JOptionPane.YES_NO_OPTION);
-                        if(dialogOut == JOptionPane.NO_OPTION)
-                        {
-                            System.out.println("NO DONT shutdown");
-
-                        }
-                        else
-                        {
-                            allLightsButton.setText("Off");
-
-                            System.out.println("Button is OFF");
-                        }
+                        bms.allLightsOff();
+                        allLightsButton.setBackground(Color.DARK_GRAY);
                     }
                 });
 
@@ -194,13 +184,14 @@ public class V2UITesting
                 {
                     if (e.getStateChange() == ItemEvent.SELECTED)
                     {
-                        allPowerButton.setText("On");
-                        System.out.println("Button is ON");
+
+                        allPowerButton.setBackground(Color.LIGHT_GRAY);
+                        bms.launchAll();
                     }
                     else
                     {
-                        allPowerButton.setText("Off");
-                        System.out.println("Button is OFF");
+                        allPowerButton.setBackground(Color.DARK_GRAY);
+                        bms.shutdownAll();
                     }
                 });
 
@@ -351,6 +342,7 @@ public class V2UITesting
                     try
                     {
                         BMSMethods.relayWrite(bms.CR1_Lights, "off");
+                        BMSMethods.relayWrite(bms.BTH1_Power, "off");
                     }
                     catch (SerialPortException | InterruptedException e)
                     {
@@ -606,18 +598,40 @@ public class V2UITesting
             cr2PowerButton = GUIHelperMethods.createToggleButton("POWER", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
             cr2PowerBox.add(cr2PowerButton);
 
-                //cr2 lights on button action listener
+                //st2 lights on button action listener
                 cr2LightsButton.addActionListener(_ ->
                 {
-                    System.out.println("Current cr2 lights are on");
+                    try
+                    {
+                        BMSMethods.relayWrite(bms.CR2_Lights, "on");
+                        BMSMethods.relayWrite(bms.BTH2_Power, "on");
+                    }
+                    catch (SerialPortException | InterruptedException e)
+                    {
+                        throw new RuntimeException(e);
+                    }
+                    cr2LightsButton.setBackground(new Color(153, 144, 14));
+                    cr2PowerButton.setBackground(Color.DARK_GRAY);
+                    System.out.println("Current st2 lights are on");
                 });
 
-                //cr2 lights off button action listener
+                //st1 lights off button action listener
                 cr2LightsButton.addActionListener(_ ->
                 {
-
-                    System.out.println("Current cr2 lights are off");
+                    try
+                    {
+                        BMSMethods.relayWrite(bms.CR2_Lights, "off");
+                        BMSMethods.relayWrite(bms.BTH2_Power, "off");
+                    }
+                    catch (SerialPortException | InterruptedException e)
+                    {
+                        throw new RuntimeException(e);
+                    }
+                    cr2LightsButton.setBackground(Color.DARK_GRAY);
+                    cr2PowerButton.setBackground(new Color(27, 59, 135));
+                    System.out.println("Current st2 lights are off");
                 });
+
 
 
 
@@ -855,17 +869,40 @@ public class V2UITesting
             cr3PowerButton = GUIHelperMethods.createToggleButton("POWER", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
             cr3PowerBox.add(cr3PowerButton);
 
-                //cr3 lights on button action listener
-                cr3LightsButton.addActionListener(_ ->
+            //st3 lights on button action listener
+            cr1LightsButton.addActionListener(_ ->
+            {
+                try
                 {
-                    System.out.println("Current cr3 lights are on");
-                });
+                    BMSMethods.relayWrite(bms.CR3_Lights, "on");
+                    BMSMethods.relayWrite(bms.BTH3_Power, "on");
+                }
+                catch (SerialPortException | InterruptedException e)
+                {
+                    throw new RuntimeException(e);
+                }
+                cr3LightsButton.setBackground(new Color(153, 144, 14));
+                cr3PowerButton.setBackground(Color.DARK_GRAY);
+                System.out.println("Current st3 lights are on");
+            });
 
-                //cr1 lights off button action listener
-                cr3LightsButton.addActionListener(_ ->
+            //st3 lights off button action listener
+            cr3LightsButton.addActionListener(_ ->
+            {
+                try
                 {
-                    System.out.println("Current cr3 lights are off");
-                });
+                    BMSMethods.relayWrite(bms.CR3_Lights, "off");
+                    BMSMethods.relayWrite(bms.BTH3_Power, "off");
+                }
+                catch (SerialPortException | InterruptedException e)
+                {
+                    throw new RuntimeException(e);
+                }
+                cr3LightsButton.setBackground(Color.DARK_GRAY);
+                cr3PowerButton.setBackground(new Color(27, 59, 135));
+                System.out.println("Current st1 lights are off");
+            });
+
 
 
 
