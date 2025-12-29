@@ -227,27 +227,21 @@ public class V2UITesting
                 //cr1 heat button action listener
                 cr1HeatButton.addActionListener(_ -> {
                     bms.findRoom("CR 1").setCoolHeat('h');
-                    cr1HeatButton.setBackground(Color.WHITE);
-                    cr1CoolButton.setBackground(Color.GRAY);
-                    cr1ConditioningOffButton.setBackground(Color.GRAY);
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "CR 1", cr1HeatButton, cr1CoolButton, cr1ConditioningOffButton);
                     System.out.println("Current st1 conditioning set to heat");
                 });
 
                 //cool button action listener
                 cr1CoolButton.addActionListener(_ -> {
                     bms.findRoom("CR 1").setCoolHeat('c');
-                    cr1HeatButton.setBackground(Color.GRAY);
-                    cr1CoolButton.setBackground(Color.WHITE);
-                    cr1ConditioningOffButton.setBackground(Color.GRAY);
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "CR 1", cr1HeatButton, cr1CoolButton, cr1ConditioningOffButton);
                     System.out.println("Current st1 conditioning set to cool ");
                 });
 
                 //off button action listener
                 cr1ConditioningOffButton.addActionListener(_ -> {
                     bms.findRoom("CR 1").setCoolHeat('n');
-                    cr1HeatButton.setBackground(Color.GRAY);
-                    cr1CoolButton.setBackground(Color.GRAY);
-                    cr1ConditioningOffButton.setBackground(Color.WHITE);
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "CR 1", cr1HeatButton, cr1CoolButton, cr1ConditioningOffButton);
                     System.out.println("Current st1 conditioning set to none");
                 });
 
@@ -390,29 +384,23 @@ public class V2UITesting
                 bth1HeatButton.addActionListener(_ ->
                 {
                     bms.findRoom("Booth 1").setCoolHeat('h');
-                    bth1HeatButton.setBackground(Color.WHITE);
-                    bth1CoolButton.setBackground(Color.GRAY);
-                    bth1ConditioningOffButton.setBackground(Color.GRAY);
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Booth 1", bth1HeatButton, bth1CoolButton, bth1ConditioningOffButton);
                     System.out.println("Current bth1 conditioning set to heat");
                 });
 
                 //cool button action listener
                 bth1CoolButton.addActionListener(_ ->
                 {
-                bms.findRoom("Booth 1").setCoolHeat('c');
-                bth1HeatButton.setBackground(Color.GRAY);
-                bth1CoolButton.setBackground(Color.WHITE);
-                bth1ConditioningOffButton.setBackground(Color.GRAY);
-                System.out.println("Current bth1 conditioning set to cool ");
+                    bms.findRoom("Booth 1").setCoolHeat('c');
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Booth 1", bth1HeatButton, bth1CoolButton, bth1ConditioningOffButton);
+                    System.out.println("Current bth1 conditioning set to cool ");
                 });
 
                 //off button action listener
                 bth1ConditioningOffButton.addActionListener(_ ->
                 {
                     bms.findRoom("Booth 1").setCoolHeat('n');
-                    bth1HeatButton.setBackground(Color.GRAY);
-                    bth1CoolButton.setBackground(Color.GRAY);
-                    bth1ConditioningOffButton.setBackground(Color.WHITE);
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Booth 1", bth1HeatButton, bth1CoolButton, bth1ConditioningOffButton);
                     System.out.println("Current bth1 conditioning set to none");
                 });
 
@@ -456,7 +444,8 @@ public class V2UITesting
             bth1TempBox.add(bth1TempDownButton);
 
                 //cr1 temp down button action listener
-                bth1TempDownButton.addActionListener(_ -> {
+                bth1TempDownButton.addActionListener(_ ->
+                {
                     double tempTemp = bms.findRoom("Booth 1").getTargetTemp()-1;
                     bms.findRoom("Booth 1").setTargetTemp(tempTemp);
                     bth1TargetTemp.setText(String.valueOf(tempTemp));
@@ -464,7 +453,8 @@ public class V2UITesting
                 });
 
                 //cr1 temp up button action listener
-                bth1TempUpButton.addActionListener(_ -> {
+                bth1TempUpButton.addActionListener(_ ->
+                {
                     double tempTemp = bms.findRoom("Booth 1").getTargetTemp()+1;
                     bms.findRoom("Booth 1").setTargetTemp(tempTemp);
                     bth1TargetTemp.setText(String.valueOf(tempTemp));
@@ -498,33 +488,27 @@ public class V2UITesting
             cr2ConditioningBox.add(cr2ConditioningOffButton);
 
 
-                //cr1 heat button action listener
+                //cr2 heat button action listener
                 cr2HeatButton.addActionListener(_ ->
                 {
                     bms.findRoom("CR 2").setCoolHeat('h');
-                    cr2HeatButton.setBackground(Color.WHITE);
-                    cr2CoolButton.setBackground(Color.GRAY);
-                    cr2ConditioningOffButton.setBackground(Color.GRAY);
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "CR 2", cr2HeatButton, cr2CoolButton, cr2ConditioningOffButton);
                     System.out.println("Current st2 conditioning set to heat");
                 });
 
-                //cool button action listener
+                //cr2 cool button action listener
                 cr2CoolButton.addActionListener(_ ->
                 {
                     bms.findRoom("CR 2").setCoolHeat('c');
-                    cr2HeatButton.setBackground(Color.GRAY);
-                    cr2CoolButton.setBackground(Color.WHITE);
-                    cr2ConditioningOffButton.setBackground(Color.GRAY);
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "CR 2", cr2HeatButton, cr2CoolButton, cr2ConditioningOffButton);
                     System.out.println("Current st2 conditioning set to cool ");
                 });
 
-                //off button action listener
+                //cr2 off button action listener
                 cr2ConditioningOffButton.addActionListener(_ ->
                 {
                     bms.findRoom("CR 2").setCoolHeat('n');
-                    cr2HeatButton.setBackground(Color.GRAY);
-                    cr2CoolButton.setBackground(Color.GRAY);
-                    cr2ConditioningOffButton.setBackground(Color.WHITE);
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "CR 2", cr2HeatButton, cr2CoolButton, cr2ConditioningOffButton);
                     System.out.println("Current st2 conditioning set to none");
                 });
 
@@ -573,7 +557,7 @@ public class V2UITesting
                     double tempTemp = bms.findRoom("CR 2").getTargetTemp()-1;
                     bms.findRoom("CR 2").setTargetTemp(tempTemp);
                     cr2TargetTemp.setText(String.valueOf(tempTemp));
-                    System.out.println("Current st2 target temperature: " + bms.findRoom("CR 2").getTargetTemp());
+                    System.out.println("Current cr2 target temperature: " + bms.findRoom("CR 2").getTargetTemp());
                 });
 
                 //cr2 temp up button action listener
@@ -582,7 +566,7 @@ public class V2UITesting
                     double tempTemp = bms.findRoom("CR 2").getTargetTemp()+1;
                     bms.findRoom("CR 2").setTargetTemp(tempTemp);
                     cr2TargetTemp.setText(String.valueOf(tempTemp));
-                    System.out.println("Current st2 target temperature: " + bms.findRoom("CR 2").getTargetTemp());
+                    System.out.println("Current cr2 target temperature: " + bms.findRoom("CR 2").getTargetTemp());
                 });
 
         //cr1 power box
@@ -597,6 +581,12 @@ public class V2UITesting
             //lights off button
             cr2PowerButton = GUIHelperMethods.createToggleButton("POWER", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
             cr2PowerBox.add(cr2PowerButton);
+
+                cr2PowerButton.addActionListener(_ ->
+                {
+                    bms.launchStudio2();
+                });
+
 
                 //st2 lights on button action listener
                 cr2LightsButton.addActionListener(_ ->
@@ -659,13 +649,11 @@ public class V2UITesting
             bth2ConditioningBox.add(bth2ConditioningOffButton);
 
 
-                //cr1 heat button action listener
+                //bth2 heat button action listener
                 bth2HeatButton.addActionListener(_ ->
                 {
                     bms.findRoom("Booth 2").setCoolHeat('h');
-                    bth2HeatButton.setBackground(Color.WHITE);
-                    bth2CoolButton.setBackground(Color.GRAY);
-                    bth2ConditioningOffButton.setBackground(Color.GRAY);
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Booth 2", bth2HeatButton, bth2CoolButton, bth2ConditioningOffButton);
                     System.out.println("Current bth2 conditioning set to heat");
                 });
 
@@ -673,9 +661,7 @@ public class V2UITesting
                 bth2CoolButton.addActionListener(_ ->
                 {
                     bms.findRoom("Booth 2").setCoolHeat('c');
-                    bth2HeatButton.setBackground(Color.GRAY);
-                    bth2CoolButton.setBackground(Color.WHITE);
-                    bth2ConditioningOffButton.setBackground(Color.GRAY);
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Booth 2", bth2HeatButton, bth2CoolButton, bth2ConditioningOffButton);
                     System.out.println("Current bth2 conditioning set to cool ");
                 });
 
@@ -683,9 +669,7 @@ public class V2UITesting
                 bth2ConditioningOffButton.addActionListener(_ ->
                 {
                     bms.findRoom("Booth 2").setCoolHeat('n');
-                    bth2HeatButton.setBackground(Color.GRAY);
-                    bth2CoolButton.setBackground(Color.GRAY);
-                    bth2ConditioningOffButton.setBackground(Color.WHITE);
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Booth 2", bth2HeatButton, bth2CoolButton, bth2ConditioningOffButton);
                     System.out.println("Current bth2 conditioning set to none");
                 });
 
@@ -753,7 +737,7 @@ public class V2UITesting
         JLabel cr3NameLabel = GUIHelperMethods.createLabel("<html>Control<br>Room 3</html>", labelXLevel, cr3YLevel+15, 80, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
         frame.add(cr3NameLabel);
 
-        //cr2 conditioning box
+        //cr3 conditioning box
         JPanel cr3ConditioningBox = GUIHelperMethods.createPanel(firstBoxXLevel, cr3YLevel, 220, 80, lineBorder3, new Color(255, 101, 66));
         frame.add(cr3ConditioningBox);
 
@@ -773,9 +757,7 @@ public class V2UITesting
                 cr3HeatButton.addActionListener(_ ->
                 {
                     bms.findRoom("CR 3").setCoolHeat('h');
-                    cr3HeatButton.setBackground(Color.WHITE);
-                    cr3CoolButton.setBackground(Color.GRAY);
-                    cr3ConditioningOffButton.setBackground(Color.GRAY);
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "CR 3", cr3HeatButton, cr3CoolButton, cr3ConditioningOffButton);
                     System.out.println("Current cr3 conditioning set to heat");
                 });
 
@@ -783,9 +765,7 @@ public class V2UITesting
                 cr3CoolButton.addActionListener(_ ->
                 {
                     bms.findRoom("CR 3").setCoolHeat('c');
-                    cr3HeatButton.setBackground(Color.GRAY);
-                    cr3CoolButton.setBackground(Color.WHITE);
-                    cr3ConditioningOffButton.setBackground(Color.GRAY);
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "CR 3", cr3HeatButton, cr3CoolButton, cr3ConditioningOffButton);
                     System.out.println("Current cr3 conditioning set to cool ");
                 });
 
@@ -793,9 +773,7 @@ public class V2UITesting
                 cr3ConditioningOffButton.addActionListener(_ ->
                 {
                     bms.findRoom("CR 3").setCoolHeat('n');
-                    cr3HeatButton.setBackground(Color.GRAY);
-                    cr3CoolButton.setBackground(Color.GRAY);
-                    cr3ConditioningOffButton.setBackground(Color.WHITE);
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "CR 3", cr3HeatButton, cr3CoolButton, cr3ConditioningOffButton);
                     System.out.println("Current cr3 conditioning set to none");
                 });
 
@@ -934,9 +912,7 @@ public class V2UITesting
                 bth3HeatButton.addActionListener(_ ->
                 {
                     bms.findRoom("Booth 3").setCoolHeat('h');
-                    bth3HeatButton.setBackground(Color.WHITE);
-                    bth3CoolButton.setBackground(Color.GRAY);
-                    bth3ConditioningOffButton.setBackground(Color.GRAY);
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Booth 3", bth3HeatButton, bth3CoolButton, bth3ConditioningOffButton);
                     System.out.println("Current bth3 conditioning set to heat");
                 });
 
@@ -944,9 +920,7 @@ public class V2UITesting
                 bth3CoolButton.addActionListener(_ ->
                 {
                     bms.findRoom("Booth 3").setCoolHeat('c');
-                    bth3HeatButton.setBackground(Color.GRAY);
-                    bth3CoolButton.setBackground(Color.WHITE);
-                    bth3ConditioningOffButton.setBackground(Color.GRAY);
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Booth 3", bth3HeatButton, bth3CoolButton, bth3ConditioningOffButton);
                     System.out.println("Current bth3 conditioning set to cool ");
                 });
 
@@ -954,9 +928,7 @@ public class V2UITesting
                 bth3ConditioningOffButton.addActionListener(_ ->
                 {
                     bms.findRoom("Booth 3").setCoolHeat('n');
-                    bth3HeatButton.setBackground(Color.GRAY);
-                    bth3CoolButton.setBackground(Color.GRAY);
-                    bth3ConditioningOffButton.setBackground(Color.WHITE);
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Booth 3", bth3HeatButton, bth3CoolButton, bth3ConditioningOffButton);
                     System.out.println("Current bth3 conditioning set to none");
                 });
 
@@ -1027,7 +999,7 @@ public class V2UITesting
         JLabel editNameLabel = GUIHelperMethods.createLabel("<html>EDIT</html>", labelXLevel, editYLevel+15, 80, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
         frame.add(editNameLabel);
 
-        //cr2 conditioning box
+        //edit conditioning box
         JPanel editConditioningBox = GUIHelperMethods.createPanel(firstBoxXLevel, editYLevel, 220, 80, lineBorder3, new Color(255, 101, 66));
         frame.add(editConditioningBox);
 
@@ -1048,9 +1020,7 @@ public class V2UITesting
                 editHeatButton.addActionListener(_ ->
                 {
                     bms.findRoom("Edit").setCoolHeat('h');
-                    editHeatButton.setBackground(Color.WHITE);
-                    editCoolButton.setBackground(Color.GRAY);
-                    editConditioningOffButton.setBackground(Color.GRAY);
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Edit", editHeatButton, editCoolButton, editConditioningOffButton);
                     System.out.println("Current edit conditioning set to heat");
                 });
 
@@ -1058,9 +1028,7 @@ public class V2UITesting
                 editCoolButton.addActionListener(_ ->
                 {
                     bms.findRoom("Edit").setCoolHeat('c');
-                    editHeatButton.setBackground(Color.GRAY);
-                    editCoolButton.setBackground(Color.WHITE);
-                    editConditioningOffButton.setBackground(Color.GRAY);
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Edit", editHeatButton, editCoolButton, editConditioningOffButton);
                     System.out.println("Current edit conditioning set to cool ");
                 });
 
@@ -1068,10 +1036,8 @@ public class V2UITesting
                 editConditioningOffButton.addActionListener(_ ->
                 {
                     bms.findRoom("Edit").setCoolHeat('n');
-                    editHeatButton.setBackground(Color.GRAY);
-                    editCoolButton.setBackground(Color.GRAY);
-                    editConditioningOffButton.setBackground(Color.WHITE);
-                    System.out.println("Current bth3 conditioning set to none");
+                    GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Edit", editHeatButton, editCoolButton, editConditioningOffButton);
+                    System.out.println("Current edit conditioning set to none");
                 });
 
 
@@ -1119,10 +1085,10 @@ public class V2UITesting
                     double tempTemp = bms.findRoom("Edit").getTargetTemp()-1;
                     bms.findRoom("Edit").setTargetTemp(tempTemp);
                     editTargetTemp.setText(String.valueOf(tempTemp));
-                    System.out.println("Current edit target temperature: " + bms.findRoom("edit").getTargetTemp());
+                    System.out.println("Current edit target temperature: " + bms.findRoom("Edit").getTargetTemp());
                 });
 
-                //bth2 temp up button action listener
+                //edit temp up button action listener
                 editTempUpButton.addActionListener(_ ->
                 {
                     double tempTemp = bms.findRoom("Edit").getTargetTemp()+1;

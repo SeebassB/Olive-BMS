@@ -84,15 +84,15 @@ public class GUIHelperMethods
         switch(currentlyOn)
         {
             case 'h':
-                x.setForeground(Color.WHITE);
+                x.setBackground(Color.WHITE);
                 break;
 
             case 'c':
-                y.setForeground(Color.WHITE);
+                y.setBackground(Color.WHITE);
                 break;
 
             case 'n':
-                z.setForeground(Color.WHITE);
+                z.setBackground(Color.WHITE);
                 break;
         }
 
