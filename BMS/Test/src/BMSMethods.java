@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -248,24 +249,30 @@ public class BMSMethods
 	 * @param inRelay         which relay you want to write
 	 * @param onoff           which state you want the relay to be
 	 * */
-	public static void relayWrite(int inRelay, String onoff) throws SerialPortException, InterruptedException
+	public static void relayWrite(int inRelay, String onoff)
 	{
-		
-		//process the inRelay number since it has to be formatted into X0 if less than 10
-		String number = "";
-		if(inRelay <10)
-			number = "0"+inRelay;
-		else
+		try
 		{
-			number += inRelay;
-		}	
-		//send the command to the port, then tell the log it happened
-		relayBoard.writeString("relay "+onoff.toLowerCase()+" "+number+"\r");
-		Thread.sleep(100);
-		relayBoard.purgePort(SerialPort.PURGE_RXCLEAR & SerialPort.PURGE_TXCLEAR);		
-		
-		logPrint("Relay "+number+" set to "+onoff+". ");
-	}	
+			//process the inRelay number since it has to be formatted into X0 if less than 10
+			String number = "";
+			if (inRelay < 10)
+				number = "0" + inRelay;
+			else {
+				number += inRelay;
+			}
+			//send the command to the port, then tell the log it happened
+			relayBoard.writeString("relay " + onoff.toLowerCase() + " " + number + "\r");
+			Thread.sleep(100);
+			relayBoard.purgePort(SerialPort.PURGE_RXCLEAR & SerialPort.PURGE_TXCLEAR);
+
+			logPrint("Relay " + number + " set to " + onoff + ". ");
+		}
+		catch(SerialPortException | InterruptedException e)
+		{
+			logPrint("Error in relayWrite, tried to write to relay "+inRelay);
+			logPrint(e.toString());
+		}
+	}
 
 	/**
 	 * Used to read the position of a relay from the relay board
@@ -390,7 +397,7 @@ public class BMSMethods
 				Thread.sleep(1000);
 			logImportantPrint("Studio 1 started up with no issues!");
 		}
-		catch( InterruptedException | SerialPortException e)
+		catch( InterruptedException e)
 		{
 			logImportantPrint("Studio 1 Launch Interrupted!");
 			logPrint(e.toString());
@@ -421,7 +428,7 @@ public class BMSMethods
 				Thread.sleep(1000);
 			logImportantPrint("Studio 1 shutdown with no issues!");
 		}
-		catch( InterruptedException | SerialPortException e)
+		catch( InterruptedException e)
 		{
 			logPrint("Studio 1 shutdown Interrupted!");
 			logPrint(e.toString());
@@ -452,7 +459,7 @@ public class BMSMethods
 				Thread.sleep(1000);
 			logImportantPrint("Studio 2 started up with no issues!");
 		}
-		catch( InterruptedException | SerialPortException e)
+		catch( InterruptedException e)
 		{
 			logPrint("Studio 2 Launch Interrupted!");
 			logPrint(e.toString());
@@ -483,7 +490,7 @@ public class BMSMethods
 				Thread.sleep(1000);
 			logImportantPrint("Studio 2 shutdown with no issues!");
 		}
-		catch( InterruptedException | SerialPortException e)
+		catch( InterruptedException e)
 		{
 			logPrint("Studio 2 Shutdown Interrupted!");
 			logPrint(e.toString());
@@ -514,7 +521,7 @@ public class BMSMethods
 				Thread.sleep(1000);
 			logImportantPrint("Studio 3 started up with no issues!");
 		}
-		catch( InterruptedException | SerialPortException e)
+		catch( InterruptedException e)
 		{
 			logPrint("Studio 3 Launch Interrupted!");
 			logPrint(e.toString());
@@ -545,13 +552,14 @@ public class BMSMethods
 				Thread.sleep(1000);
 			logImportantPrint("Studio 3 shutdown with no issues!");
 		}
-		catch( InterruptedException | SerialPortException e)
+		catch( InterruptedException e)
 		{
 			logPrint("Studio 3 Shutdown Interrupted!");
 			logPrint(e.toString());
 		}
 		
 	}
+
 
 	/**
 	 * Method to open a damper
@@ -1171,17 +1179,10 @@ public class BMSMethods
 	public void stopHVAC()
 	{
 		//simply turns off all HVAC machines
-		try 
-		{
-			relayWrite(50, off);
-			relayWrite(51, off);
-			relayWrite(53, off);
-			relayWrite(54, off);
-		}
-		catch (SerialPortException | InterruptedException e)
-		{
-			e.printStackTrace();
-		}
+        relayWrite(50, off);
+        relayWrite(51, off);
+        relayWrite(53, off);
+        relayWrite(54, off);
 
     }
 	
@@ -1272,7 +1273,7 @@ public class BMSMethods
 			//LOG
 			System.out.println("allLightsOn");
 		}
-		catch (SerialPortException | InterruptedException e)
+		catch (InterruptedException e)
 		{
 			System.err.println("allLightsOn error");
 			throw new RuntimeException(e);
@@ -1293,7 +1294,7 @@ public class BMSMethods
 			System.out.println("allLightsOff");
 
 		}
-		catch (SerialPortException | InterruptedException e)
+		catch (InterruptedException e)
 		{
             System.err.println("allLightsOff error");
 			throw new RuntimeException(e);

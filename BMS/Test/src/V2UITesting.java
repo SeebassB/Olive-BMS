@@ -277,12 +277,12 @@ public class V2UITesting
         frame.add(cr1TempBox);
 
             //temp up
-            JButton cr1TempUpButton = GUIHelperMethods.createButton("↑", 10, 10, 60, 60, lineBorder2, serif, Color.ORANGE, Color.YELLOW);
+            JButton cr1TempUpButton = GUIHelperMethods.createButton("↑", 10, 10, 60, 60, lineBorder2, serif, new Color(224, 51, 31), Color.YELLOW);
             cr1TempUpButton.setFocusPainted(false);
             cr1TempBox.add(cr1TempUpButton);
 
             //temp down
-            JButton cr1TempDownButton = GUIHelperMethods.createButton("↓", 80, 10, 60, 60, lineBorder2, serif, new Color(29, 127, 184), Color.YELLOW);
+            JButton cr1TempDownButton = GUIHelperMethods.createButton("↓", 80, 10, 60, 60, lineBorder2, serif, Color.BLUE, Color.YELLOW);
             cr1TempDownButton.setFocusPainted(false);
             cr1TempBox.add(cr1TempDownButton);
 
@@ -315,36 +315,41 @@ public class V2UITesting
             cr1PowerButton = GUIHelperMethods.createToggleButton("POWER", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
             cr1PowerBox.add(cr1PowerButton);
 
-                //st1 lights on button action listener
-                cr1LightsButton.addActionListener(_ -> {
-                    try
+                //st1 power button action listener
+                cr1PowerButton.addItemListener(e ->
+                {
+                    if (e.getStateChange() == ItemEvent.SELECTED)
                     {
-                        BMSMethods.relayWrite(bms.CR1_Lights, "on");
-                        BMSMethods.relayWrite(bms.BTH1_Power, "on");
+
+                        cr1PowerButton.setBackground(Color.LIGHT_GRAY);
+                        bms.launchStudio1();
                     }
-                    catch (SerialPortException | InterruptedException e)
+                    else
                     {
-                        throw new RuntimeException(e);
+                        cr1PowerButton.setBackground(Color.DARK_GRAY);
+                        bms.shutdownStudio1();
                     }
-                    cr1LightsButton.setBackground(new Color(153, 144, 14));
-                    cr1PowerButton.setBackground(Color.DARK_GRAY);
-                    System.out.println("Current st1 lights are on");
                 });
 
                 //st1 lights off button action listener
-                cr1LightsButton.addActionListener(_ -> {
-                    try
+                cr1LightsButton.addItemListener(e ->
+                {
+                    if (e.getStateChange() == ItemEvent.SELECTED)
                     {
+                        System.out.println("St1 Lights on");
+                        cr1LightsButton.setBackground(Color.LIGHT_GRAY);
+                        BMSMethods.relayWrite(bms.CR1_Lights, "on");
+                        BMSMethods.relayWrite(bms.BTH1_Power, "on");
+                        System.out.println("Cr1 lights are on");
+                    }
+                    else
+                    {
+                        cr1LightsButton.setBackground(Color.DARK_GRAY);
                         BMSMethods.relayWrite(bms.CR1_Lights, "off");
                         BMSMethods.relayWrite(bms.BTH1_Power, "off");
+                        System.out.println("Current st1 lights are off");
                     }
-                    catch (SerialPortException | InterruptedException e)
-                    {
-                        throw new RuntimeException(e);
-                    }
-                cr1LightsButton.setBackground(Color.DARK_GRAY);
-                cr1PowerButton.setBackground(new Color(27, 59, 135));
-                System.out.println("Current st1 lights are off");
+
                 });
 
 
@@ -436,7 +441,7 @@ public class V2UITesting
         frame.add(bth1TempBox);
 
             //temp up
-            JButton bth1TempUpButton = GUIHelperMethods.createButton("↑", 10, 10, 60, 60, lineBorder2, serif, Color.ORANGE, Color.YELLOW);
+            JButton bth1TempUpButton = GUIHelperMethods.createButton("↑", 10, 10, 60, 60, lineBorder2, serif, new Color(224, 51, 31), Color.YELLOW);
             bth1TempBox.add(bth1TempUpButton);
 
             //temp down
@@ -544,7 +549,7 @@ public class V2UITesting
         frame.add(cr2TempBox);
 
             //temp up
-            JButton cr2TempUpButton = GUIHelperMethods.createButton("↑", 10, 10, 60, 60, lineBorder2, serif, Color.ORANGE, Color.YELLOW);
+            JButton cr2TempUpButton = GUIHelperMethods.createButton("↑", 10, 10, 60, 60, lineBorder2, serif, new Color(224, 51, 31), Color.YELLOW);
             cr2TempBox.add(cr2TempUpButton);
 
             //temp down
@@ -582,44 +587,45 @@ public class V2UITesting
             cr2PowerButton = GUIHelperMethods.createToggleButton("POWER", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
             cr2PowerBox.add(cr2PowerButton);
 
-                cr2PowerButton.addActionListener(_ ->
-                {
-                    bms.launchStudio2();
-                });
 
 
                 //st2 lights on button action listener
-                cr2LightsButton.addActionListener(_ ->
+                cr2PowerButton.addItemListener(e ->
                 {
-                    try
+                    if (e.getStateChange() == ItemEvent.SELECTED)
                     {
-                        BMSMethods.relayWrite(bms.CR2_Lights, "on");
-                        BMSMethods.relayWrite(bms.BTH2_Power, "on");
+
+                        cr1PowerButton.setBackground(Color.LIGHT_GRAY);
+                        bms.launchStudio2();
                     }
-                    catch (SerialPortException | InterruptedException e)
+                    else
                     {
-                        throw new RuntimeException(e);
+                        cr2PowerButton.setBackground(Color.DARK_GRAY);
+                        bms.shutdownStudio2();
                     }
-                    cr2LightsButton.setBackground(new Color(153, 144, 14));
-                    cr2PowerButton.setBackground(Color.DARK_GRAY);
-                    System.out.println("Current st2 lights are on");
                 });
 
-                //st1 lights off button action listener
-                cr2LightsButton.addActionListener(_ ->
+                //st2 power button action listener
+                cr2LightsButton.addItemListener(e ->
                 {
-                    try
+                    if (e.getStateChange() == ItemEvent.SELECTED)
                     {
+
+                        cr2LightsButton.setBackground(Color.LIGHT_GRAY);
+                        BMSMethods.relayWrite(bms.CR2_Lights, "on");
+                        BMSMethods.relayWrite(bms.BTH2_Power, "on");
+                        System.out.println("St2 lights are on");
+
+
+                    }
+                    else
+                    {
+                        cr2LightsButton.setBackground(Color.DARK_GRAY);
                         BMSMethods.relayWrite(bms.CR2_Lights, "off");
                         BMSMethods.relayWrite(bms.BTH2_Power, "off");
+                        System.out.println("Current st2 lights are off");
                     }
-                    catch (SerialPortException | InterruptedException e)
-                    {
-                        throw new RuntimeException(e);
-                    }
-                    cr2LightsButton.setBackground(Color.DARK_GRAY);
-                    cr2PowerButton.setBackground(new Color(27, 59, 135));
-                    System.out.println("Current st2 lights are off");
+
                 });
 
 
@@ -703,7 +709,7 @@ public class V2UITesting
         frame.add(bth2TempBox);
 
             //temp up
-            JButton bth2TempUpButton = GUIHelperMethods.createButton("↑", 10, 10, 60, 60, lineBorder2, serif, Color.ORANGE, Color.YELLOW);
+            JButton bth2TempUpButton = GUIHelperMethods.createButton("↑", 10, 10, 60, 60, lineBorder2, serif, new Color(224, 51, 31), Color.YELLOW);
             bth2TempBox.add(bth2TempUpButton);
 
             //temp down
@@ -809,7 +815,7 @@ public class V2UITesting
         frame.add(cr3TempBox);
 
             //temp up
-            JButton cr3TempUpButton = GUIHelperMethods.createButton("↑", 10, 10, 60, 60, lineBorder2, serif, Color.ORANGE, Color.YELLOW);
+            JButton cr3TempUpButton = GUIHelperMethods.createButton("↑", 10, 10, 60, 60, lineBorder2, serif, new Color(224, 51, 31), Color.YELLOW);
             cr3TempBox.add(cr3TempUpButton);
 
             //temp down
@@ -847,40 +853,44 @@ public class V2UITesting
             cr3PowerButton = GUIHelperMethods.createToggleButton("POWER", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
             cr3PowerBox.add(cr3PowerButton);
 
-            //st3 lights on button action listener
-            cr1LightsButton.addActionListener(_ ->
-            {
-                try
+                //st3 lights on button action listener
+                cr3PowerButton.addItemListener(e ->
                 {
-                    BMSMethods.relayWrite(bms.CR3_Lights, "on");
-                    BMSMethods.relayWrite(bms.BTH3_Power, "on");
-                }
-                catch (SerialPortException | InterruptedException e)
-                {
-                    throw new RuntimeException(e);
-                }
-                cr3LightsButton.setBackground(new Color(153, 144, 14));
-                cr3PowerButton.setBackground(Color.DARK_GRAY);
-                System.out.println("Current st3 lights are on");
-            });
+                    if (e.getStateChange() == ItemEvent.SELECTED)
+                    {
 
-            //st3 lights off button action listener
-            cr3LightsButton.addActionListener(_ ->
-            {
-                try
-                {
-                    BMSMethods.relayWrite(bms.CR3_Lights, "off");
-                    BMSMethods.relayWrite(bms.BTH3_Power, "off");
-                }
-                catch (SerialPortException | InterruptedException e)
-                {
-                    throw new RuntimeException(e);
-                }
-                cr3LightsButton.setBackground(Color.DARK_GRAY);
-                cr3PowerButton.setBackground(new Color(27, 59, 135));
-                System.out.println("Current st1 lights are off");
-            });
+                        cr3PowerButton.setBackground(Color.LIGHT_GRAY);
+                        bms.launchStudio3();
+                    }
+                    else
+                    {
+                        cr3PowerButton.setBackground(Color.DARK_GRAY);
+                        bms.shutdownStudio3();
+                    }
+                });
 
+                //st3 power button action listener
+                cr3LightsButton.addItemListener(e ->
+                {
+                    if(e.getStateChange() == ItemEvent.SELECTED)
+                    {
+
+                        cr3LightsButton.setBackground(Color.LIGHT_GRAY);
+                        BMSMethods.relayWrite(bms.CR3_Lights, "on");
+                        BMSMethods.relayWrite(bms.BTH3_Power, "on");
+                        System.out.println("St3 lights are on");
+
+                    }
+                    else
+                    {
+                        cr3LightsButton.setBackground(Color.DARK_GRAY);
+                        BMSMethods.relayWrite(bms.CR3_Lights, "off");
+                        BMSMethods.relayWrite(bms.BTH3_Power, "off");
+                        System.out.println("Current st3 lights are off");
+                    }
+
+
+        });
 
 
 
@@ -963,7 +973,7 @@ public class V2UITesting
         frame.add(bth3TempBox);
 
             //temp up
-            JButton bth3TempUpButton = GUIHelperMethods.createButton("↑", 10, 10, 60, 60, lineBorder2, serif, Color.ORANGE, Color.YELLOW);
+            JButton bth3TempUpButton = GUIHelperMethods.createButton("↑", 10, 10, 60, 60, lineBorder2, serif, new Color(224, 51, 31), Color.YELLOW);
             bth3TempBox.add(bth3TempUpButton);
 
             //temp down
@@ -1072,7 +1082,7 @@ public class V2UITesting
         frame.add(editTempBox);
 
             //temp up
-            JButton editTempUpButton = GUIHelperMethods.createButton("↑", 10, 10, 60, 60, lineBorder2, serif, Color.ORANGE, Color.YELLOW);
+            JButton editTempUpButton = GUIHelperMethods.createButton("↑", 10, 10, 60, 60, lineBorder2, serif, new Color(224, 51, 31), Color.YELLOW);
             editTempBox.add(editTempUpButton);
 
             //temp down
