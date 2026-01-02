@@ -10,7 +10,13 @@ public class GUIHelperMethods
      * @param text the text on the button
      * @param x the x int location of the top corner of the button
      * @param y the y int location fo the top left corner of the button
-     * @param
+     * @param width the width of the button
+     * @param height the height of the button
+     * @param border the border for the button
+     * @param font the font for the button
+     * @param background the color of the background of the button
+     * @param foreground the color of the foreground
+     * @return a JButton that you made
      * */
     public static JButton createButton(String text, int x, int y, int width, int height, Border border, Font font, Color background, Color foreground)
     {
@@ -71,12 +77,20 @@ public class GUIHelperMethods
         return panel;
     }
 
-
+    /**
+     * Method used to update the color of the backgrounds of sets of three buttons
+     * @param bms passed to give context to this method
+     * @param roomIn the name of the room you need to find the CoolHeat of
+     * @param x first button (COOL
+     * @param y second button (HEAT)
+     * @param z button (NONE)
+     * */
     public static void updateRoomCoolHeatButtons(BMSMethods bms, String roomIn, JButton x, JButton y, JButton z)
     {
-
+        //get coolHeat of the target room
         char currentlyOn = bms.findRoom(roomIn).getCoolHeat();
 
+        //reset to gray
         x.setBackground(Color.GRAY);
         y.setBackground(Color.GRAY);
         z.setBackground(Color.GRAY);

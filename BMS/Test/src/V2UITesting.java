@@ -91,6 +91,9 @@ public class V2UITesting
     JLabel phoneBoothCurrentTemp;
     JLabel mrCurrentTemp;
 
+    //HVAC Machine Status
+    JLabel HVACMachine1Status;
+    JLabel HVACMachine2Status;
 
     public V2UITesting(BMSMethods bms)
     {
@@ -100,7 +103,6 @@ public class V2UITesting
         Border lineBorder2 = BorderFactory.createLineBorder(Color.BLACK, 2);
 
         Font serif = new Font("Serif", Font.BOLD, 14);
-
         Timer timer = new Timer(3000, null);
 
         //set up the frame
@@ -1126,45 +1128,72 @@ public class V2UITesting
         JPanel otherConditioningBox = GUIHelperMethods.createPanel(100, otherYLevel, 290, 80, lineBorder3, new Color(100, 101, 66));
         frame.add(otherConditioningBox);
 
-        //kitchen
-        JLabel kitchenLabel = GUIHelperMethods.createLabel("Kitchen", 10, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
-        otherConditioningBox.add(kitchenLabel);
+            //kitchen
+            JLabel kitchenLabel = GUIHelperMethods.createLabel("Kitchen", 10, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            otherConditioningBox.add(kitchenLabel);
 
-        kitchenCurrentTemp = GUIHelperMethods.createLabel(Double.toString(bms.findRoom("Kitchen").getCurrentTemp()), 10, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
-        otherConditioningBox.add(kitchenCurrentTemp);
+            kitchenCurrentTemp = GUIHelperMethods.createLabel(Double.toString(bms.findRoom("Kitchen").getCurrentTemp()), 10, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            otherConditioningBox.add(kitchenCurrentTemp);
 
-        //hallway
-        JLabel hallwayLabel = GUIHelperMethods.createLabel("Hallway", 80, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
-        otherConditioningBox.add(hallwayLabel);
+            //hallway
+            JLabel hallwayLabel = GUIHelperMethods.createLabel("Hallway", 80, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            otherConditioningBox.add(hallwayLabel);
 
-        hallwayCurrentTemp = GUIHelperMethods.createLabel(Double.toString(bms.findRoom("Hallway").getCurrentTemp()), 80, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
-        otherConditioningBox.add(hallwayCurrentTemp);
+            hallwayCurrentTemp = GUIHelperMethods.createLabel(Double.toString(bms.findRoom("Hallway").getCurrentTemp()), 80, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            otherConditioningBox.add(hallwayCurrentTemp);
 
-        //phone booth
-        JLabel phoneBoothLabel = GUIHelperMethods.createLabel("Phone Booth", 150, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
-        otherConditioningBox.add(phoneBoothLabel);
+            //phone booth
+            JLabel phoneBoothLabel = GUIHelperMethods.createLabel("Phone Booth", 150, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            otherConditioningBox.add(phoneBoothLabel);
 
-        phoneBoothCurrentTemp = GUIHelperMethods.createLabel(Double.toString(bms.findRoom("Phone Booth").getCurrentTemp()), 150, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
-        otherConditioningBox.add(phoneBoothCurrentTemp);
+            phoneBoothCurrentTemp = GUIHelperMethods.createLabel(Double.toString(bms.findRoom("Phone Booth").getCurrentTemp()), 150, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            otherConditioningBox.add(phoneBoothCurrentTemp);
 
-        //machine room
-        JLabel mrConditioningLabel = GUIHelperMethods.createLabel("Machine Room", 220, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
-        otherConditioningBox.add(mrConditioningLabel);
+            //machine room
+            JLabel mrConditioningLabel = GUIHelperMethods.createLabel("Machine Room", 220, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            otherConditioningBox.add(mrConditioningLabel);
 
-        mrCurrentTemp = GUIHelperMethods.createLabel(Double.toString(bms.findRoom("Machine Room 1").getCurrentTemp()), 220, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
-        otherConditioningBox.add(mrCurrentTemp);
+            mrCurrentTemp = GUIHelperMethods.createLabel(Double.toString(bms.findRoom("Machine Room 1").getCurrentTemp()), 220, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            otherConditioningBox.add(mrCurrentTemp);
 
+        //hvac info
+        JPanel HVACStatusBox = GUIHelperMethods.createPanel(400, otherYLevel, 150, 80, lineBorder3, new Color(100, 150, 66));
+        frame.add(HVACStatusBox);
+
+            JLabel machineOne = GUIHelperMethods.createLabel("HVAC 1", 10, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            HVACStatusBox.add(machineOne);
+
+            HVACMachine1Status = GUIHelperMethods.createLabel("IDK", 10, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            HVACStatusBox.add(HVACMachine1Status);
+
+            JLabel machineTwo = GUIHelperMethods.createLabel("HVAC 2", 80, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            HVACStatusBox.add(machineTwo);
+
+            HVACMachine2Status = GUIHelperMethods.createLabel("IDK", 80, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            HVACStatusBox.add(HVACMachine2Status);
+
+        //debug button
+        JPanel debugBox = GUIHelperMethods.createPanel(600, otherYLevel, 80, 80, lineBorder3, Color.RED);
+        frame.add(debugBox);
+
+            JButton debugOpenButton = GUIHelperMethods.createButton("DEBUG", 10, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            debugBox.add(debugOpenButton);
+
+                //debug screen open button
+                debugOpenButton.addActionListener(_ ->
+                {
+                   System.out.println("debug start");
+                    DebugGUI deb = new DebugGUI(bms);
+                });
 
         frame.setVisible(true);
-
 
     }
 
 
 
 
-    public void update(BMSMethods bms)
-    {
+    public void update(BMSMethods bms) throws SerialPortException, InterruptedException {
 
 
 
@@ -1287,6 +1316,28 @@ public class V2UITesting
         hallwayCurrentTemp.setText(Double.toString(bms.findRoom("Hallway").getCurrentTemp()));
         phoneBoothCurrentTemp.setText(Double.toString(bms.findRoom("Phone Booth").getCurrentTemp()));
         mrCurrentTemp.setText(Double.toString(bms.findRoom("Machine Room 1").getCurrentTemp()));
+
+
+        //HVAC machine state
+        if(BMSMethods.relayRead(50).equals("on"))
+            HVACMachine1Status.setText("Cool");
+        else if(BMSMethods.relayRead(51).equals("on"))
+            HVACMachine1Status.setText("Heat");
+        else
+        {
+            HVACMachine1Status.setText("None");
+        }
+
+        if(BMSMethods.relayRead(53).equals("on"))
+            HVACMachine2Status.setText("Cool");
+        else if(BMSMethods.relayRead(54).equals("on"))
+            HVACMachine2Status.setText("Heat");
+        else
+        {
+            HVACMachine2Status.setText("None");
+        }
+
+
 
     }
 

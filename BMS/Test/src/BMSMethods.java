@@ -565,10 +565,8 @@ public class BMSMethods
 	 * Method to open a damper
 	 * 
 	 * @param inDamper which damper to open by number
-	 * @throws InterruptedException boilerplate
-	 * @throws SerialPortException relayWrite might have a serial exception
-	 */
-	public static void openDamper(int inDamper) throws SerialPortException, InterruptedException
+     */
+	public static void openDamper(int inDamper)
 	{
 		relayWrite(inDamper,"on");
 		logPrint("Opened Damper "+inDamper+".");
@@ -580,7 +578,7 @@ public class BMSMethods
 	 * 
 	 * @param inDamper which damper to open by number
 	 */
-	public static void closeDamper(int inDamper) throws SerialPortException, InterruptedException
+	public static void closeDamper(int inDamper)
 	{
 		relayWrite(inDamper,"off");
 		logPrint("Closed Damper "+inDamper+".");
@@ -719,7 +717,7 @@ public class BMSMethods
 	 * Method used to cull from a room list where all previousStates are equal to the int given
 	 * @param list list of rooms you want to use
 	 * @param cull all rooms with a previousState value of the param will be culled
-	 * @return Room[] list given as a param minus rooms that had previousState eaual to the other param
+	 * @return Room[] list given as a param minus rooms that had previousState equal to the other param
 	 * */
 	public Room[] removeFromListPrevious(Room[] list, char cull)
 	{
@@ -1069,7 +1067,7 @@ public class BMSMethods
 		
 		
 		//arraylist to sort the added array by roomname, also remove duplicates
-		ArrayList<Room> sortedList = new ArrayList<Room>();
+		ArrayList<Room> sortedList = new ArrayList<>();
 		
 		String previous = "";
 		
@@ -1143,7 +1141,7 @@ public class BMSMethods
 	
 		//set up a writer, that makes a new log file each day
 		File target = new File("C:\\Users\\BMS Machine\\Documents\\BMS Logs\\Temperature Logs\\"+ shortDate+" templog.txt");
-		BufferedWriter writer = null;
+		BufferedWriter writer;
 		try 
 		{	
 			//if the file exists, then you dont need to make a new one
@@ -1254,8 +1252,7 @@ public class BMSMethods
 			r.setRequestState(request);
 		}
 	}
-
-	//GUI METHODS
+	
 
 	public void allLightsOn()
 	{
