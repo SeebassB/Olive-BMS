@@ -1,4 +1,8 @@
+import jssc.SerialPortException;
+
 import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -26,6 +30,20 @@ public class DebugGUI
         commandInputArea.setBounds(10, 50, 100, 20);
         frame.add(commandInputArea);
 
+        JButton commandEnterButton = GUIHelperMethods.createButton("Enter Command", 10, 100, 100, 20, null, null, Color.GRAY, Color.BLACK);
+        frame.add(commandEnterButton);
+
+
+            commandEnterButton.addActionListener(_ ->
+            {
+                try {
+                    BMSMethods.relayBoard.writeString(commandInputArea.getText());
+                } catch (SerialPortException e) {
+                    throw new RuntimeException(e);
+                }
+                commandInputArea.setText("");
+                System.out.println("Command run!");
+            });
 
         //button to stop everything
 
