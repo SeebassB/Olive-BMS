@@ -1,5 +1,6 @@
 import javax.swing.*;
-import javax.swing.border.Border;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class DebugGUI
 {
@@ -17,14 +18,34 @@ public class DebugGUI
         frame.setResizable(false);
 
 
-        JLabel instruction = GUIHelperMethods.createLabel("Relay Command: ", 10, 10, 80, 80, null, null, null, null);
+        JLabel instruction = GUIHelperMethods.createLabel("Relay Command: ", 10, 10, 100, 20, null, null, null, null);
         frame.add(instruction);
 
-        //toggle button for pause
+        //text box for command input
+        JTextArea commandInputArea = new JTextArea();
+        commandInputArea.setBounds(10, 50, 100, 20);
+        frame.add(commandInputArea);
+
+
+        //button to stop everything
+
+        //warning for purge cycle
+        //dropdown for each hvac machine
+
+        //text label for handy commands
+
+
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e)
+            {
+                BMSMainController.mainStatusFlag = "normal";
+                super.windowClosing(e);
+            }
+        });
 
         frame.setVisible(true);
 
     }
-
 
 }

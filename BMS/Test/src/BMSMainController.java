@@ -25,7 +25,7 @@ public class BMSMainController
 
 
 
-    public static void main(String[] args) throws SerialPortException, InterruptedException, MalformedURLException, IOException
+    public static void main(String[] args) throws InterruptedException, IOException
 	{
 
 
@@ -64,11 +64,13 @@ public class BMSMainController
 					gui.update(bms);
 					break;
 
-				case "pause":
-					System.out.println("Entering pause");
+				case "maintenance":
+					System.out.println("System entering maintenance mode");
 					while(!Objects.equals(mainStatusFlag, "normal"))
 					{
-						Thread.sleep(1 * 60 * 1000);//sleep for a minute
+						Thread.sleep(1 * 30 * 1000);//sleep for a minute
+						gui.update(bms);
+						bms.printInfo();
 					}
 					System.out.println("Exiting pause");
 					break;
@@ -95,5 +97,4 @@ public class BMSMainController
 * Rework logging
 * GUI Timer for power button
 * Power off double check
-*
 */

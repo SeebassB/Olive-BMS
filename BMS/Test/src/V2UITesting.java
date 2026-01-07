@@ -1173,17 +1173,18 @@ public class V2UITesting
             HVACStatusBox.add(HVACMachine2Status);
 
         //debug button
-        JPanel debugBox = GUIHelperMethods.createPanel(600, otherYLevel, 80, 80, lineBorder3, Color.RED);
+        JPanel debugBox = GUIHelperMethods.createPanel(790, otherYLevel, 80, 80, lineBorder3, Color.RED);
         frame.add(debugBox);
 
-            JButton debugOpenButton = GUIHelperMethods.createButton("DEBUG", 10, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            JButton debugOpenButton = GUIHelperMethods.createButton("MAINT", 10, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
             debugBox.add(debugOpenButton);
 
                 //debug screen open button
                 debugOpenButton.addActionListener(_ ->
                 {
                    System.out.println("debug start");
-                    DebugGUI deb = new DebugGUI(bms);
+                   BMSMainController.mainStatusFlag = "maintenance";
+                   DebugGUI deb = new DebugGUI(bms);
                 });
 
         frame.setVisible(true);
@@ -1215,9 +1216,6 @@ public class V2UITesting
             cr1ConditioningStatus.setBackground(Color.BLUE);
         else
             cr1ConditioningStatus.setBackground(Color.GRAY);
-
-        //CR1 update lights and power
-        //TODO LATER, not needed for initial release
 
 
         //bth 1
