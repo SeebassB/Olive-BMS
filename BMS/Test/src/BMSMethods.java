@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -71,12 +72,6 @@ public class BMSMethods
 	final static String off = "off";
     private static final DecimalFormat df2 = new DecimalFormat("00.00");
     private static final DecimalFormat df2sans0 = new DecimalFormat("0.00");
-
-    int currentCoolMachine = 0;
-	int currentHeatMachine = 0;
-	int mr48 = 0;
-	int mr49 = 0;
-	int doubleOff =1;
 
 	private final Room[] primary;
 	private final Room[] secondary;
@@ -164,7 +159,7 @@ public class BMSMethods
 		}//end try
 		catch( IOException e)
 		{
-			debugPrint(e.toString()+"\n");
+			debugPrint(String.valueOf(e));
 			debugPrint("writer is having issues");
 		}
 	}
@@ -226,7 +221,7 @@ public class BMSMethods
 	 */
 	public static void debugPrint(String in)
 	{
-		//just a print out to see stuff in the console
+		//just a print to see stuff in the console
 		System.out.println(in);
 	}
 	
@@ -254,24 +249,30 @@ public class BMSMethods
 	 * @param inRelay         which relay you want to write
 	 * @param onoff           which state you want the relay to be
 	 * */
-	public static void relayWrite(int inRelay, String onoff) throws SerialPortException, InterruptedException
+	public static void relayWrite(int inRelay, String onoff)
 	{
-		
-		//process the inRelay number since it has to be formatted into X0 if less than 10
-		String number = "";
-		if(inRelay <10)
-			number = "0"+inRelay;
-		else
+		try
 		{
-			number += inRelay;
-		}	
-		//send the command to the port, then tell the log it happened
-		relayBoard.writeString("relay "+onoff.toLowerCase()+" "+number+"\r");
-		Thread.sleep(100);
-		relayBoard.purgePort(SerialPort.PURGE_RXCLEAR & SerialPort.PURGE_TXCLEAR);		
-		
-		logPrint("Relay "+number+" set to "+onoff+". ");
-	}	
+			//process the inRelay number since it has to be formatted into X0 if less than 10
+			String number = "";
+			if (inRelay < 10)
+				number = "0" + inRelay;
+			else {
+				number += inRelay;
+			}
+			//send the command to the port, then tell the log it happened
+			relayBoard.writeString("relay " + onoff.toLowerCase() + " " + number + "\r");
+			Thread.sleep(100);
+			relayBoard.purgePort(SerialPort.PURGE_RXCLEAR & SerialPort.PURGE_TXCLEAR);
+
+			logPrint("Relay " + number + " set to " + onoff + ". ");
+		}
+		catch(SerialPortException | InterruptedException e)
+		{
+			logPrint("Error in relayWrite, tried to write to relay "+inRelay);
+			logPrint(e.toString());
+		}
+	}
 
 	/**
 	 * Used to read the position of a relay from the relay board
@@ -354,7 +355,7 @@ public class BMSMethods
 	 * Launch all studios
 	 * Calls each launchStudio#()
 	 * */
-	public void launchAll() throws SerialPortException, InterruptedException
+	public void launchAll()
 	{
 		launchStudio1();
 		launchStudio2();
@@ -365,13 +366,13 @@ public class BMSMethods
 	 * Shutdown all studios
 	 * Calls each shutdownStudio#() method
 	 * */
-	public void shutdownAll() throws SerialPortException, InterruptedException
+	public void shutdownAll()
 	{
-		shutdownStudio1();
-		shutdownStudio2();
-		shutdownStudio3();
-		System.out.println("All Studios shutdown!");
-	}
+        shutdownStudio1();
+        shutdownStudio2();
+        shutdownStudio3();
+        System.out.println("All Studios shutdown!");
+    }
 	
 	/**
 	 * Startup Studio 1 at the beginning of the day
@@ -396,7 +397,7 @@ public class BMSMethods
 				Thread.sleep(1000);
 			logImportantPrint("Studio 1 started up with no issues!");
 		}
-		catch( InterruptedException | SerialPortException e)
+		catch( InterruptedException e)
 		{
 			logImportantPrint("Studio 1 Launch Interrupted!");
 			logPrint(e.toString());
@@ -427,7 +428,7 @@ public class BMSMethods
 				Thread.sleep(1000);
 			logImportantPrint("Studio 1 shutdown with no issues!");
 		}
-		catch( InterruptedException | SerialPortException e)
+		catch( InterruptedException e)
 		{
 			logPrint("Studio 1 shutdown Interrupted!");
 			logPrint(e.toString());
@@ -458,7 +459,7 @@ public class BMSMethods
 				Thread.sleep(1000);
 			logImportantPrint("Studio 2 started up with no issues!");
 		}
-		catch( InterruptedException | SerialPortException e)
+		catch( InterruptedException e)
 		{
 			logPrint("Studio 2 Launch Interrupted!");
 			logPrint(e.toString());
@@ -489,7 +490,7 @@ public class BMSMethods
 				Thread.sleep(1000);
 			logImportantPrint("Studio 2 shutdown with no issues!");
 		}
-		catch( InterruptedException | SerialPortException e)
+		catch( InterruptedException e)
 		{
 			logPrint("Studio 2 Shutdown Interrupted!");
 			logPrint(e.toString());
@@ -520,7 +521,7 @@ public class BMSMethods
 				Thread.sleep(1000);
 			logImportantPrint("Studio 3 started up with no issues!");
 		}
-		catch( InterruptedException | SerialPortException e)
+		catch( InterruptedException e)
 		{
 			logPrint("Studio 3 Launch Interrupted!");
 			logPrint(e.toString());
@@ -551,7 +552,7 @@ public class BMSMethods
 				Thread.sleep(1000);
 			logImportantPrint("Studio 3 shutdown with no issues!");
 		}
-		catch( InterruptedException | SerialPortException e)
+		catch( InterruptedException e)
 		{
 			logPrint("Studio 3 Shutdown Interrupted!");
 			logPrint(e.toString());
@@ -559,14 +560,13 @@ public class BMSMethods
 		
 	}
 
+
 	/**
 	 * Method to open a damper
 	 * 
 	 * @param inDamper which damper to open by number
-	 * @throws InterruptedException boilerplate
-	 * @throws SerialPortException relayWrite might have a serial exception
-	 */
-	public static void openDamper(int inDamper) throws SerialPortException, InterruptedException
+     */
+	public static void openDamper(int inDamper)
 	{
 		relayWrite(inDamper,"on");
 		logPrint("Opened Damper "+inDamper+".");
@@ -578,7 +578,7 @@ public class BMSMethods
 	 * 
 	 * @param inDamper which damper to open by number
 	 */
-	public static void closeDamper(int inDamper) throws SerialPortException, InterruptedException
+	public static void closeDamper(int inDamper)
 	{
 		relayWrite(inDamper,"off");
 		logPrint("Closed Damper "+inDamper+".");
@@ -702,333 +702,7 @@ public class BMSMethods
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 	//room methods
 	
-	/**
-	 * Method used to sort and run the machines based on how much air is needed
-	 * @param currentRequested the amount of air needed from the machines
-	 * @param hotCold whether you want heat or cold, c being cold, h being heat
-	 * */
-	public void handleHVACMachines(int currentRequested, char hotCold) throws SerialPortException, InterruptedException
-	{
 
-		char previousHVAC = 'n';
-		BMSMainController.mainStatusFlag = "reading HVAC machines";
-
-		//50 and 51 are machine 1
-		//arrays are both machines followed by their states
-		int[][] coolingMachines = {{50, 53} , {0,0}};
-		int[][] heatingMachines = {{51, 54} , {0,0}};
-
-		System.out.println("Machine Request: "+currentRequested);
-		
-		//something strange is up with read so this is an "empty" read to reset the issue
-		relayRead(50);
-
-		//read the machine's current states and adjust their arrays to match
-		//sets the 2d array collingMachines to the current state of the actual machines
-		if(relayRead(50).equalsIgnoreCase("OFF"))
-		{
-			coolingMachines[1][0] = 0;
-			System.out.println("Cooling Machine 50 is off");
-		}
-		else
-		{
-			coolingMachines[1][0] = 1;
-			System.out.println("Cooling Machine 50 is on");
-
-		}
-		//second cooling machine
-		if(relayRead(53).equalsIgnoreCase("OFF"))
-		{	
-			coolingMachines[1][1] = 0;		
-			System.out.println("Cooling Machine 53 is off");
-
-		}
-		else
-		{
-			coolingMachines[1][1] = 1;	
-			System.out.println("Cooling Machine 53 is on");
-
-		}	
-		//first heating machine
-		if(relayRead(51).equalsIgnoreCase("OFF"))
-		{	
-			heatingMachines[1][0] = 0;			
-			System.out.println("Heating Machine 51 is off");
-
-		}
-		else
-		{
-			heatingMachines[1][0] = 1;			
-			System.out.println("Heating Machine 51 is on");
-
-		}	
-		//second heating machine
-		if(relayRead(54).equalsIgnoreCase("OFF"))
-		{	
-			heatingMachines[1][1] = 0;			
-			System.out.println("Heating Machine 54 is off");
-
-		}
-		else
-		{
-			heatingMachines[1][1] = 1;			
-			System.out.println("Heating Machine 54 is on");
-		}
-		
-		//adjust previousHVAC based on the machines that are currently on
-		//if either cool machine is on then the previous state is cool or 0
-     	if(coolingMachines[1][0]+coolingMachines[1][1]>0)
-	     	previousHVAC='c';
-		//if either heat machine in on then the previous state is heat or 1
-    	else if(heatingMachines[1][0]+heatingMachines[1][1]>0)
-     		previousHVAC='h';
-	
-		//handle the purging cycle time
-		int purgeTimer=180;//timer for the purge cycle which is 3 minutes 60s * 3 = 180seconds
-
-		//check if current request and previous request are mismatched, if so trigger a purge cycle
-		if((hotCold == 'c' && previousHVAC== 'h')||(hotCold == 'h' && previousHVAC== 'c'))
-		{
-			System.out.println("P U R G I N G");
-			BMSMainController.mainStatusFlag = "purging";
-			//turn off all units
-			relayWrite(50,"off");
-			relayWrite(53,"off");
-			relayWrite(51,"off");
-			relayWrite(54,"off");
-
-				
-			currentCoolMachine++;
-			currentHeatMachine++;
-
-			System.out.println("Turning all machines off for the purge cycle");
-			while(purgeTimer>0)
-			{
-				Thread.sleep(1000 * 10);//10s
-				System.out.println("seconds left in purge cycle = "+purgeTimer);
-				purgeTimer-=10;
-			}
-		}
-		
-		System.out.println("----------\nMachine Decisions:");	
-
-		BMSMainController.mainStatusFlag = "HVAC Deciding";
-		//machine decisions time
-		//decide if both machines are needed
-		//if this number is ever changed form 50, remember to change it in the main method as well
-		if(currentRequested > 50)
-		{
-			//main cooling machine decisions
-			if(hotCold == 'c')
-			{
-
-				relayWrite(50, on);
-				relayWrite(53, on);
-				System.out.println("Turning on both cooling machines!");
-				BMSMainController.mainStatusFlag = "COOLING DOUBLE";
-			}
-			//main heating machine decisions
-			else if(hotCold == 'h')
-			{
-				relayWrite(51, on);
-				relayWrite(54, on);
-				System.out.println("Turning on both heating machines!");
-				BMSMainController.mainStatusFlag = "HEATING DOUBLE";
-			}	
-		}
-		//nothing requested
-		else if(currentRequested == 0)
-		{
-			//all machines off
-			relayWrite(50, off);
-			relayWrite(51, off);
-			relayWrite(53,off);
-			relayWrite(54,off);
-			currentCoolMachine++;
-			currentHeatMachine++;
-			System.out.println("Turning off all machines");
-			BMSMainController.mainStatusFlag = "ALL HAPPY";
-			//MRs set to open
-			mr48++;
-			mr49++;
-				
-		}	
-		//only 1 machine needed
-		else if(currentRequested > 0)
-		{
-			int totalCool = coolingMachines[1][0] + coolingMachines[1][1];
-			int totalHeat = heatingMachines[1][0] + heatingMachines[1][1];
-		
-			//check cooling
-			if(hotCold == 'c')
-			{
-				//turn one machine on
-				if(totalCool == 0)
-				{
-					relayWrite(coolingMachines[0][currentCoolMachine%2], on);//alternating machines
-					System.out.println("Turning on 1 cooling machine, number= "+coolingMachines[0][currentCoolMachine%2]);
-				}
-				//leave as is because 1 machine is already on
-				else if(totalCool == 1)
-				{
-					System.out.println("1 machine is already on");
-				}	
-				//turn one machine off since both are running and only 1 is needed
-				else if(totalCool == 2)
-				{
-					relayWrite(coolingMachines[0][currentCoolMachine%2], off);
-					System.out.println("Turning off 1 machine, both were running, turning off "+coolingMachines[0][currentCoolMachine%2]);
-					currentCoolMachine++;
-					Thread.sleep(1000 * 60 * 2);//2m
-					//temporary cooldown to prevent the extra pressure from the winding down machines from making noise in the pipes
-					System.out.println("Opening MRs to allow for extra airflow temporarily");
-					openDamper(48);
-					openDamper(49);
-					doubleOff = 3;
-					mr48++;
-					mr49++;
-				
-				}	
-				else
-				{
-					//Shouldnt ever happen, program needs to be fixed if this error shows up
-					//maybe upgrade this to some sort of warning
-					System.out.println("Problem with the 2d array ");
-				}	
-				BMSMainController.mainStatusFlag = "COOLING SINGLE";
-			}
-			//check heating
-			else if(hotCold == 'h')
-			{
-				//turn one machine on
-				if(totalHeat == 0)
-				{
-					relayWrite(heatingMachines[0][currentHeatMachine%2], on);
-					System.out.println("Turning on 1 heating machine, number= "+heatingMachines[0][currentHeatMachine%2]);
-				}
-				//leave as is cause 1 machine is already on
-				else if(totalHeat == 1)
-				{
-					System.out.println("Requesting 1 machine on, "+heatingMachines[0][currentHeatMachine%2]+" is already on, no change");
-				}	
-				//turn one machine off since both were one already
-				else if(totalHeat == 2)
-				{
-					relayWrite(heatingMachines[0][currentHeatMachine%2], off);
-					System.out.println("Turning off 1 machine, both were running, turning off "+heatingMachines[0][currentHeatMachine%2]);
-					currentHeatMachine++;
-				}	
-				BMSMainController.mainStatusFlag = "HEATING SINGLE";
-			}
-		}//one machine request if end
-	}
-	
-	/**
-	 * Method used to calculate dump zones, and when to open/close them
-	 * @param currentCapacity the current Airflow being requested
-	 * @param hotCold whether you are asking for hot/cold
-	 * */
-	public void handleHVACDumpZones(int currentCapacity, char hotCold) throws SerialPortException, InterruptedException
-	{
-		//adjustment int
-		int dumpActivateLevel = -30;
-		
-		//handle cold
-		if(hotCold == 'c')
-		{
-			System.out.println("----------\nDumpZones for Cold Air");
-		
-			//starting from the top, subtract the dump zone's capacity until it reaches 0
-			if(currentCapacity < dumpActivateLevel)
-			{
-				mr48++;		
-				currentCapacity += 13;
-				System.out.println("Requesting MR1(48) open, capacity= "+currentCapacity);
-			}
-			//48 not requested
-			else
-			{
-				mr48=0;
-				System.out.println("MR1(48) not requested as dump zone");
-			}	
-			//49 requested
-			if(currentCapacity < dumpActivateLevel)
-			{
-				mr49++;			
-				currentCapacity += 13;
-				System.out.println("Requesting MR2(49) open, capacity= "+currentCapacity);
-			}	
-			//49 not requested
-			else
-			{
-				mr49=0;
-				System.out.println("MR2(49) not requested as dump zone");
-			}	
-
-			//35 requested - OUTSIDE DUMP 1
-			if(currentCapacity < dumpActivateLevel)
-			{
-				openDamper(35);
-				currentCapacity += 13;
-				System.out.println("Requesting OUTSIDE 1 open, capacity= "+currentCapacity);
-			}	
-			//35 not requested - OUTSIDE DUMP 1
-			else
-			{
-				closeDamper(35);
-				System.out.println("OUTSIDE DUMP 1 not requested");
-			}	
-			
-			//34 requested - OUTSIDE DUMP 2
-			if(currentCapacity < dumpActivateLevel)
-			{
-				openDamper(34);
-				currentCapacity += 13;
-				System.out.println("Requesting OUTSIDE 2 open, capacity= "+currentCapacity);
-			}	
-			//34 not requested - OUTSIDE DUMP 2
-			else
-			{
-				closeDamper(34);
-				System.out.println("OUTSIDE 2 not requested as dump zone");
-			}	
-			
-		}
-
-		//handle heat	
-		else if(hotCold == 'h')
-		{
-
-			//Damp_Phone requested, opening
-			if((currentCapacity < dumpActivateLevel) || (relayRead(Damp_Phone).equals("on")))
-			{
-				openDamper(Damp_Phone);
-				currentCapacity += 9;
-				System.out.println("Opening Phone Booth(47), capacity= "+currentCapacity);
-			}	
-			//44 not requested, closing
-			else
-			{
-				closeDamper(Damp_Phone);
-				System.out.println("Phone Booth(47) not requested, final capacity= "+currentCapacity);
-			}
-
-		}//hot else if end
-		else if(hotCold == 'n')
-		{
-			
-			System.out.println("Leaving MRs open to circulate air and prevent overpressure when the machines are winding down");
-			mr48++;
-			mr49++;
-		}	
-		else
-		{
-			System.out.println("Problem with handleHVACDumpZones, reveived a non -1/0/1 hotCold");	
-		}
-		
-		System.out.println("Current dump leftover at="+currentCapacity);
-	}
-		
 	/**
 	 * Sets the value of previousState in multiple rooms
 	 * @param list list the list of rooms you want to update previousState in
@@ -1043,7 +717,7 @@ public class BMSMethods
 	 * Method used to cull from a room list where all previousStates are equal to the int given
 	 * @param list list of rooms you want to use
 	 * @param cull all rooms with a previousState value of the param will be culled
-	 * @return Room[] list given as a param minus rooms that had previousState eaual to the other param
+	 * @return Room[] list given as a param minus rooms that had previousState equal to the other param
 	 * */
 	public Room[] removeFromListPrevious(Room[] list, char cull)
 	{
@@ -1393,7 +1067,7 @@ public class BMSMethods
 		
 		
 		//arraylist to sort the added array by roomname, also remove duplicates
-		ArrayList<Room> sortedList = new ArrayList<Room>();
+		ArrayList<Room> sortedList = new ArrayList<>();
 		
 		String previous = "";
 		
@@ -1467,7 +1141,7 @@ public class BMSMethods
 	
 		//set up a writer, that makes a new log file each day
 		File target = new File("C:\\Users\\BMS Machine\\Documents\\BMS Logs\\Temperature Logs\\"+ shortDate+" templog.txt");
-		BufferedWriter writer = null;
+		BufferedWriter writer;
 		try 
 		{	
 			//if the file exists, then you dont need to make a new one
@@ -1494,7 +1168,7 @@ public class BMSMethods
 		}//end try
 		catch( IOException e)
 		{
-			System.out.println(e.toString()+"\n");
+			System.out.println(e +"\n");
 			System.out.println("writer is having issues");
 		}
 		System.out.println("Updated the temperature log");
@@ -1503,17 +1177,10 @@ public class BMSMethods
 	public void stopHVAC()
 	{
 		//simply turns off all HVAC machines
-		try 
-		{
-			relayWrite(50, off);
-			relayWrite(51, off);
-			relayWrite(53, off);
-			relayWrite(54, off);
-		}
-		catch (SerialPortException | InterruptedException e)
-		{
-			e.printStackTrace();
-		}
+        relayWrite(50, off);
+        relayWrite(51, off);
+        relayWrite(53, off);
+        relayWrite(54, off);
 
     }
 	
@@ -1585,5 +1252,52 @@ public class BMSMethods
 			r.setRequestState(request);
 		}
 	}
+	
+
+	public void allLightsOn()
+	{
+		try
+		{
+			relayWrite(CR1_Lights, "on");//CR1_Lights = 8
+			Thread.sleep(500);
+			relayWrite(BTH1_Power, "on");
+			Thread.sleep(500);
+			relayWrite(CR2_Lights, "on");//CR2_Lights
+			Thread.sleep(500);
+			relayWrite(BTH2_Power, "on");
+			Thread.sleep(500);
+			relayWrite(CR3_Lights, "on");
+			//LOG
+			System.out.println("allLightsOn");
+		}
+		catch (InterruptedException e)
+		{
+			System.err.println("allLightsOn error");
+			throw new RuntimeException(e);
+		}
+
+	}
+
+	public void allLightsOff()
+	{
+		try
+		{
+			BMSMethods.relayWrite(CR1_Lights, "off");//CR1_Lights = 8
+			Thread.sleep(500);
+			BMSMethods.relayWrite(CR2_Lights, "off");//CR2_Lights
+			Thread.sleep(500);
+			BMSMethods.relayWrite(CR3_Lights, "off");
+			//LOG
+			System.out.println("allLightsOff");
+
+		}
+		catch (InterruptedException e)
+		{
+            System.err.println("allLightsOff error");
+			throw new RuntimeException(e);
+        }
+    }
+
+
 }//big end
 

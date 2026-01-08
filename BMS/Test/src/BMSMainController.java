@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Objects;
 
 import jssc.SerialPortException;
 
@@ -7,33 +8,40 @@ public class BMSMainController
 {
 
 
+	static String mainStatusFlag = "normal";
 	static BMSMethods bms;
 
-    static {
-        try {
+    static
+	{
+        try
+		{
             bms = new BMSMethods();
-        } catch (SerialPortException | InterruptedException e) {
-            throw new RuntimeException(e);
+        }
+		catch (SerialPortException | InterruptedException e)
+		{
+			throw new RuntimeException(e);
         }
     }
 
-    static String mainStatusFlag = "normal";
 
 
-    public static void main(String[] args) throws SerialPortException, InterruptedException, MalformedURLException, IOException
+    public static void main(String[] args) throws InterruptedException, IOException
 	{
 
 
 		System.out.println("asdasdadsadas");
 
+		//TODO port selector tool if missing port
+
+
+		//start up BMS
 		bms.portOpen();
         bms.refreshAllRooms();
         bms.printInfo();
 
-		//open up the bms and port
 		ConditioningMethods cond = new ConditioningMethods();
 
-		//handle the general set up
+		//startup GUI
         V2UITesting gui = new V2UITesting(bms);
 
 		//main thread management loop
@@ -41,20 +49,28 @@ public class BMSMainController
 		{
 			System.out.println("before teh switch = "+mainStatusFlag);
             bms.refreshAllRooms();
+			gui.update(bms);
 			switch(mainStatusFlag)//regular operation
 			{
 				case "normal":
 					//UPDATE GUI
                     cond.runConditioning(bms);
 					bms.printInfo();
-                    Thread.sleep(3 * 60 * 1000);//sleep this main thread for X time   gui.setBmsInput(bms);
+					Thread.sleep(1 * 60 * 1000);//sleep this main thread for X time, one minute
+					gui.update(bms);
+					Thread.sleep(1 * 60 * 1000);
+					gui.update(bms);
+					Thread.sleep(1 * 60 * 1000);
+					gui.update(bms);
 					break;
 
-				case "pause":
-					System.out.println("Entering pause");
-					while(mainStatusFlag != "ESCAPE")
+				case "maintenance":
+					System.out.println("System entering maintenance mode");
+					while(!Objects.equals(mainStatusFlag, "normal"))
 					{
-						Thread.sleep(1 * 60 * 1000);//sleep for a minute
+						Thread.sleep(1 * 30 * 1000);//sleep for a minute
+						gui.update(bms);
+						bms.printInfo();
 					}
 					System.out.println("Exiting pause");
 					break;
@@ -71,3 +87,14 @@ public class BMSMainController
 	}//main end
 	
 }
+
+/*TODO
+* Make it prettier
+* Add pause mode
+* Add a direct relay manipulator
+* Add tab and space to hit buttons
+* Add shortcuts?
+* Rework logging
+* GUI Timer for power button
+* Power off double check
+*/
