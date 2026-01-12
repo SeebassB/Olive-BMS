@@ -113,5 +113,57 @@ public class GUIHelperMethods
     }
 
 
+    static class allLightsOnWorker extends SwingWorker<Void, Void>
+    {
+        protected Void doInBackground() throws Exception
+        {
+            BMSMethods.relayWrite(BMSMethods.CR1_Lights, "on");
+            Thread.sleep(500);
+            BMSMethods.relayWrite(BMSMethods.BTH1_Power, "on");
+            Thread.sleep(500);
+            System.out.println("Cr1 lights are on");
+
+
+            //re-enable the buttons and change the colors and selected states
+            //when this button is toggled ON
+            V2UITesting.allLightsButton.setEnabled(true);//disable all light buttons
+            V2UITesting.allLightsButton.setBackground(Color.LIGHT_GRAY);//set all light buttons background color
+            V2UITesting.cr1LightsButton.setEnabled(true);
+            V2UITesting.cr1LightsButton.setBackground(Color.LIGHT_GRAY);
+            V2UITesting.cr2LightsButton.setEnabled(true);
+            V2UITesting.cr2LightsButton.setBackground(Color.LIGHT_GRAY);
+            V2UITesting.cr3LightsButton.setEnabled(true);
+            V2UITesting.cr3LightsButton.setBackground(Color.LIGHT_GRAY);
+
+
+            return null;
+        }
+
+    }
+
+
+    static class allLightsOffWorker extends SwingWorker<Void, Void>
+    {
+        protected Void doInBackground() throws Exception
+        {
+
+            return null;
+        }
+
+        protected void done()
+        {
+            try
+            {
+                get();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
 
 }

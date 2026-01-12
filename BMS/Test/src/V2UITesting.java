@@ -10,8 +10,8 @@ import javax.swing.border.Border;
 public class V2UITesting
 {
     //all
-    JToggleButton allLightsButton;
-    JToggleButton allPowerButton;
+    static JToggleButton allLightsButton;
+    static JToggleButton allPowerButton;
 
     //cr1
     JButton cr1HeatButton;
@@ -22,8 +22,8 @@ public class V2UITesting
     JLabel cr1TargetTemp;
     JLabel cr1ConditioningStatus;
 
-    JToggleButton cr1LightsButton;
-    JToggleButton cr1PowerButton;
+    static JToggleButton cr1LightsButton;
+    static JToggleButton cr1PowerButton;
 
     //bth1
     JButton bth1HeatButton;
@@ -43,8 +43,8 @@ public class V2UITesting
     JLabel cr2TargetTemp;
     JLabel cr2ConditioningStatus;
 
-    JToggleButton cr2LightsButton;
-    JToggleButton cr2PowerButton;
+    static JToggleButton cr2LightsButton;
+    static JToggleButton cr2PowerButton;
 
     //bth2
     JButton bth2HeatButton;
@@ -64,8 +64,8 @@ public class V2UITesting
     JLabel cr3TargetTemp;
     JLabel cr3ConditioningStatus;
 
-    JToggleButton cr3LightsButton;
-    JToggleButton cr3PowerButton;
+    static JToggleButton cr3LightsButton;
+    static JToggleButton cr3PowerButton;
 
     //bth3
     JButton bth3HeatButton;
@@ -157,29 +157,39 @@ public class V2UITesting
 
                 allLightsButton.addItemListener(e ->
                 {
-                    if (e.getStateChange() == ItemEvent.SELECTED)
+                    if(e.getStateChange() == ItemEvent.SELECTED)
                     {
-                        bms.allLightsOn();
-                        System.out.println("Button is ON");
-                        allLightsButton.setBackground(Color.LIGHT_GRAY);
+                        //when this button is toggled ON
+                        allLightsButton.setEnabled(false);//disable all light buttons
+                        allLightsButton.setBackground(Color.DARK_GRAY);//set all light buttons background color
+                        cr1LightsButton.setEnabled(false);
+                        cr1LightsButton.setBackground(Color.DARK_GRAY);
+                        cr2LightsButton.setEnabled(false);
+                        cr2LightsButton.setBackground(Color.DARK_GRAY);
+                        cr3LightsButton.setEnabled(false);
+                        cr3LightsButton.setBackground(Color.DARK_GRAY);
 
-                       /* timer.addActionListener( _ -> {
-                            System.out.println("in time stop");
-                            allLightsButton.setBackground(Color.GRAY);
-                            allLightsButton.setEnabled(true);
-                            allLightsButton.setText("On");
-                            timer.stop();
-                        });
-                        timer.setRepeats(false);
-                        timer.start();
-                    */
+                        new GUIHelperMethods.allLightsOnWorker().execute();
+                    }
+                    else if(e.getStateChange() == ItemEvent.DESELECTED)
+                    {
+                        allLightsButton.setEnabled(false);
+                        allLightsButton.setBackground(Color.GRAY);
+                        cr1LightsButton.setEnabled(false);
+                        cr1LightsButton.setBackground(Color.GRAY);
+                        cr2LightsButton.setEnabled(false);
+                        cr2LightsButton.setBackground(Color.GRAY);
+                        cr3LightsButton.setEnabled(false);
+                        cr3LightsButton.setBackground(Color.GRAY);
+
+                        new GUIHelperMethods.allLightsOffWorker().execute();
                     }
 
-                    else
-                    {
-                        bms.allLightsOff();
-                        allLightsButton.setBackground(Color.DARK_GRAY);
-                    }
+
+                    //allLightsButton.doClick(); as if it was clicked
+                    //allLightsButton.setSelected(); swap the state
+
+
                 });
 
                 allPowerButton.addItemListener(e ->
@@ -212,17 +222,14 @@ public class V2UITesting
 
             //heat button
             cr1HeatButton = GUIHelperMethods.createButton("Heat", 10, 10, 60, 60, lineBorder2, serif, Color.GRAY, new Color(163,80,43));
-            cr1HeatButton.setFocusPainted(false);
             cr1ConditioningBox.add(cr1HeatButton);
 
             //cool button
             cr1CoolButton = GUIHelperMethods.createButton("Cool", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, new Color(53, 43, 163));
-            cr1CoolButton.setFocusPainted(false);
             cr1ConditioningBox.add(cr1CoolButton);
 
             //off button
             cr1ConditioningOffButton = GUIHelperMethods.createButton("OFF", 150, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.LIGHT_GRAY);
-            cr1ConditioningOffButton.setFocusPainted(false);
             cr1ConditioningBox.add(cr1ConditioningOffButton);
 
 
@@ -280,12 +287,10 @@ public class V2UITesting
 
             //temp up
             JButton cr1TempUpButton = GUIHelperMethods.createButton("↑", 10, 10, 60, 60, lineBorder2, serif, new Color(224, 51, 31), Color.YELLOW);
-            cr1TempUpButton.setFocusPainted(false);
             cr1TempBox.add(cr1TempUpButton);
 
             //temp down
             JButton cr1TempDownButton = GUIHelperMethods.createButton("↓", 80, 10, 60, 60, lineBorder2, serif, Color.BLUE, Color.YELLOW);
-            cr1TempDownButton.setFocusPainted(false);
             cr1TempBox.add(cr1TempDownButton);
 
                 //cr1 temp down button action listener
@@ -1163,13 +1168,13 @@ public class V2UITesting
             JLabel machineOne = GUIHelperMethods.createLabel("HVAC 1", 10, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
             HVACStatusBox.add(machineOne);
 
-            HVACMachine1Status = GUIHelperMethods.createLabel("IDK", 10, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            HVACMachine1Status = GUIHelperMethods.createLabel(ConditioningMethods.getCurrentConditioningState(), 10, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
             HVACStatusBox.add(HVACMachine1Status);
 
             JLabel machineTwo = GUIHelperMethods.createLabel("HVAC 2", 80, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
             HVACStatusBox.add(machineTwo);
 
-            HVACMachine2Status = GUIHelperMethods.createLabel("IDK", 80, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            HVACMachine2Status = GUIHelperMethods.createLabel(ConditioningMethods.getCurrentConditioningState(), 80, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
             HVACStatusBox.add(HVACMachine2Status);
 
         //debug button
@@ -1190,8 +1195,6 @@ public class V2UITesting
         frame.setVisible(true);
 
     }
-
-
 
 
     public void update(BMSMethods bms) throws SerialPortException, InterruptedException {
