@@ -43,6 +43,7 @@ public class GUIHelperMethods
         tButton.setBackground(background);
         tButton.setForeground(foreground);
 
+       // tButton.setSelected(false);
         tButton.setHorizontalAlignment(SwingConstants.CENTER);
         tButton.setFocusPainted(false);
 
@@ -112,28 +113,52 @@ public class GUIHelperMethods
 
     }
 
+    public static void buttonEnabler(JToggleButton button)
+    {
+        button.setEnabled(true);
+        button.setSelected(true);
+        button.setBackground(V2UITesting.onColor);
+    }
+
+    public static void buttonDisabler(JToggleButton button)
+    {
+        button.setEnabled(true);
+        button.setSelected(false);
+        button.setBackground(V2UITesting.offColor);
+    }
+
+
+
 
     static class allLightsOnWorker extends SwingWorker<Void, Void>
     {
         protected Void doInBackground() throws Exception
         {
-            BMSMethods.relayWrite(BMSMethods.CR1_Lights, "on");
+
+            BMSMethods.relayWrite(BMSMethods.CR1_Lights, "off");
             Thread.sleep(500);
-            BMSMethods.relayWrite(BMSMethods.BTH1_Power, "on");
+            BMSMethods.relayWrite(BMSMethods.BTH1_Power, "off");
             Thread.sleep(500);
-            System.out.println("Cr1 lights are on");
+            System.out.println("Studio 1 lights are on");
+
+            BMSMethods.relayWrite(BMSMethods.CR2_Lights, "off");
+            Thread.sleep(500);
+            BMSMethods.relayWrite(BMSMethods.BTH2_Power, "off");
+            Thread.sleep(500);
+            System.out.println("Studio 2 lights are on");
+
+            BMSMethods.relayWrite(BMSMethods.CR3_Lights, "off");
+            Thread.sleep(500);
+            BMSMethods.relayWrite(BMSMethods.BTH3_Power, "off");
+            Thread.sleep(500);
+            System.out.println("Studio 3 lights are on");
 
 
-            //re-enable the buttons and change the colors and selected states
-            //when this button is toggled ON
-            V2UITesting.allLightsButton.setEnabled(true);//disable all light buttons
-            V2UITesting.allLightsButton.setBackground(Color.LIGHT_GRAY);//set all light buttons background color
-            V2UITesting.cr1LightsButton.setEnabled(true);
-            V2UITesting.cr1LightsButton.setBackground(Color.LIGHT_GRAY);
-            V2UITesting.cr2LightsButton.setEnabled(true);
-            V2UITesting.cr2LightsButton.setBackground(Color.LIGHT_GRAY);
-            V2UITesting.cr3LightsButton.setEnabled(true);
-            V2UITesting.cr3LightsButton.setBackground(Color.LIGHT_GRAY);
+            //re-enable all light buttons when done
+            buttonEnabler(V2UITesting.allLightsButton);
+            buttonEnabler(V2UITesting.cr1LightsButton);
+            buttonEnabler(V2UITesting.cr2LightsButton);
+            buttonEnabler(V2UITesting.cr3LightsButton);
 
 
             return null;
@@ -144,23 +169,98 @@ public class GUIHelperMethods
 
     static class allLightsOffWorker extends SwingWorker<Void, Void>
     {
-        protected Void doInBackground() throws Exception
+        protected Void doInBackground() throws InterruptedException {
+
+            BMSMethods.relayWrite(BMSMethods.CR1_Lights, "on");
+            Thread.sleep(500);
+            BMSMethods.relayWrite(BMSMethods.BTH1_Power, "on");
+            Thread.sleep(500);
+            System.out.println("Studio 1 lights are off");
+
+            BMSMethods.relayWrite(BMSMethods.CR2_Lights, "on");
+            Thread.sleep(500);
+            BMSMethods.relayWrite(BMSMethods.BTH2_Power, "on");
+            Thread.sleep(500);
+            System.out.println("Studio 2 lights are off");
+
+            BMSMethods.relayWrite(BMSMethods.CR3_Lights, "on");
+            Thread.sleep(500);
+            BMSMethods.relayWrite(BMSMethods.BTH3_Power, "on");
+            Thread.sleep(500);
+            System.out.println("Studio 3 lights are off");
+
+            //re-enable all light buttons when done
+            buttonEnabler(V2UITesting.allLightsButton);
+            buttonEnabler(V2UITesting.cr1LightsButton);
+            buttonEnabler(V2UITesting.cr2LightsButton);
+            buttonEnabler(V2UITesting.cr3LightsButton);
+
+            return null;
+        }
+    }
+
+
+
+
+    static class allPowerOnWorker extends SwingWorker<Void, Void>
+    {
+
+        private final BMSMethods bms;
+
+        public allPowerOnWorker(BMSMethods bms)
         {
+            this.bms = bms;
+        }
+
+        protected Void doInBackground()
+        {
+            bms.launchAll();
+            System.out.println("All power ON");
+
+            //re-enable all power buttons when done
+            buttonEnabler(V2UITesting.allPowerButton);
+            buttonEnabler(V2UITesting.cr1PowerButton);
+            buttonEnabler(V2UITesting.cr2PowerButton);
+            buttonEnabler(V2UITesting.cr3PowerButton);
 
             return null;
         }
 
-        protected void done()
-        {
-            try
-            {
-                get();
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
+    }
 
+    static class allPowerOffWorker extends SwingWorker<Void, Void>
+    {
+        private final BMSMethods bms;
+
+        public allPowerOffWorker(BMSMethods bms)
+        {
+            this.bms = bms;
+        }
+
+        protected Void doInBackground()
+        {
+            //double check
+          //  int confirmation = JOptionPane.showConfirmDialog(new JFrame(), "Are you sure you want to shutdown all rooms?", "Exit?", JOptionPane.YES_NO_OPTION);
+
+            System.out.println("ASDBHIODASBUISDABUIOSADBIUSDA/nasdguySDGYOUASDGIOHASDGIUOSAD/nASDBUIOSADBUIOASDBIASD/nASDBUISADBUIOSADBIUGSAD/nASDBUIOSADBIOASDBUI");
+
+         //   if(confirmation == JOptionPane.YES_OPTION )
+         //   {
+                bms.shutdownAll();
+                System.out.println("All power OFF");
+
+                //re-enable all power buttons when done
+                buttonEnabler(V2UITesting.allPowerButton);
+                buttonEnabler(V2UITesting.cr1PowerButton);
+                buttonEnabler(V2UITesting.cr2PowerButton);
+                buttonEnabler(V2UITesting.cr3PowerButton);
+        //    }
+        //    else
+         //   {
+                System.out.println("Shutdown AVERTED");
+         //   }
+
+            return null;
         }
 
     }

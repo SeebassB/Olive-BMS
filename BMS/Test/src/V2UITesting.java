@@ -95,6 +95,13 @@ public class V2UITesting
     JLabel HVACMachine1Status;
     JLabel HVACMachine2Status;
 
+    static Color onColor = new Color(144, 103, 198);
+    static Color offColor = new Color(141,134,201);
+    static Color disabledColor = new Color(202,196,206);
+
+    static int buttonFlag = 0;
+
+
     public V2UITesting(BMSMethods bms)
     {
 
@@ -157,33 +164,19 @@ public class V2UITesting
 
                 allLightsButton.addItemListener(e ->
                 {
+                    //disable all light buttons while executing this
+                    GUIHelperMethods.buttonDisabler(allLightsButton);
+                    GUIHelperMethods.buttonDisabler(cr1LightsButton);
+                    GUIHelperMethods.buttonDisabler(cr2LightsButton);
+                    GUIHelperMethods.buttonDisabler(cr3LightsButton);
+
+                    //when this button is toggled ON, rising edge
                     if(e.getStateChange() == ItemEvent.SELECTED)
-                    {
-                        //when this button is toggled ON
-                        allLightsButton.setEnabled(false);//disable all light buttons
-                        allLightsButton.setBackground(Color.DARK_GRAY);//set all light buttons background color
-                        cr1LightsButton.setEnabled(false);
-                        cr1LightsButton.setBackground(Color.DARK_GRAY);
-                        cr2LightsButton.setEnabled(false);
-                        cr2LightsButton.setBackground(Color.DARK_GRAY);
-                        cr3LightsButton.setEnabled(false);
-                        cr3LightsButton.setBackground(Color.DARK_GRAY);
-
                         new GUIHelperMethods.allLightsOnWorker().execute();
-                    }
-                    else if(e.getStateChange() == ItemEvent.DESELECTED)
-                    {
-                        allLightsButton.setEnabled(false);
-                        allLightsButton.setBackground(Color.GRAY);
-                        cr1LightsButton.setEnabled(false);
-                        cr1LightsButton.setBackground(Color.GRAY);
-                        cr2LightsButton.setEnabled(false);
-                        cr2LightsButton.setBackground(Color.GRAY);
-                        cr3LightsButton.setEnabled(false);
-                        cr3LightsButton.setBackground(Color.GRAY);
 
+                    else if(e.getStateChange() == ItemEvent.DESELECTED)
                         new GUIHelperMethods.allLightsOffWorker().execute();
-                    }
+
 
 
                     //allLightsButton.doClick(); as if it was clicked
@@ -194,17 +187,19 @@ public class V2UITesting
 
                 allPowerButton.addItemListener(e ->
                 {
-                    if (e.getStateChange() == ItemEvent.SELECTED)
-                    {
+                    //disable all power buttons while executing this
+                    GUIHelperMethods.buttonDisabler(allPowerButton);
+                    GUIHelperMethods.buttonDisabler(cr1PowerButton);
+                    GUIHelperMethods.buttonDisabler(cr2PowerButton);
+                    GUIHelperMethods.buttonDisabler(cr3PowerButton);
 
-                        allPowerButton.setBackground(Color.LIGHT_GRAY);
-                        bms.launchAll();
-                    }
-                    else
-                    {
-                        allPowerButton.setBackground(Color.DARK_GRAY);
-                        bms.shutdownAll();
-                    }
+                    //power turned on
+                    if (e.getStateChange() == ItemEvent.SELECTED && buttonFlag ==0)
+                        new GUIHelperMethods.allPowerOnWorker(bms).execute();
+
+                    else if(e.getStateChange() == ItemEvent.DESELECTED && buttonFlag == 0)
+                        new GUIHelperMethods.allPowerOffWorker(bms).execute();
+
                 });
 
 
