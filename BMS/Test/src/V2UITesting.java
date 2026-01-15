@@ -99,7 +99,7 @@ public class V2UITesting
     static Color offColor = new Color(141,134,201);
     static Color disabledColor = new Color(202,196,206);
 
-    static int buttonFlag = 0;
+    static boolean itemListenerFlag = false;
 
 
     public V2UITesting(BMSMethods bms)
@@ -164,6 +164,10 @@ public class V2UITesting
 
                 allLightsButton.addItemListener(e ->
                 {
+                    //if you are doing this programmatically then do nothing
+                    if(itemListenerFlag)
+                        return;
+                    itemListenerFlag = true;
                     //disable all light buttons while executing this
                     GUIHelperMethods.buttonDisabler(allLightsButton);
                     GUIHelperMethods.buttonDisabler(cr1LightsButton);
@@ -171,10 +175,10 @@ public class V2UITesting
                     GUIHelperMethods.buttonDisabler(cr3LightsButton);
 
                     //when this button is toggled ON, rising edge
-                    if(e.getStateChange() == ItemEvent.SELECTED)
+                    if(e.getStateChange() == ItemEvent.SELECTED && itemListenerFlag)
                         new GUIHelperMethods.allLightsOnWorker().execute();
 
-                    else if(e.getStateChange() == ItemEvent.DESELECTED)
+                    else if(e.getStateChange() == ItemEvent.DESELECTED && itemListenerFlag)
                         new GUIHelperMethods.allLightsOffWorker().execute();
 
 
@@ -187,6 +191,11 @@ public class V2UITesting
 
                 allPowerButton.addItemListener(e ->
                 {
+                    //if you are doing this programmatically then do nothing
+                    if(itemListenerFlag)
+                        return;
+                    itemListenerFlag = true;
+
                     //disable all power buttons while executing this
                     GUIHelperMethods.buttonDisabler(allPowerButton);
                     GUIHelperMethods.buttonDisabler(cr1PowerButton);
@@ -194,10 +203,10 @@ public class V2UITesting
                     GUIHelperMethods.buttonDisabler(cr3PowerButton);
 
                     //power turned on
-                    if (e.getStateChange() == ItemEvent.SELECTED && buttonFlag ==0)
+                    if (e.getStateChange() == ItemEvent.SELECTED)
                         new GUIHelperMethods.allPowerOnWorker(bms).execute();
 
-                    else if(e.getStateChange() == ItemEvent.DESELECTED && buttonFlag == 0)
+                    else if(e.getStateChange() == ItemEvent.DESELECTED)
                         new GUIHelperMethods.allPowerOffWorker(bms).execute();
 
                 });
@@ -320,13 +329,17 @@ public class V2UITesting
                 //st1 power button action listener
                 cr1PowerButton.addItemListener(e ->
                 {
+                    //if you are doing this programmatically then do nothing
+                    if(itemListenerFlag)
+                        return;
+
                     if (e.getStateChange() == ItemEvent.SELECTED)
                     {
 
                         cr1PowerButton.setBackground(Color.LIGHT_GRAY);
                         bms.launchStudio1();
                     }
-                    else
+                    else if(e.getStateChange() == ItemEvent.DESELECTED)
                     {
                         cr1PowerButton.setBackground(Color.DARK_GRAY);
                         bms.shutdownStudio1();
@@ -336,6 +349,10 @@ public class V2UITesting
                 //st1 lights off button action listener
                 cr1LightsButton.addItemListener(e ->
                 {
+                    //if you are doing this programmatically then do nothing
+                    if(itemListenerFlag)
+                        return;
+
                     if (e.getStateChange() == ItemEvent.SELECTED)
                     {
                         System.out.println("St1 Lights on");
@@ -344,7 +361,7 @@ public class V2UITesting
                         BMSMethods.relayWrite(bms.BTH1_Power, "on");
                         System.out.println("Cr1 lights are on");
                     }
-                    else
+                    else if(e.getStateChange() == ItemEvent.DESELECTED)
                     {
                         cr1LightsButton.setBackground(Color.DARK_GRAY);
                         BMSMethods.relayWrite(bms.CR1_Lights, "off");
@@ -594,13 +611,17 @@ public class V2UITesting
                 //st2 lights on button action listener
                 cr2PowerButton.addItemListener(e ->
                 {
+                    //if you are doing this programmatically then do nothing
+                    if(itemListenerFlag)
+                        return;
+
                     if (e.getStateChange() == ItemEvent.SELECTED)
                     {
 
                         cr1PowerButton.setBackground(Color.LIGHT_GRAY);
                         bms.launchStudio2();
                     }
-                    else
+                    else if(e.getStateChange() == ItemEvent.DESELECTED)
                     {
                         cr2PowerButton.setBackground(Color.DARK_GRAY);
                         bms.shutdownStudio2();
@@ -610,6 +631,10 @@ public class V2UITesting
                 //st2 power button action listener
                 cr2LightsButton.addItemListener(e ->
                 {
+                    //if you are doing this programmatically then do nothing
+                    if(itemListenerFlag)
+                        return;
+
                     if (e.getStateChange() == ItemEvent.SELECTED)
                     {
 
@@ -620,7 +645,7 @@ public class V2UITesting
 
 
                     }
-                    else
+                    else if(e.getStateChange() == ItemEvent.DESELECTED)
                     {
                         cr2LightsButton.setBackground(Color.DARK_GRAY);
                         BMSMethods.relayWrite(bms.CR2_Lights, "off");
@@ -858,13 +883,17 @@ public class V2UITesting
                 //st3 lights on button action listener
                 cr3PowerButton.addItemListener(e ->
                 {
+                    //if you are doing this programmatically then do nothing
+                    if(itemListenerFlag)
+                        return;
+
                     if (e.getStateChange() == ItemEvent.SELECTED)
                     {
 
                         cr3PowerButton.setBackground(Color.LIGHT_GRAY);
                         bms.launchStudio3();
                     }
-                    else
+                    else if(e.getStateChange() == ItemEvent.DESELECTED)
                     {
                         cr3PowerButton.setBackground(Color.DARK_GRAY);
                         bms.shutdownStudio3();
@@ -874,6 +903,10 @@ public class V2UITesting
                 //st3 power button action listener
                 cr3LightsButton.addItemListener(e ->
                 {
+                    //if you are doing this programmatically then do nothing
+                    if(itemListenerFlag)
+                        return;
+
                     if(e.getStateChange() == ItemEvent.SELECTED)
                     {
 

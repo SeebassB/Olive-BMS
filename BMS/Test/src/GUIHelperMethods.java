@@ -160,6 +160,7 @@ public class GUIHelperMethods
             buttonEnabler(V2UITesting.cr2LightsButton);
             buttonEnabler(V2UITesting.cr3LightsButton);
 
+            V2UITesting.itemListenerFlag = false;
 
             return null;
         }
@@ -195,6 +196,8 @@ public class GUIHelperMethods
             buttonEnabler(V2UITesting.cr2LightsButton);
             buttonEnabler(V2UITesting.cr3LightsButton);
 
+            V2UITesting.itemListenerFlag = false;
+
             return null;
         }
     }
@@ -223,6 +226,8 @@ public class GUIHelperMethods
             buttonEnabler(V2UITesting.cr2PowerButton);
             buttonEnabler(V2UITesting.cr3PowerButton);
 
+            V2UITesting.itemListenerFlag =false;
+
             return null;
         }
 
@@ -240,12 +245,11 @@ public class GUIHelperMethods
         protected Void doInBackground()
         {
             //double check
-          //  int confirmation = JOptionPane.showConfirmDialog(new JFrame(), "Are you sure you want to shutdown all rooms?", "Exit?", JOptionPane.YES_NO_OPTION);
+            int confirmation = JOptionPane.showConfirmDialog(new JFrame(), "Are you sure you want to shutdown all rooms?", "Exit?", JOptionPane.YES_NO_OPTION);
 
-            System.out.println("ASDBHIODASBUISDABUIOSADBIUSDA/nasdguySDGYOUASDGIOHASDGIUOSAD/nASDBUIOSADBUIOASDBIASD/nASDBUISADBUIOSADBIUGSAD/nASDBUIOSADBIOASDBUI");
 
-         //   if(confirmation == JOptionPane.YES_OPTION )
-         //   {
+            if(confirmation == JOptionPane.YES_OPTION )
+            {
                 bms.shutdownAll();
                 System.out.println("All power OFF");
 
@@ -254,12 +258,15 @@ public class GUIHelperMethods
                 buttonEnabler(V2UITesting.cr1PowerButton);
                 buttonEnabler(V2UITesting.cr2PowerButton);
                 buttonEnabler(V2UITesting.cr3PowerButton);
-        //    }
-        //    else
-         //   {
+           }
+           else
+           {
                 System.out.println("Shutdown AVERTED");
-         //   }
+                V2UITesting.allPowerButton.setSelected(true);
+            }
 
+
+           V2UITesting.itemListenerFlag =false;
             return null;
         }
 
