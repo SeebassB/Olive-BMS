@@ -243,6 +243,13 @@ public class GUIHelperMethods
 
             V2UITesting.itemListenerFlag =false;
 
+
+            for(Room r : bms.getPrimary())
+            {
+                r.setRequestState('c');
+            }
+
+
             return null;
         }
 
@@ -261,7 +268,7 @@ public class GUIHelperMethods
         {
             //double check
             int confirmation = JOptionPane.showConfirmDialog(new JFrame(), "Are you sure you want to shutdown all rooms?", "Exit?", JOptionPane.YES_NO_OPTION);
-
+            boolean shutdownRequested = false;
 
             if(confirmation == JOptionPane.YES_OPTION )
             {
@@ -272,22 +279,29 @@ public class GUIHelperMethods
             else
             {
                 System.out.println("Shutdown AVERTED");
+                shutdownRequested = true;
                 V2UITesting.allPowerButton.setSelected(true);
             }
 
             //re-enable all power buttons when done
-            buttonEnabler(V2UITesting.allPowerButton, false, "Power");
-            buttonEnabler(V2UITesting.cr1PowerButton, false, "Power");
-            buttonEnabler(V2UITesting.cr2PowerButton, false, "Power");
-            buttonEnabler(V2UITesting.cr3PowerButton, false, "Power");
+            buttonEnabler(V2UITesting.allPowerButton, shutdownRequested, "Power");
+            buttonEnabler(V2UITesting.cr1PowerButton, shutdownRequested, "Power");
+            buttonEnabler(V2UITesting.cr2PowerButton, shutdownRequested, "Power");
+            buttonEnabler(V2UITesting.cr3PowerButton, shutdownRequested, "Power");
 
             //re-enable all light buttons when done
-            buttonEnabler(V2UITesting.allLightsButton, false, "Lights");
-            buttonEnabler(V2UITesting.cr1LightsButton, false, "Lights");
-            buttonEnabler(V2UITesting.cr2LightsButton, false, "Lights");
-            buttonEnabler(V2UITesting.cr3LightsButton, false, "Lights");
+            buttonEnabler(V2UITesting.allLightsButton, shutdownRequested, "Lights");
+            buttonEnabler(V2UITesting.cr1LightsButton, shutdownRequested, "Lights");
+            buttonEnabler(V2UITesting.cr2LightsButton, shutdownRequested, "Lights");
+            buttonEnabler(V2UITesting.cr3LightsButton, shutdownRequested, "Lights");
 
             V2UITesting.itemListenerFlag =false;
+
+            for(Room r : bms.getPrimary())
+            {
+                r.setRequestState('n');
+            }
+
 
             return null;
         }

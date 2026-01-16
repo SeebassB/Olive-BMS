@@ -102,8 +102,7 @@ public class V2UITesting
     static boolean itemListenerFlag = false;
 
 
-    public V2UITesting(BMSMethods bms)
-    {
+    public V2UITesting(BMSMethods bms) throws SerialPortException, InterruptedException {
 
         UIManager.put("ToggleButton.select", onColor);
         //UIManager.put("ToggleButton.deselected", offColor);
@@ -1236,40 +1235,13 @@ public class V2UITesting
                    DebugGUI deb = new DebugGUI(bms);
                 });
 
-         //initial setup of each button's state
-        try
-        {
-            //lights
-            cr1LightsButton.setSelected(BMSMethods.relayRead(BMSMethods.CR1_Lights).equals("off"));
-            cr2LightsButton.setSelected(BMSMethods.relayRead(BMSMethods.CR2_Lights).equals("off"));
-            cr3LightsButton.setSelected(BMSMethods.relayRead(BMSMethods.CR3_Lights).equals("off"));
-
-            //power
-            cr1PowerButton.setSelected(BMSMethods.relayRead(BMSMethods.CR1_Desk).equals("off"));
-            cr2PowerButton.setSelected(BMSMethods.relayRead(BMSMethods.CR2_Desk).equals("off"));
-            cr3PowerButton.setSelected(BMSMethods.relayRead(BMSMethods.CR3_Desk).equals("off"));
-
-            //read dampers to figure out the rooms
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-        }
-        catch (SerialPortException | InterruptedException e)
-        {
-            System.out.println("Big problem on the initial setup of the GUI");
-            throw new RuntimeException(e);
-        }
+        update(bms); //initial update
 
         frame.setVisible(true);
 
