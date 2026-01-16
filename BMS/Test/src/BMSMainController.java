@@ -44,6 +44,7 @@ public class BMSMainController
 		//startup GUI
         V2UITesting gui = new V2UITesting(bms);
 
+
 		//main thread management loop
 		while(!mainStatusFlag.equalsIgnoreCase( "QUIT"))//while hvacThreadStatus is not -1 which signifies
 		{

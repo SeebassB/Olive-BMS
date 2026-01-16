@@ -3,8 +3,8 @@ import jssc.SerialPortException;
 public class ConditioningMethods
 {
 
-	int currentCoolMachine = 0;
-	int currentHeatMachine = 0;
+	static int currentCoolMachine = 0;
+	static int currentHeatMachine = 0;
 	int mr48 = 0;
 	int mr49 = 0;
 	int doubleOff =1;
@@ -465,5 +465,17 @@ public class ConditioningMethods
 
 		System.out.println("Current dump leftover at="+currentRequested);
 	}
+
+
+	static public String getCurrentConditioningState()
+	{
+		if(currentCoolMachine > 0)
+			return "cooling";
+		if(currentHeatMachine > 0)
+			return "heating";
+		else
+			return "nothing";
+	}
+
 
 }

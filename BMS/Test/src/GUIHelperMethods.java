@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.plaf.basic.BasicToggleButtonUI;
 import java.awt.*;
 
 public class GUIHelperMethods
@@ -26,7 +27,6 @@ public class GUIHelperMethods
         button.setFont(font);
         button.setBackground(background);
         button.setForeground(foreground);
-
         button.setHorizontalTextPosition(SwingConstants.CENTER);
         button.setFocusPainted(false);
         button.setOpaque(true);
@@ -42,7 +42,7 @@ public class GUIHelperMethods
         tButton.setFont(font);
         tButton.setBackground(background);
         tButton.setForeground(foreground);
-
+        tButton.setUI(new BasicToggleButtonUI());
         tButton.setHorizontalAlignment(SwingConstants.CENTER);
         tButton.setFocusPainted(false);
 
@@ -112,6 +112,201 @@ public class GUIHelperMethods
 
     }
 
+    public static void buttonEnabler(JToggleButton button, boolean selected, String textIn)
+    {
+        button.setEnabled(true);
+
+        if (selected) {
+            System.out.println("IN buttonEnabler true");
+            button.setSelected(true);
+            button.setBackground(V2UITesting.onColor);
+        }
+        else
+        {
+            button.setBackground(V2UITesting.offColor);
+            button.setSelected(false);
+        }
+        button.setText(textIn);
+    }
+
+    public static void buttonDisabler(JToggleButton button)
+    {
+        button.setEnabled(true);
+        button.setText("WORKING");
+        button.setBackground(V2UITesting.disabledColor);
+    }
+
+
+
+
+    static class allLightsOnWorker extends SwingWorker<Void, Void>
+    {
+        protected Void doInBackground() throws Exception
+        {
+
+            BMSMethods.relayWrite(BMSMethods.CR1_Lights, "off");
+            Thread.sleep(500);
+            BMSMethods.relayWrite(BMSMethods.BTH1_Power, "off");
+            Thread.sleep(500);
+            System.out.println("Studio 1 lights are on");
+
+            BMSMethods.relayWrite(BMSMethods.CR2_Lights, "off");
+            Thread.sleep(500);
+            BMSMethods.relayWrite(BMSMethods.BTH2_Power, "off");
+            Thread.sleep(500);
+            System.out.println("Studio 2 lights are on");
+
+            BMSMethods.relayWrite(BMSMethods.CR3_Lights, "off");
+            Thread.sleep(500);
+            BMSMethods.relayWrite(BMSMethods.BTH3_Power, "off");
+            Thread.sleep(500);
+            System.out.println("Studio 3 lights are on");
+
+
+            //re-enable all light buttons when done
+            buttonEnabler(V2UITesting.allLightsButton, true, "Lights");
+            buttonEnabler(V2UITesting.cr1LightsButton, true, "Lights");
+            buttonEnabler(V2UITesting.cr2LightsButton, true, "Lights");
+            buttonEnabler(V2UITesting.cr3LightsButton, true, "Lights");
+
+            V2UITesting.itemListenerFlag = false;
+
+            return null;
+        }
+
+    }
+
+
+    static class allLightsOffWorker extends SwingWorker<Void, Void>
+    {
+        protected Void doInBackground() throws InterruptedException {
+
+            BMSMethods.relayWrite(BMSMethods.CR1_Lights, "on");
+            Thread.sleep(500);
+            BMSMethods.relayWrite(BMSMethods.BTH1_Power, "on");
+            Thread.sleep(500);
+            System.out.println("Studio 1 lights are off");
+
+            BMSMethods.relayWrite(BMSMethods.CR2_Lights, "on");
+            Thread.sleep(500);
+            BMSMethods.relayWrite(BMSMethods.BTH2_Power, "on");
+            Thread.sleep(500);
+            System.out.println("Studio 2 lights are off");
+
+            BMSMethods.relayWrite(BMSMethods.CR3_Lights, "on");
+            Thread.sleep(500);
+            BMSMethods.relayWrite(BMSMethods.BTH3_Power, "on");
+            Thread.sleep(500);
+            System.out.println("Studio 3 lights are off");
+
+            //re-enable all light buttons when done
+            buttonEnabler(V2UITesting.allLightsButton, false, "Lights");
+            buttonEnabler(V2UITesting.cr1LightsButton, false, "Lights");
+            buttonEnabler(V2UITesting.cr2LightsButton, false, "Lights");
+            buttonEnabler(V2UITesting.cr3LightsButton, false, "Lights");
+
+            V2UITesting.itemListenerFlag = false;
+
+            return null;
+        }
+    }
+
+
+
+
+    static class allPowerOnWorker extends SwingWorker<Void, Void>
+    {
+
+        private final BMSMethods bms;
+
+        public allPowerOnWorker(BMSMethods bms)
+        {
+            this.bms = bms;
+        }
+
+        protected Void doInBackground()
+        {
+            bms.launchAll();
+            System.out.println("All power ON");
+
+            //re-enable all power buttons when done
+            buttonEnabler(V2UITesting.allPowerButton, true, "Power");
+            buttonEnabler(V2UITesting.cr1PowerButton, true, "Power");
+            buttonEnabler(V2UITesting.cr2PowerButton, true, "Power");
+            buttonEnabler(V2UITesting.cr3PowerButton, true, "Power");
+
+            //re-enable all light buttons when done
+            buttonEnabler(V2UITesting.allLightsButton, true, "Lights");
+            buttonEnabler(V2UITesting.cr1LightsButton, true, "Lights");
+            buttonEnabler(V2UITesting.cr2LightsButton, true, "Lights");
+            buttonEnabler(V2UITesting.cr3LightsButton, true, "Lights");
+
+            V2UITesting.itemListenerFlag =false;
+
+
+            for(Room r : bms.getPrimary())
+            {
+                r.setRequestState('c');
+            }
+
+
+            return null;
+        }
+
+    }
+
+    static class allPowerOffWorker extends SwingWorker<Void, Void>
+    {
+        private final BMSMethods bms;
+
+        public allPowerOffWorker(BMSMethods bms)
+        {
+            this.bms = bms;
+        }
+
+        protected Void doInBackground()
+        {
+            //double check
+            int confirmation = JOptionPane.showConfirmDialog(new JFrame(), "Are you sure you want to shutdown all rooms?", "Exit?", JOptionPane.YES_NO_OPTION);
+            boolean shutdownRequested = false;
+
+            if(confirmation == JOptionPane.YES_OPTION )
+            {
+                bms.shutdownAll();
+                System.out.println("All power OFF");
+
+            }
+            else
+            {
+                System.out.println("Shutdown AVERTED");
+                shutdownRequested = true;
+                V2UITesting.allPowerButton.setSelected(true);
+            }
+
+            //re-enable all power buttons when done
+            buttonEnabler(V2UITesting.allPowerButton, shutdownRequested, "Power");
+            buttonEnabler(V2UITesting.cr1PowerButton, shutdownRequested, "Power");
+            buttonEnabler(V2UITesting.cr2PowerButton, shutdownRequested, "Power");
+            buttonEnabler(V2UITesting.cr3PowerButton, shutdownRequested, "Power");
+
+            //re-enable all light buttons when done
+            buttonEnabler(V2UITesting.allLightsButton, shutdownRequested, "Lights");
+            buttonEnabler(V2UITesting.cr1LightsButton, shutdownRequested, "Lights");
+            buttonEnabler(V2UITesting.cr2LightsButton, shutdownRequested, "Lights");
+            buttonEnabler(V2UITesting.cr3LightsButton, shutdownRequested, "Lights");
+
+            V2UITesting.itemListenerFlag =false;
+
+            for(Room r : bms.getPrimary())
+            {
+                r.setRequestState('n');
+            }
+
+
+            return null;
+        }
+
+    }
 
 
 }

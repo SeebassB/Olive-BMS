@@ -53,6 +53,7 @@ public class DebugGUI
         //text label for handy commands
 
 
+        //when closing this window set the BMS back to normal
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e)

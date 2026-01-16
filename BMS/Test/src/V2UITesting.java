@@ -10,8 +10,8 @@ import javax.swing.border.Border;
 public class V2UITesting
 {
     //all
-    JToggleButton allLightsButton;
-    JToggleButton allPowerButton;
+    static JToggleButton allLightsButton;
+    static JToggleButton allPowerButton;
 
     //cr1
     JButton cr1HeatButton;
@@ -22,8 +22,8 @@ public class V2UITesting
     JLabel cr1TargetTemp;
     JLabel cr1ConditioningStatus;
 
-    JToggleButton cr1LightsButton;
-    JToggleButton cr1PowerButton;
+    static JToggleButton cr1LightsButton;
+    static JToggleButton cr1PowerButton;
 
     //bth1
     JButton bth1HeatButton;
@@ -43,8 +43,8 @@ public class V2UITesting
     JLabel cr2TargetTemp;
     JLabel cr2ConditioningStatus;
 
-    JToggleButton cr2LightsButton;
-    JToggleButton cr2PowerButton;
+    static JToggleButton cr2LightsButton;
+    static JToggleButton cr2PowerButton;
 
     //bth2
     JButton bth2HeatButton;
@@ -64,8 +64,8 @@ public class V2UITesting
     JLabel cr3TargetTemp;
     JLabel cr3ConditioningStatus;
 
-    JToggleButton cr3LightsButton;
-    JToggleButton cr3PowerButton;
+    static JToggleButton cr3LightsButton;
+    static JToggleButton cr3PowerButton;
 
     //bth3
     JButton bth3HeatButton;
@@ -95,15 +95,25 @@ public class V2UITesting
     JLabel HVACMachine1Status;
     JLabel HVACMachine2Status;
 
-    public V2UITesting(BMSMethods bms)
-    {
+    static Color onColor = new Color(246, 144, 5);
+    static Color offColor = new Color(47,79,143);
+    static Color disabledColor = new Color(202,196,206);
+
+    static boolean itemListenerFlag = false;
+
+
+    public V2UITesting(BMSMethods bms) throws SerialPortException, InterruptedException {
+
+        UIManager.put("ToggleButton.select", onColor);
+        //UIManager.put("ToggleButton.deselected", offColor);
 
         //general formatting things
         Border lineBorder3 = BorderFactory.createLineBorder(Color.BLACK, 3);
         Border lineBorder2 = BorderFactory.createLineBorder(Color.BLACK, 2);
 
         Font serif = new Font("Serif", Font.BOLD, 14);
-        Timer timer = new Timer(3000, null);
+        Font small = new Font("Serif", Font.PLAIN, 12);
+
 
         //set up the frame
         JFrame frame = new JFrame("Olive Building Management System");
@@ -151,50 +161,69 @@ public class V2UITesting
             allLightsButton = GUIHelperMethods.createToggleButton("LIGHTS", 10, 10,  60, 60, lineBorder2, serif, Color.GRAY, null);
             allLightsBox.add(allLightsButton);
 
+
+
+
+            System.out.println("allLightsBUottn current= "+allLightsButton.isSelected());
+
             //all lights off button
             allPowerButton = GUIHelperMethods.createToggleButton("POWER+LIGHTS", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, null);
             allLightsBox.add(allPowerButton);
 
                 allLightsButton.addItemListener(e ->
                 {
-                    if (e.getStateChange() == ItemEvent.SELECTED)
-                    {
-                        bms.allLightsOn();
-                        System.out.println("Button is ON");
-                        allLightsButton.setBackground(Color.LIGHT_GRAY);
+                    //if you are doing this programmatically then do nothing
+                    if(itemListenerFlag)
+                        return;
+                    itemListenerFlag = true;
 
-                       /* timer.addActionListener( _ -> {
-                            System.out.println("in time stop");
-                            allLightsButton.setBackground(Color.GRAY);
-                            allLightsButton.setEnabled(true);
-                            allLightsButton.setText("On");
-                            timer.stop();
-                        });
-                        timer.setRepeats(false);
-                        timer.start();
-                    */
-                    }
+                    //disable all light buttons while executing this
+                    GUIHelperMethods.buttonDisabler(allLightsButton);
+                    GUIHelperMethods.buttonDisabler(cr1LightsButton);
+                    GUIHelperMethods.buttonDisabler(cr2LightsButton);
+                    GUIHelperMethods.buttonDisabler(cr3LightsButton);
 
-                    else
-                    {
-                        bms.allLightsOff();
-                        allLightsButton.setBackground(Color.DARK_GRAY);
-                    }
+                    //when this button is toggled ON, rising edge
+                    if(e.getStateChange() == ItemEvent.SELECTED && itemListenerFlag)
+                        new GUIHelperMethods.allLightsOnWorker().execute();
+
+                    else if(e.getStateChange() == ItemEvent.DESELECTED && itemListenerFlag)
+                        new GUIHelperMethods.allLightsOffWorker().execute();
+
+
+
+                    //allLightsButton.doClick(); as if it was clicked
+                    //allLightsButton.setSelected(); swap the state
+
+
                 });
 
                 allPowerButton.addItemListener(e ->
                 {
-                    if (e.getStateChange() == ItemEvent.SELECTED)
-                    {
+                    //if you are doing this programmatically then do nothing
+                    if(itemListenerFlag)
+                        return;
+                    itemListenerFlag = true;
 
-                        allPowerButton.setBackground(Color.LIGHT_GRAY);
-                        bms.launchAll();
-                    }
-                    else
-                    {
-                        allPowerButton.setBackground(Color.DARK_GRAY);
-                        bms.shutdownAll();
-                    }
+                    //disable all power buttons while executing this
+                    GUIHelperMethods.buttonDisabler(allPowerButton);
+                    GUIHelperMethods.buttonDisabler(cr1PowerButton);
+                    GUIHelperMethods.buttonDisabler(cr2PowerButton);
+                    GUIHelperMethods.buttonDisabler(cr3PowerButton);
+
+                    //disable all lights buttons as well
+                    GUIHelperMethods.buttonDisabler(allLightsButton);
+                    GUIHelperMethods.buttonDisabler(cr1LightsButton);
+                    GUIHelperMethods.buttonDisabler(cr2LightsButton);
+                    GUIHelperMethods.buttonDisabler(cr3LightsButton);
+
+                    //power turned on
+                    if (e.getStateChange() == ItemEvent.SELECTED)
+                        new GUIHelperMethods.allPowerOnWorker(bms).execute();
+
+                    else if(e.getStateChange() == ItemEvent.DESELECTED)
+                        new GUIHelperMethods.allPowerOffWorker(bms).execute();
+
                 });
 
 
@@ -212,17 +241,14 @@ public class V2UITesting
 
             //heat button
             cr1HeatButton = GUIHelperMethods.createButton("Heat", 10, 10, 60, 60, lineBorder2, serif, Color.GRAY, new Color(163,80,43));
-            cr1HeatButton.setFocusPainted(false);
             cr1ConditioningBox.add(cr1HeatButton);
 
             //cool button
             cr1CoolButton = GUIHelperMethods.createButton("Cool", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, new Color(53, 43, 163));
-            cr1CoolButton.setFocusPainted(false);
             cr1ConditioningBox.add(cr1CoolButton);
 
             //off button
             cr1ConditioningOffButton = GUIHelperMethods.createButton("OFF", 150, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.LIGHT_GRAY);
-            cr1ConditioningOffButton.setFocusPainted(false);
             cr1ConditioningBox.add(cr1ConditioningOffButton);
 
 
@@ -280,12 +306,10 @@ public class V2UITesting
 
             //temp up
             JButton cr1TempUpButton = GUIHelperMethods.createButton("↑", 10, 10, 60, 60, lineBorder2, serif, new Color(224, 51, 31), Color.YELLOW);
-            cr1TempUpButton.setFocusPainted(false);
             cr1TempBox.add(cr1TempUpButton);
 
             //temp down
             JButton cr1TempDownButton = GUIHelperMethods.createButton("↓", 80, 10, 60, 60, lineBorder2, serif, Color.BLUE, Color.YELLOW);
-            cr1TempDownButton.setFocusPainted(false);
             cr1TempBox.add(cr1TempDownButton);
 
                 //cr1 temp down button action listener
@@ -320,13 +344,17 @@ public class V2UITesting
                 //st1 power button action listener
                 cr1PowerButton.addItemListener(e ->
                 {
+                    //if you are doing this programmatically then do nothing
+                    if(itemListenerFlag)
+                        return;
+
                     if (e.getStateChange() == ItemEvent.SELECTED)
                     {
 
                         cr1PowerButton.setBackground(Color.LIGHT_GRAY);
                         bms.launchStudio1();
                     }
-                    else
+                    else if(e.getStateChange() == ItemEvent.DESELECTED)
                     {
                         cr1PowerButton.setBackground(Color.DARK_GRAY);
                         bms.shutdownStudio1();
@@ -336,6 +364,10 @@ public class V2UITesting
                 //st1 lights off button action listener
                 cr1LightsButton.addItemListener(e ->
                 {
+                    //if you are doing this programmatically then do nothing
+                    if(itemListenerFlag)
+                        return;
+
                     if (e.getStateChange() == ItemEvent.SELECTED)
                     {
                         System.out.println("St1 Lights on");
@@ -344,7 +376,7 @@ public class V2UITesting
                         BMSMethods.relayWrite(bms.BTH1_Power, "on");
                         System.out.println("Cr1 lights are on");
                     }
-                    else
+                    else if(e.getStateChange() == ItemEvent.DESELECTED)
                     {
                         cr1LightsButton.setBackground(Color.DARK_GRAY);
                         BMSMethods.relayWrite(bms.CR1_Lights, "off");
@@ -594,13 +626,17 @@ public class V2UITesting
                 //st2 lights on button action listener
                 cr2PowerButton.addItemListener(e ->
                 {
+                    //if you are doing this programmatically then do nothing
+                    if(itemListenerFlag)
+                        return;
+
                     if (e.getStateChange() == ItemEvent.SELECTED)
                     {
 
                         cr1PowerButton.setBackground(Color.LIGHT_GRAY);
                         bms.launchStudio2();
                     }
-                    else
+                    else if(e.getStateChange() == ItemEvent.DESELECTED)
                     {
                         cr2PowerButton.setBackground(Color.DARK_GRAY);
                         bms.shutdownStudio2();
@@ -610,6 +646,10 @@ public class V2UITesting
                 //st2 power button action listener
                 cr2LightsButton.addItemListener(e ->
                 {
+                    //if you are doing this programmatically then do nothing
+                    if(itemListenerFlag)
+                        return;
+
                     if (e.getStateChange() == ItemEvent.SELECTED)
                     {
 
@@ -620,7 +660,7 @@ public class V2UITesting
 
 
                     }
-                    else
+                    else if(e.getStateChange() == ItemEvent.DESELECTED)
                     {
                         cr2LightsButton.setBackground(Color.DARK_GRAY);
                         BMSMethods.relayWrite(bms.CR2_Lights, "off");
@@ -858,13 +898,17 @@ public class V2UITesting
                 //st3 lights on button action listener
                 cr3PowerButton.addItemListener(e ->
                 {
+                    //if you are doing this programmatically then do nothing
+                    if(itemListenerFlag)
+                        return;
+
                     if (e.getStateChange() == ItemEvent.SELECTED)
                     {
 
                         cr3PowerButton.setBackground(Color.LIGHT_GRAY);
                         bms.launchStudio3();
                     }
-                    else
+                    else if(e.getStateChange() == ItemEvent.DESELECTED)
                     {
                         cr3PowerButton.setBackground(Color.DARK_GRAY);
                         bms.shutdownStudio3();
@@ -874,6 +918,10 @@ public class V2UITesting
                 //st3 power button action listener
                 cr3LightsButton.addItemListener(e ->
                 {
+                    //if you are doing this programmatically then do nothing
+                    if(itemListenerFlag)
+                        return;
+
                     if(e.getStateChange() == ItemEvent.SELECTED)
                     {
 
@@ -1163,13 +1211,13 @@ public class V2UITesting
             JLabel machineOne = GUIHelperMethods.createLabel("HVAC 1", 10, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
             HVACStatusBox.add(machineOne);
 
-            HVACMachine1Status = GUIHelperMethods.createLabel("IDK", 10, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            HVACMachine1Status = GUIHelperMethods.createLabel(ConditioningMethods.getCurrentConditioningState(), 10, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
             HVACStatusBox.add(HVACMachine1Status);
 
             JLabel machineTwo = GUIHelperMethods.createLabel("HVAC 2", 80, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
             HVACStatusBox.add(machineTwo);
 
-            HVACMachine2Status = GUIHelperMethods.createLabel("IDK", 80, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            HVACMachine2Status = GUIHelperMethods.createLabel(ConditioningMethods.getCurrentConditioningState(), 80, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
             HVACStatusBox.add(HVACMachine2Status);
 
         //debug button
@@ -1187,11 +1235,17 @@ public class V2UITesting
                    DebugGUI deb = new DebugGUI(bms);
                 });
 
+
+
+
+
+
+
+        update(bms); //initial update
+
         frame.setVisible(true);
 
     }
-
-
 
 
     public void update(BMSMethods bms) throws SerialPortException, InterruptedException {
