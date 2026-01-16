@@ -95,8 +95,8 @@ public class V2UITesting
     JLabel HVACMachine1Status;
     JLabel HVACMachine2Status;
 
-    static Color onColor = new Color(144, 103, 198);
-    static Color offColor = new Color(141,134,201);
+    static Color onColor = new Color(246, 144, 5);
+    static Color offColor = new Color(47,79,143);
     static Color disabledColor = new Color(202,196,206);
 
     static boolean itemListenerFlag = false;
@@ -105,12 +105,16 @@ public class V2UITesting
     public V2UITesting(BMSMethods bms)
     {
 
+        UIManager.put("ToggleButton.select", onColor);
+        //UIManager.put("ToggleButton.deselected", offColor);
+
         //general formatting things
         Border lineBorder3 = BorderFactory.createLineBorder(Color.BLACK, 3);
         Border lineBorder2 = BorderFactory.createLineBorder(Color.BLACK, 2);
 
         Font serif = new Font("Serif", Font.BOLD, 14);
-        Timer timer = new Timer(3000, null);
+        Font small = new Font("Serif", Font.PLAIN, 12);
+
 
         //set up the frame
         JFrame frame = new JFrame("Olive Building Management System");
@@ -158,6 +162,11 @@ public class V2UITesting
             allLightsButton = GUIHelperMethods.createToggleButton("LIGHTS", 10, 10,  60, 60, lineBorder2, serif, Color.GRAY, null);
             allLightsBox.add(allLightsButton);
 
+
+
+
+            System.out.println("allLightsBUottn current= "+allLightsButton.isSelected());
+
             //all lights off button
             allPowerButton = GUIHelperMethods.createToggleButton("POWER+LIGHTS", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, null);
             allLightsBox.add(allPowerButton);
@@ -168,6 +177,7 @@ public class V2UITesting
                     if(itemListenerFlag)
                         return;
                     itemListenerFlag = true;
+
                     //disable all light buttons while executing this
                     GUIHelperMethods.buttonDisabler(allLightsButton);
                     GUIHelperMethods.buttonDisabler(cr1LightsButton);
@@ -201,6 +211,12 @@ public class V2UITesting
                     GUIHelperMethods.buttonDisabler(cr1PowerButton);
                     GUIHelperMethods.buttonDisabler(cr2PowerButton);
                     GUIHelperMethods.buttonDisabler(cr3PowerButton);
+
+                    //disable all lights buttons as well
+                    GUIHelperMethods.buttonDisabler(allLightsButton);
+                    GUIHelperMethods.buttonDisabler(cr1LightsButton);
+                    GUIHelperMethods.buttonDisabler(cr2LightsButton);
+                    GUIHelperMethods.buttonDisabler(cr3LightsButton);
 
                     //power turned on
                     if (e.getStateChange() == ItemEvent.SELECTED)
@@ -1219,6 +1235,41 @@ public class V2UITesting
                    BMSMainController.mainStatusFlag = "maintenance";
                    DebugGUI deb = new DebugGUI(bms);
                 });
+
+         //initial setup of each button's state
+        try
+        {
+            //lights
+            cr1LightsButton.setSelected(BMSMethods.relayRead(BMSMethods.CR1_Lights).equals("off"));
+            cr2LightsButton.setSelected(BMSMethods.relayRead(BMSMethods.CR2_Lights).equals("off"));
+            cr3LightsButton.setSelected(BMSMethods.relayRead(BMSMethods.CR3_Lights).equals("off"));
+
+            //power
+            cr1PowerButton.setSelected(BMSMethods.relayRead(BMSMethods.CR1_Desk).equals("off"));
+            cr2PowerButton.setSelected(BMSMethods.relayRead(BMSMethods.CR2_Desk).equals("off"));
+            cr3PowerButton.setSelected(BMSMethods.relayRead(BMSMethods.CR3_Desk).equals("off"));
+
+            //read dampers to figure out the rooms
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+        catch (SerialPortException | InterruptedException e)
+        {
+            System.out.println("Big problem on the initial setup of the GUI");
+            throw new RuntimeException(e);
+        }
 
         frame.setVisible(true);
 

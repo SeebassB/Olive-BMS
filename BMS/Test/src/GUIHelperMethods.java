@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.plaf.basic.BasicToggleButtonUI;
 import java.awt.*;
 
 public class GUIHelperMethods
@@ -26,7 +27,6 @@ public class GUIHelperMethods
         button.setFont(font);
         button.setBackground(background);
         button.setForeground(foreground);
-
         button.setHorizontalTextPosition(SwingConstants.CENTER);
         button.setFocusPainted(false);
         button.setOpaque(true);
@@ -42,8 +42,7 @@ public class GUIHelperMethods
         tButton.setFont(font);
         tButton.setBackground(background);
         tButton.setForeground(foreground);
-
-       // tButton.setSelected(false);
+        tButton.setUI(new BasicToggleButtonUI());
         tButton.setHorizontalAlignment(SwingConstants.CENTER);
         tButton.setFocusPainted(false);
 
@@ -113,18 +112,28 @@ public class GUIHelperMethods
 
     }
 
-    public static void buttonEnabler(JToggleButton button)
+    public static void buttonEnabler(JToggleButton button, boolean selected, String textIn)
     {
         button.setEnabled(true);
-        button.setSelected(true);
-        button.setBackground(V2UITesting.onColor);
+
+        if (selected) {
+            System.out.println("IN buttonEnabler true");
+            button.setSelected(true);
+            button.setBackground(V2UITesting.onColor);
+        }
+        else
+        {
+            button.setBackground(V2UITesting.offColor);
+            button.setSelected(false);
+        }
+        button.setText(textIn);
     }
 
     public static void buttonDisabler(JToggleButton button)
     {
         button.setEnabled(true);
-        button.setSelected(false);
-        button.setBackground(V2UITesting.offColor);
+        button.setText("WORKING");
+        button.setBackground(V2UITesting.disabledColor);
     }
 
 
@@ -155,10 +164,10 @@ public class GUIHelperMethods
 
 
             //re-enable all light buttons when done
-            buttonEnabler(V2UITesting.allLightsButton);
-            buttonEnabler(V2UITesting.cr1LightsButton);
-            buttonEnabler(V2UITesting.cr2LightsButton);
-            buttonEnabler(V2UITesting.cr3LightsButton);
+            buttonEnabler(V2UITesting.allLightsButton, true, "Lights");
+            buttonEnabler(V2UITesting.cr1LightsButton, true, "Lights");
+            buttonEnabler(V2UITesting.cr2LightsButton, true, "Lights");
+            buttonEnabler(V2UITesting.cr3LightsButton, true, "Lights");
 
             V2UITesting.itemListenerFlag = false;
 
@@ -191,10 +200,10 @@ public class GUIHelperMethods
             System.out.println("Studio 3 lights are off");
 
             //re-enable all light buttons when done
-            buttonEnabler(V2UITesting.allLightsButton);
-            buttonEnabler(V2UITesting.cr1LightsButton);
-            buttonEnabler(V2UITesting.cr2LightsButton);
-            buttonEnabler(V2UITesting.cr3LightsButton);
+            buttonEnabler(V2UITesting.allLightsButton, false, "Lights");
+            buttonEnabler(V2UITesting.cr1LightsButton, false, "Lights");
+            buttonEnabler(V2UITesting.cr2LightsButton, false, "Lights");
+            buttonEnabler(V2UITesting.cr3LightsButton, false, "Lights");
 
             V2UITesting.itemListenerFlag = false;
 
@@ -221,10 +230,16 @@ public class GUIHelperMethods
             System.out.println("All power ON");
 
             //re-enable all power buttons when done
-            buttonEnabler(V2UITesting.allPowerButton);
-            buttonEnabler(V2UITesting.cr1PowerButton);
-            buttonEnabler(V2UITesting.cr2PowerButton);
-            buttonEnabler(V2UITesting.cr3PowerButton);
+            buttonEnabler(V2UITesting.allPowerButton, true, "Power");
+            buttonEnabler(V2UITesting.cr1PowerButton, true, "Power");
+            buttonEnabler(V2UITesting.cr2PowerButton, true, "Power");
+            buttonEnabler(V2UITesting.cr3PowerButton, true, "Power");
+
+            //re-enable all light buttons when done
+            buttonEnabler(V2UITesting.allLightsButton, true, "Lights");
+            buttonEnabler(V2UITesting.cr1LightsButton, true, "Lights");
+            buttonEnabler(V2UITesting.cr2LightsButton, true, "Lights");
+            buttonEnabler(V2UITesting.cr3LightsButton, true, "Lights");
 
             V2UITesting.itemListenerFlag =false;
 
@@ -253,20 +268,27 @@ public class GUIHelperMethods
                 bms.shutdownAll();
                 System.out.println("All power OFF");
 
-                //re-enable all power buttons when done
-                buttonEnabler(V2UITesting.allPowerButton);
-                buttonEnabler(V2UITesting.cr1PowerButton);
-                buttonEnabler(V2UITesting.cr2PowerButton);
-                buttonEnabler(V2UITesting.cr3PowerButton);
-           }
-           else
-           {
+            }
+            else
+            {
                 System.out.println("Shutdown AVERTED");
                 V2UITesting.allPowerButton.setSelected(true);
             }
 
+            //re-enable all power buttons when done
+            buttonEnabler(V2UITesting.allPowerButton, false, "Power");
+            buttonEnabler(V2UITesting.cr1PowerButton, false, "Power");
+            buttonEnabler(V2UITesting.cr2PowerButton, false, "Power");
+            buttonEnabler(V2UITesting.cr3PowerButton, false, "Power");
 
-           V2UITesting.itemListenerFlag =false;
+            //re-enable all light buttons when done
+            buttonEnabler(V2UITesting.allLightsButton, false, "Lights");
+            buttonEnabler(V2UITesting.cr1LightsButton, false, "Lights");
+            buttonEnabler(V2UITesting.cr2LightsButton, false, "Lights");
+            buttonEnabler(V2UITesting.cr3LightsButton, false, "Lights");
+
+            V2UITesting.itemListenerFlag =false;
+
             return null;
         }
 

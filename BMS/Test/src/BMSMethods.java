@@ -25,19 +25,19 @@ public class BMSMethods
 	final int CR1_Right_Speaker  = 21; //Contactor 1  //Breakers 1  and 3  //to be reviewed
 	final int CR1_Middle_Speaker = 22; //Contactor 2  //Breakers 5  and 7  //to be reviewed
 	final int CR1_Left_Speaker   = 23; //Contactor 3  //Breakers 9  and 11 //to be reviewed
-	final int CR1_Desk           = 24; //Contactor 4  //Breakers 13 and 15 
+	static final int CR1_Desk           = 24; //Contactor 4  //Breakers 13 and 15
 	static final int BTH1_Power         = 25; //Contactor 5  //Breakers 17 and 19
 	
 	final int CR2_Right_Speaker  = 14; //Contactor 8  //Breakers 29 and 31
 	final int CR2_Middle_Speaker = 27; //Contactor 7  //Breakers 25 and 27
 	final int CR2_Left_Speaker   = 26; //Contactor 6  //Breakers 21 and 23
-	final int CR2_Desk           = 15; //Contactor 9  //Breakers 33 and 35
+	static final int CR2_Desk           = 15; //Contactor 9  //Breakers 33 and 35
 	static final int BTH2_Power         = 16; //Contactor 10 //Breakers 37 and 39
 	
 	final int CR3_Right_Speaker  = 19; //Contactor 13 //Breakers 14 and 16
 	final int CR3_Middle_Speaker = 17; //Contactor 11 //Breakers 6  and 8
 	final int CR3_Left_Speaker   = 18; //Contactor 12 //Breakers 10 and 12
-	final int CR3_Desk           = 20; //Contactor 14 //Breakers 18 and 20
+	static final int CR3_Desk           = 20; //Contactor 14 //Breakers 18 and 20
 	static final int BTH3_Power         =  7; //Contactor 15 //Breakers 22 and 24
 	
 	
