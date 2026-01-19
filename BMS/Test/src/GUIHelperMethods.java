@@ -246,6 +246,7 @@ public class GUIHelperMethods
 
             for(Room r : bms.getPrimary())
             {
+                r.setTargetTemp(74.00);
                 r.setRequestState('c');
             }
 
@@ -306,6 +307,124 @@ public class GUIHelperMethods
             return null;
         }
 
+    }
+
+    static class singleRoomLightsWorker extends SwingWorker<Void, Void>
+    {
+
+        private final int room;
+        private final boolean onOff;
+        private final JToggleButton tButt;
+
+        public singleRoomLightsWorker(int room, boolean onOff, JToggleButton tButt)
+        {
+            this.room = room;
+            this.onOff = onOff;
+            this.tButt = tButt;
+        }
+
+        protected Void doInBackground()
+        {
+            int currentRoomLights = 0;
+            int boothLights       = 0;
+
+
+            if (room == 1) {
+                currentRoomLights = BMSMethods.CR1_Lights;
+                boothLights = BMSMethods.BTH1_Power;
+            } else if (room == 2) {
+                currentRoomLights = BMSMethods.CR2_Lights;
+                boothLights = BMSMethods.BTH2_Power;
+            } else if (room == 3) {
+                currentRoomLights = BMSMethods.CR3_Lights;
+                boothLights = BMSMethods.BTH3_Power;
+            }
+
+            //lights on
+            if(onOff)
+            {
+                BMSMethods.relayWrite(currentRoomLights, "off");
+                BMSMethods.relayWrite(boothLights, "off");
+            }
+            //lights off
+            else
+            {
+                BMSMethods.relayWrite(currentRoomLights, "on");
+                BMSMethods.relayWrite(boothLights, "on");
+            }
+
+            buttonEnabler(tButt, onOff, "Lights");
+
+            return null;
+        }
+    }
+
+    static class singleRoomPowerWorker extends SwingWorker<Void, Void>
+    {
+        private final BMSMethods bms;
+        private final int room;
+        private final boolean onOff;
+        private final JToggleButton lightsButton;
+        private final JToggleButton powerButton;
+
+
+        public singleRoomPowerWorker(BMSMethods bms, int room, boolean onOff, JToggleButton lightsButton, JToggleButton powerButton)
+        {
+            this.bms = bms;
+            this.room = room;
+            this.onOff = onOff;
+            this.lightsButton = lightsButton;
+            this.powerButton = powerButton;
+        }
+
+
+        protected Void doInBackground()
+        {
+
+            //make sure that you want to turn off the room
+            if(!onOff)
+            {
+                int confirmation = JOptionPane.showConfirmDialog(new JFrame(), "Are you sure you want to shutdown studio " + room + "?", "Exit?", JOptionPane.YES_NO_OPTION);
+
+                if (confirmation == JOptionPane.NO_OPTION)//check when turning off
+                {
+                    System.out.println("Shutdown for studio " + room + " averted");
+                    buttonEnabler(lightsButton, true, "Lights");
+                    buttonEnabler(powerButton, true, "Power");
+                    return null;
+                }
+            }
+
+            //turn the power on
+            if(onOff)
+            {
+                if(room == 1)
+                    bms.launchStudio1();
+                if(room == 2)
+                    bms.launchStudio2();
+                if(room == 3)
+                    bms.launchStudio3();
+
+                new singleRoomLightsWorker(room, true, lightsButton).execute();
+                buttonEnabler(powerButton, true, "Power");
+
+            }
+            else
+            {
+                if(room == 1)
+                    bms.shutdownStudio1();
+                if(room == 2)
+                    bms.shutdownStudio2();
+                if(room == 3)
+                    bms.shutdownStudio3();
+
+                new singleRoomLightsWorker(room, false, lightsButton).execute();
+                buttonEnabler(powerButton, onOff, "Power");
+
+
+            }
+            return null;
+        }
     }
 
 
