@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -113,7 +112,6 @@ public class BMSMethods
 
 	public Room[] getPrimary() { return primary;}
 	public Room[] getSecondary() { return secondary;}
-	public Room[] getAllRooms() { return allRoomsList; }
 
 	/**
 	 * Used to log almost everything into a log file
@@ -141,7 +139,7 @@ public class BMSMethods
 			
 			//set up a writer, that makes a new log file each day
 			File target = new File("C:\\Users\\BMS Machine\\Documents\\BMS Logs\\"+smalldate+" log.txt");
-			BufferedWriter writer = null;
+			BufferedWriter writer;
 
 			//if the file exists, then you dont need to make a new one
 			//if it dosn't make a new file with the date in it's title
@@ -159,8 +157,8 @@ public class BMSMethods
 		}//end try
 		catch( IOException e)
 		{
-			debugPrint(String.valueOf(e));
-			debugPrint("writer is having issues");
+			//debugPrint(String.valueOf(e));
+			//debugPrint("writer is having issues");
 		}
 	}
 
@@ -192,7 +190,7 @@ public class BMSMethods
 			
 			//set up a writer, that makes a new log file each day
 			File target = new File("C:\\Users\\BMS Machine\\Documents\\BMS Logs\\"+smalldate+" important log.txt");
-			BufferedWriter writer = null;
+			BufferedWriter writer;
 
 			//if the file exists, then you don't need to make a new one
 			//if it doesn't make a new file with the date in it's title
@@ -210,7 +208,7 @@ public class BMSMethods
 		}//end try
 		catch( IOException e)
 		{
-			debugPrint(e.toString()+"\n");
+			debugPrint(e+"\n");
 			debugPrint("writer is having issues");
 		}
 	}
@@ -673,7 +671,7 @@ public class BMSMethods
 
 
 		//set up needed variables to use
-		double out =-1;
+		double out;
 		StringBuilder pulledJSON = new StringBuilder();
 		String found = "";
 		int cp;
@@ -747,7 +745,7 @@ public class BMSMethods
 	/**
 	 * Method to update all room's data
 	 * */
-	public void refreshAllRooms() throws SerialPortException, InterruptedException
+	public void refreshAllRooms()
 	{
         for (Room room : allRoomsList)
 		{

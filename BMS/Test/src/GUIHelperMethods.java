@@ -116,8 +116,8 @@ public class GUIHelperMethods
     {
         button.setEnabled(true);
 
-        if (selected) {
-            System.out.println("IN buttonEnabler true");
+        if (selected)
+        {
             button.setSelected(true);
             button.setBackground(V2UITesting.onColor);
         }
@@ -132,7 +132,7 @@ public class GUIHelperMethods
     public static void buttonDisabler(JToggleButton button)
     {
         button.setEnabled(true);
-        button.setText("WORKING");
+        button.setText("<html>Please<br>Wait</html>");
         button.setBackground(V2UITesting.disabledColor);
     }
 
@@ -148,26 +148,26 @@ public class GUIHelperMethods
             Thread.sleep(500);
             BMSMethods.relayWrite(BMSMethods.BTH1_Power, "off");
             Thread.sleep(500);
+            buttonEnabler(V2UITesting.cr1LightsButton, true, "Lights");
             System.out.println("Studio 1 lights are on");
 
             BMSMethods.relayWrite(BMSMethods.CR2_Lights, "off");
             Thread.sleep(500);
             BMSMethods.relayWrite(BMSMethods.BTH2_Power, "off");
             Thread.sleep(500);
+            buttonEnabler(V2UITesting.cr2LightsButton, true, "Lights");
             System.out.println("Studio 2 lights are on");
 
             BMSMethods.relayWrite(BMSMethods.CR3_Lights, "off");
             Thread.sleep(500);
             BMSMethods.relayWrite(BMSMethods.BTH3_Power, "off");
             Thread.sleep(500);
+            buttonEnabler(V2UITesting.cr3LightsButton, true, "Lights");
             System.out.println("Studio 3 lights are on");
 
 
             //re-enable all light buttons when done
             buttonEnabler(V2UITesting.allLightsButton, true, "Lights");
-            buttonEnabler(V2UITesting.cr1LightsButton, true, "Lights");
-            buttonEnabler(V2UITesting.cr2LightsButton, true, "Lights");
-            buttonEnabler(V2UITesting.cr3LightsButton, true, "Lights");
 
             V2UITesting.itemListenerFlag = false;
 
@@ -185,25 +185,25 @@ public class GUIHelperMethods
             Thread.sleep(500);
             BMSMethods.relayWrite(BMSMethods.BTH1_Power, "on");
             Thread.sleep(500);
+            buttonEnabler(V2UITesting.cr1LightsButton, false, "Lights");
             System.out.println("Studio 1 lights are off");
 
             BMSMethods.relayWrite(BMSMethods.CR2_Lights, "on");
             Thread.sleep(500);
             BMSMethods.relayWrite(BMSMethods.BTH2_Power, "on");
             Thread.sleep(500);
+            buttonEnabler(V2UITesting.cr2LightsButton, false, "Lights");
             System.out.println("Studio 2 lights are off");
 
             BMSMethods.relayWrite(BMSMethods.CR3_Lights, "on");
             Thread.sleep(500);
             BMSMethods.relayWrite(BMSMethods.BTH3_Power, "on");
             Thread.sleep(500);
+            buttonEnabler(V2UITesting.cr3LightsButton, false, "Lights");
             System.out.println("Studio 3 lights are off");
 
             //re-enable all light buttons when done
             buttonEnabler(V2UITesting.allLightsButton, false, "Lights");
-            buttonEnabler(V2UITesting.cr1LightsButton, false, "Lights");
-            buttonEnabler(V2UITesting.cr2LightsButton, false, "Lights");
-            buttonEnabler(V2UITesting.cr3LightsButton, false, "Lights");
 
             V2UITesting.itemListenerFlag = false;
 
@@ -323,8 +323,7 @@ public class GUIHelperMethods
             this.tButt = tButt;
         }
 
-        protected Void doInBackground()
-        {
+        protected Void doInBackground() throws InterruptedException {
             int currentRoomLights = 0;
             int boothLights       = 0;
 
@@ -340,20 +339,24 @@ public class GUIHelperMethods
                 boothLights = BMSMethods.BTH3_Power;
             }
 
-            //lights on
+            //lights on, these are inverted for some reason
             if(onOff)
             {
                 BMSMethods.relayWrite(currentRoomLights, "off");
+                Thread.sleep(500);
                 BMSMethods.relayWrite(boothLights, "off");
             }
             //lights off
             else
             {
                 BMSMethods.relayWrite(currentRoomLights, "on");
+                Thread.sleep(500);
                 BMSMethods.relayWrite(boothLights, "on");
             }
 
             buttonEnabler(tButt, onOff, "Lights");
+            V2UITesting.itemListenerFlag =false;
+
 
             return null;
         }
@@ -365,35 +368,22 @@ public class GUIHelperMethods
         private final int room;
         private final boolean onOff;
         private final JToggleButton lightsButton;
+        private final boolean lightsButtonInitialState;
         private final JToggleButton powerButton;
 
 
-        public singleRoomPowerWorker(BMSMethods bms, int room, boolean onOff, JToggleButton lightsButton, JToggleButton powerButton)
+        public singleRoomPowerWorker(BMSMethods bms, int room, boolean onOff, JToggleButton lightsButton,boolean lightsButtonInitialState, JToggleButton powerButton)
         {
             this.bms = bms;
             this.room = room;
             this.onOff = onOff;
             this.lightsButton = lightsButton;
+            this.lightsButtonInitialState = lightsButton.isSelected();
             this.powerButton = powerButton;
         }
 
-
         protected Void doInBackground()
         {
-
-            //make sure that you want to turn off the room
-            if(!onOff)
-            {
-                int confirmation = JOptionPane.showConfirmDialog(new JFrame(), "Are you sure you want to shutdown studio " + room + "?", "Exit?", JOptionPane.YES_NO_OPTION);
-
-                if (confirmation == JOptionPane.NO_OPTION)//check when turning off
-                {
-                    System.out.println("Shutdown for studio " + room + " averted");
-                    buttonEnabler(lightsButton, true, "Lights");
-                    buttonEnabler(powerButton, true, "Power");
-                    return null;
-                }
-            }
 
             //turn the power on
             if(onOff)
@@ -409,8 +399,21 @@ public class GUIHelperMethods
                 buttonEnabler(powerButton, true, "Power");
 
             }
+            //power off
             else
             {
+                int confirmation = JOptionPane.showConfirmDialog(new JFrame(), "Are you sure you want to shutdown studio " + room + "?", "Exit?", JOptionPane.YES_NO_OPTION);
+
+                if (confirmation == JOptionPane.NO_OPTION)//check when turning off
+                {
+                    System.out.println("Shutdown for studio " + room + " averted");
+                    buttonEnabler(lightsButton, lightsButtonInitialState, "Lights");
+                    buttonEnabler(powerButton, true, "Power");
+                    V2UITesting.itemListenerFlag =false;
+                    return null;
+                }
+
+
                 if(room == 1)
                     bms.shutdownStudio1();
                 if(room == 2)
@@ -419,7 +422,8 @@ public class GUIHelperMethods
                     bms.shutdownStudio3();
 
                 new singleRoomLightsWorker(room, false, lightsButton).execute();
-                buttonEnabler(powerButton, onOff, "Power");
+                buttonEnabler(powerButton, false, "Power");
+                V2UITesting.itemListenerFlag =false;
 
 
             }

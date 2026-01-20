@@ -1,7 +1,6 @@
 import jssc.SerialPortException;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -10,7 +9,7 @@ public class DebugGUI
 {
 
 
-    public DebugGUI(BMSMethods bms)
+    public DebugGUI()
     {
 
         JFrame frame = new JFrame("Debug");
