@@ -426,6 +426,9 @@ public class BMSMethods
 				Thread.sleep(1000);
 			relayWrite(CR1_Desk,           on);
 				Thread.sleep(1000);
+			findRoom("CR 1").setCoolHeat('n');
+				Thread.sleep(1000);
+			findRoom("BTH 1").setCoolHeat('n');
 			logImportantPrint("Studio 1 shutdown with no issues!");
 		}
 		catch( InterruptedException e)
@@ -489,6 +492,9 @@ public class BMSMethods
 				Thread.sleep(1000);
 			relayWrite(CR2_Desk,           on);
 				Thread.sleep(1000);
+			findRoom("CR 2").setCoolHeat('n');
+				Thread.sleep(1000);
+			findRoom("BTH 2").setCoolHeat('n');
 			logImportantPrint("Studio 2 shutdown with no issues!");
 		}
 		catch( InterruptedException e)
@@ -551,6 +557,8 @@ public class BMSMethods
 				Thread.sleep(1000);
 			relayWrite(CR3_Desk,           on);
 				Thread.sleep(1000);
+			findRoom("CR 3").setCoolHeat('n');
+			findRoom("BTH 3").setCoolHeat('n');
 			logImportantPrint("Studio 3 shutdown with no issues!");
 		}
 		catch( InterruptedException e)

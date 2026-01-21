@@ -431,7 +431,7 @@ public class GUIHelperMethods
                     return null;
                 }
 
-
+                //power off
                 if(room == 1)
                     bms.shutdownStudio1();
                 if(room == 2)

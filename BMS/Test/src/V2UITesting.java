@@ -102,9 +102,6 @@ public class V2UITesting
     static boolean itemListenerFlag = false;
 
 
-
-    //TODO green box rightmost split to say status
-
     //TODO machine status to show more clearly when blue and red/orange
 
     //TODO add port checker before running the program
@@ -112,6 +109,8 @@ public class V2UITesting
     //TODO rename GUI class
 
     //TODO figure out fonts and stuff
+
+    //TODO redo logging
 
     public V2UITesting(BMSMethods bms){
 
