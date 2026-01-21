@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.Objects;
 
 import jssc.SerialPortException;
@@ -42,7 +41,7 @@ public class BMSMainController
 		ConditioningMethods cond = new ConditioningMethods();
 
 		//startup GUI
-        V2UITesting gui = new V2UITesting(bms);
+        GUIController gui = new GUIController(bms);
 
 
 		//main thread management loop

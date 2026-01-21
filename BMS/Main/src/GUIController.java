@@ -7,7 +7,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 
 
-public class V2UITesting
+public class GUIController
 {
     //all
     static JToggleButton allLightsButton;
@@ -106,13 +106,11 @@ public class V2UITesting
 
     //TODO add port checker before running the program
 
-    //TODO rename GUI class
-
     //TODO figure out fonts and stuff
 
     //TODO redo logging
 
-    public V2UITesting(BMSMethods bms){
+    public GUIController(BMSMethods bms){
 
         UIManager.put("ToggleButton.select", onColor);
 
@@ -372,10 +370,10 @@ public class V2UITesting
                 GUIHelperMethods.buttonDisabler(cr1LightsButton);
 
                 if (e.getStateChange() == ItemEvent.SELECTED)
-                    new GUIHelperMethods.singleRoomPowerWorker(bms, 1, true, cr1LightsButton, cr1LightsButton.isSelected(), cr1PowerButton).execute();
+                    new GUIHelperMethods.singleRoomPowerWorker(bms, 1, true, cr1LightsButton, cr1PowerButton).execute();
 
                 else if(e.getStateChange() == ItemEvent.DESELECTED)
-                    new GUIHelperMethods.singleRoomPowerWorker(bms, 1, false, cr1LightsButton, cr1LightsButton.isSelected(), cr1PowerButton).execute();
+                    new GUIHelperMethods.singleRoomPowerWorker(bms, 1, false, cr1LightsButton, cr1PowerButton).execute();
             });
 
 
@@ -650,9 +648,9 @@ public class V2UITesting
             GUIHelperMethods.buttonDisabler(cr2LightsButton);
 
             if (e.getStateChange() == ItemEvent.SELECTED)
-                new GUIHelperMethods.singleRoomPowerWorker(bms, 2, true, cr2LightsButton, cr2LightsButton.isSelected(), cr2PowerButton).execute();
+                new GUIHelperMethods.singleRoomPowerWorker(bms, 2, true, cr2LightsButton, cr2PowerButton).execute();
             else if(e.getStateChange() == ItemEvent.DESELECTED)
-                new GUIHelperMethods.singleRoomPowerWorker(bms, 2, false, cr2LightsButton, cr2LightsButton.isSelected(), cr2PowerButton).execute();
+                new GUIHelperMethods.singleRoomPowerWorker(bms, 2, false, cr2LightsButton, cr2PowerButton).execute();
 
         });
 
@@ -918,9 +916,9 @@ public class V2UITesting
                         GUIHelperMethods.buttonDisabler(cr3PowerButton);
 
                         if (e.getStateChange() == ItemEvent.SELECTED)
-                            new GUIHelperMethods.singleRoomPowerWorker(bms, 3, true, cr3LightsButton, cr3LightsButton.isSelected(), cr3PowerButton).execute();
+                            new GUIHelperMethods.singleRoomPowerWorker(bms, 3, true, cr3LightsButton, cr3PowerButton).execute();
                         else if(e.getStateChange() == ItemEvent.DESELECTED)
-                            new GUIHelperMethods.singleRoomPowerWorker(bms, 3, false, cr3LightsButton, cr3LightsButton.isSelected(), cr3PowerButton).execute();
+                            new GUIHelperMethods.singleRoomPowerWorker(bms, 3, false, cr3LightsButton, cr3PowerButton).execute();
 
                     });
 
