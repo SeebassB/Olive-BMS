@@ -102,18 +102,20 @@ public class V2UITesting
     static boolean itemListenerFlag = false;
 
 
-    //TODO lihgst in st2 are also reversed on/ff
-    //
-    //TODO power in 2 turns off lights
-    //
-    //TODO lights in st3 are also reversed on/off
 
+    //TODO green box rightmost split to say status
 
+    //TODO machine status to show more clearly when blue and red/orange
+
+    //TODO add port checker before running the program
+
+    //TODO rename GUI class
+
+    //TODO figure out fonts and stuff
 
     public V2UITesting(BMSMethods bms){
 
         UIManager.put("ToggleButton.select", onColor);
-        //UIManager.put("ToggleButton.deselected", offColor);
 
         //general formatting things
         Border lineBorder3 = BorderFactory.createLineBorder(Color.BLACK, 3);
@@ -166,11 +168,11 @@ public class V2UITesting
         frame.add(allLightsBox);
 
             //all lights on button
-            allLightsButton = GUIHelperMethods.createToggleButton("LIGHTS", 10, 10,  60, 60, lineBorder2, small, Color.GRAY, null);
+            allLightsButton = GUIHelperMethods.createToggleButton("LIGHTS", 10, 10,  60, 60, lineBorder2, small, offColor, null);
             allLightsBox.add(allLightsButton);
 
             //all lights off button
-            allPowerButton = GUIHelperMethods.createToggleButton("POWER+LIGHTS", 80, 10, 60, 60, lineBorder2, small, Color.GRAY, null);
+            allPowerButton = GUIHelperMethods.createToggleButton("POWER+LIGHTS", 80, 10, 60, 60, lineBorder2, small, offColor, null);
             allLightsBox.add(allPowerButton);
 
                 allLightsButton.addItemListener(e ->
@@ -290,9 +292,12 @@ public class V2UITesting
             cr1TemperatureInfoBox.add(cr1TargetTempLabel);
 
             //cr1 current conditioning display
-            cr1ConditioningStatus = GUIHelperMethods.createLabel(Character.toString(bms.findRoom("CR 1").getCoolHeat()), 150, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr1ConditioningStatus = GUIHelperMethods.createLabel(Character.toString(bms.findRoom("CR 1").getCoolHeat()), 150, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
             cr1TemperatureInfoBox.add(cr1ConditioningStatus);
 
+            //cr1 current conditioning label
+            JLabel cr1ConditioningStatusLabel = GUIHelperMethods.createLabel("Status", 150, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr1TemperatureInfoBox.add(cr1ConditioningStatusLabel);
 
         //CR1 temp box-------------------------------------------------------------------------------------------
         JPanel cr1TempBox = GUIHelperMethods.createPanel(tempControlBoxXLevel, cr1YLevel, 150, 80, lineBorder3, new Color(62, 94, 173));
@@ -329,11 +334,11 @@ public class V2UITesting
 
 
             //cr 1lights on button
-            cr1LightsButton = GUIHelperMethods.createToggleButton("LIGHTS", 10, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr1LightsButton = GUIHelperMethods.createToggleButton("LIGHTS", 10, 10, 60, 60, lineBorder2, serif, offColor, Color.BLACK);
             cr1PowerBox.add(cr1LightsButton);
 
             //lights off button
-            cr1PowerButton = GUIHelperMethods.createToggleButton("POWER", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr1PowerButton = GUIHelperMethods.createToggleButton("POWER", 80, 10, 60, 60, lineBorder2, serif, offColor, Color.BLACK);
             cr1PowerBox.add(cr1PowerButton);
 
             //st1 lights off button action listener
@@ -342,6 +347,8 @@ public class V2UITesting
                 //if you are doing this programmatically then do nothing
                 if(itemListenerFlag)
                     return;
+                itemListenerFlag = true;
+
 
                 GUIHelperMethods.buttonDisabler(cr1LightsButton);
 
@@ -359,6 +366,8 @@ public class V2UITesting
                 //if you are doing this programmatically then do nothing
                 if(itemListenerFlag)
                     return;
+                itemListenerFlag = true;
+
 
                 GUIHelperMethods.buttonDisabler(cr1PowerButton);
                 GUIHelperMethods.buttonDisabler(cr1LightsButton);
@@ -379,8 +388,6 @@ public class V2UITesting
         //room name label
         JLabel bth1NameLabel = GUIHelperMethods.createLabel("Booth 1", labelXLevel, bth1YLevel+30, 80, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
         frame.add(bth1NameLabel);
-
-
 
         //bth1 conditioning box
         JPanel bth1ConditioningBox = GUIHelperMethods.createPanel(firstBoxXLevel, bth1YLevel, 220, 80, lineBorder3, new Color(255, 101, 66));
@@ -447,8 +454,12 @@ public class V2UITesting
             bth1TemperatureInfoBox.add(bth1TargetTempLabel);
 
             //bth1 current conditioning display
-            bth1ConditioningStatus = GUIHelperMethods.createLabel(Character.toString(bms.findRoom("Booth 1").getCoolHeat()), 150, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            bth1ConditioningStatus = GUIHelperMethods.createLabel(Character.toString(bms.findRoom("Booth 1").getCoolHeat()), 150, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
             bth1TemperatureInfoBox.add(bth1ConditioningStatus);
+
+            //bth1 current conditioning label
+            JLabel bth1ConditioningStatusLabel = GUIHelperMethods.createLabel("Status", 150, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            bth1TemperatureInfoBox.add(bth1ConditioningStatusLabel);
 
 
         //CR1 temp box-------------------------------------------------------------------------------------------
@@ -556,9 +567,12 @@ public class V2UITesting
             cr2TemperatureInfoBox.add(cr2TargetTempLabel);
 
             //cr2 current conditioning display
-            cr2ConditioningStatus = GUIHelperMethods.createLabel(Character.toString(bms.findRoom("CR 2").getCoolHeat()), 150, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr2ConditioningStatus = GUIHelperMethods.createLabel(Character.toString(bms.findRoom("CR 2").getCoolHeat()), 150, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
             cr2TemperatureInfoBox.add(cr2ConditioningStatus);
 
+            //cr2 current conditioning label
+            JLabel cr2ConditioningStatusLabel = GUIHelperMethods.createLabel("Status", 150, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr2TemperatureInfoBox.add(cr2ConditioningStatusLabel);
 
         //CR2 temp box-------------------------------------------------------------------------------------------
         JPanel cr2TempBox = GUIHelperMethods.createPanel(tempControlBoxXLevel, cr2YLevel, 150, 80, lineBorder3, new Color(62, 94, 173));
@@ -596,11 +610,11 @@ public class V2UITesting
 
 
             //cr 2 lights button
-            cr2LightsButton = GUIHelperMethods.createToggleButton("LIGHTS", 10, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr2LightsButton = GUIHelperMethods.createToggleButton("LIGHTS", 10, 10, 60, 60, lineBorder2, serif, offColor, Color.BLACK);
             cr2PowerBox.add(cr2LightsButton);
 
             //lights off button
-            cr2PowerButton = GUIHelperMethods.createToggleButton("POWER", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr2PowerButton = GUIHelperMethods.createToggleButton("POWER", 80, 10, 60, 60, lineBorder2, serif, offColor, Color.BLACK);
             cr2PowerBox.add(cr2PowerButton);
 
 
@@ -612,6 +626,7 @@ public class V2UITesting
                     //if you are doing this programmatically then do nothing
                     if(itemListenerFlag)
                         return;
+                    itemListenerFlag = true;
 
                     GUIHelperMethods.buttonDisabler(cr2LightsButton);
 
@@ -712,9 +727,12 @@ public class V2UITesting
             bth2TemperatureInfoBox.add(bth2TargetTempLabel);
 
             //bth2 current conditioning display
-            bth2ConditioningStatus = GUIHelperMethods.createLabel(Character.toString(bms.findRoom("Booth 2").getCoolHeat()), 150, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            bth2ConditioningStatus = GUIHelperMethods.createLabel(Character.toString(bms.findRoom("Booth 2").getCoolHeat()), 150, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
             bth2TemperatureInfoBox.add(bth2ConditioningStatus);
 
+            //bth2 current conditioning label
+            JLabel bth2ConditioningStatusLabel = GUIHelperMethods.createLabel("Status", 150, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            bth2TemperatureInfoBox.add(bth2ConditioningStatusLabel);
 
         //BTH2 temp box
         JPanel bth2TempBox = GUIHelperMethods.createPanel(tempControlBoxXLevel, bth2YLevel, 150, 80, lineBorder3, new Color(62, 94, 173));
@@ -818,9 +836,12 @@ public class V2UITesting
             cr3TemperatureInfoBox.add(cr3TargetTempLabel);
 
             //cr3 current conditioning display
-            cr3ConditioningStatus = GUIHelperMethods.createLabel(Character.toString(bms.findRoom("CR 3").getCoolHeat()), 150, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr3ConditioningStatus = GUIHelperMethods.createLabel(Character.toString(bms.findRoom("CR 3").getCoolHeat()), 150, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
             cr3TemperatureInfoBox.add(cr3ConditioningStatus);
 
+            //cr3 current conditioning label
+            JLabel cr3ConditioningStatusLabel = GUIHelperMethods.createLabel("Status", 150, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr3TemperatureInfoBox.add(cr3ConditioningStatusLabel);
 
         //CR3 temp box
         JPanel cr3TempBox = GUIHelperMethods.createPanel(tempControlBoxXLevel, cr3YLevel, 150, 80, lineBorder3, new Color(62, 94, 173));
@@ -858,11 +879,11 @@ public class V2UITesting
 
 
             //cr 3 lights button
-            cr3LightsButton = GUIHelperMethods.createToggleButton("LIGHTS", 10, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr3LightsButton = GUIHelperMethods.createToggleButton("LIGHTS", 10, 10, 60, 60, lineBorder2, serif, offColor, Color.BLACK);
             cr3PowerBox.add(cr3LightsButton);
 
             //lights off button
-            cr3PowerButton = GUIHelperMethods.createToggleButton("POWER", 80, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            cr3PowerButton = GUIHelperMethods.createToggleButton("POWER", 80, 10, 60, 60, lineBorder2, serif, offColor, Color.BLACK);
             cr3PowerBox.add(cr3PowerButton);
 
 
@@ -873,6 +894,8 @@ public class V2UITesting
                     //if you are doing this programmatically then do nothing
                     if(itemListenerFlag)
                         return;
+                    itemListenerFlag = true;
+
 
                     GUIHelperMethods.buttonDisabler(cr3LightsButton);
 
@@ -976,9 +999,12 @@ public class V2UITesting
             bth3TemperatureInfoBox.add(bth3TargetTempLabel);
 
             //bth3 current conditioning display
-            bth3ConditioningStatus = GUIHelperMethods.createLabel(Character.toString(bms.findRoom("Booth 3").getCoolHeat()), 150, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            bth3ConditioningStatus = GUIHelperMethods.createLabel(Character.toString(bms.findRoom("Booth 3").getCoolHeat()), 150, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
             bth3TemperatureInfoBox.add(bth3ConditioningStatus);
 
+            //bth3 current conditioning label
+            JLabel bth3ConditioningStatusLabel = GUIHelperMethods.createLabel("Status", 150, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            bth3TemperatureInfoBox.add(bth3ConditioningStatusLabel);
 
         //BTH2 temp box
         JPanel bth3TempBox = GUIHelperMethods.createPanel(tempControlBoxXLevel, bth3YLevel, 150, 80, lineBorder3, new Color(62, 94, 173));
@@ -1085,9 +1111,12 @@ public class V2UITesting
             editTemperatureInfoBox.add(editTargetTempLabel);
 
             //edit current conditioning display
-            editConditioningStatus = GUIHelperMethods.createLabel(Character.toString(bms.findRoom("Booth 2").getCoolHeat()), 150, 10, 60, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            editConditioningStatus = GUIHelperMethods.createLabel(Character.toString(bms.findRoom("Booth 2").getCoolHeat()), 150, 10, 60, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
             editTemperatureInfoBox.add(editConditioningStatus);
 
+            //edit current conditoning label
+            JLabel editConditioningStatusLabel = GUIHelperMethods.createLabel("Status", 150, 48, 60, 22, lineBorder2, serif, Color.GRAY, Color.BLACK);
+            editTemperatureInfoBox.add(editConditioningStatusLabel);
 
         //edit temp box
         JPanel editTempBox = GUIHelperMethods.createPanel(tempControlBoxXLevel, editYLevel, 150, 80, lineBorder3, new Color(62, 94, 173));
@@ -1223,7 +1252,7 @@ public class V2UITesting
         //CR1 update temp info box
         cr1CurrentTemp.setText(Double.toString(bms.findRoom("CR 1").getCurrentTemp()));
         cr1TargetTemp.setText(Double.toString(bms.findRoom("CR 1").getTargetTemp()));
-        cr1ConditioningStatus.setText(Character.toString(bms.findRoom("CR 1").getCoolHeat()));
+        cr1ConditioningStatus.setText(Character.toString(bms.findRoom("CR 1").getRequestState()));
 
         //set the color of the temp status
         if(cr1ConditioningStatus.getText().equals("h"))
@@ -1239,7 +1268,7 @@ public class V2UITesting
 
         bth1CurrentTemp.setText(Double.toString(bms.findRoom("Booth 1").getCurrentTemp()));
         bth1TargetTemp.setText(Double.toString(bms.findRoom("Booth 1").getTargetTemp()));
-        bth1ConditioningStatus.setText(Character.toString(bms.findRoom("Booth 1").getCoolHeat()));
+        bth1ConditioningStatus.setText(Character.toString(bms.findRoom("Booth 1").getRequestState()));
 
         //set the color of the temp status
         if(bth1ConditioningStatus.getText().equals("h"))
@@ -1255,7 +1284,7 @@ public class V2UITesting
 
         cr2CurrentTemp.setText(Double.toString(bms.findRoom("CR 2").getCurrentTemp()));
         cr2TargetTemp.setText(Double.toString(bms.findRoom("CR 2").getTargetTemp()));
-        cr2ConditioningStatus.setText(Character.toString(bms.findRoom("CR 2").getCoolHeat()));
+        cr2ConditioningStatus.setText(Character.toString(bms.findRoom("CR 2").getRequestState()));
 
         if(cr2ConditioningStatus.getText().equals("h"))
             cr2ConditioningStatus.setBackground(Color.ORANGE);
@@ -1270,7 +1299,7 @@ public class V2UITesting
 
         bth2CurrentTemp.setText(Double.toString(bms.findRoom("Booth 2").getCurrentTemp()));
         bth2TargetTemp.setText(Double.toString(bms.findRoom("Booth 2").getTargetTemp()));
-        bth2ConditioningStatus.setText(Character.toString(bms.findRoom("Booth 2").getCoolHeat()));
+        bth2ConditioningStatus.setText(Character.toString(bms.findRoom("Booth 2").getRequestState()));
 
         if(bth2ConditioningStatus.getText().equals("h"))
             bth2ConditioningStatus.setBackground(Color.ORANGE);
@@ -1285,7 +1314,7 @@ public class V2UITesting
 
         cr3CurrentTemp.setText(Double.toString(bms.findRoom("CR 3").getCurrentTemp()));
         cr3TargetTemp.setText(Double.toString(bms.findRoom("CR 3").getTargetTemp()));
-        cr3ConditioningStatus.setText(Character.toString(bms.findRoom("CR 3").getCoolHeat()));
+        cr3ConditioningStatus.setText(Character.toString(bms.findRoom("CR 3").getRequestState()));
 
         if(cr3ConditioningStatus.getText().equals("h"))
             cr3ConditioningStatus.setBackground(Color.ORANGE);
@@ -1300,7 +1329,7 @@ public class V2UITesting
 
         bth3CurrentTemp.setText(Double.toString(bms.findRoom("Booth 3").getCurrentTemp()));
         bth3TargetTemp.setText(Double.toString(bms.findRoom("Booth 3").getTargetTemp()));
-        bth3ConditioningStatus.setText(Character.toString(bms.findRoom("Booth 3").getCoolHeat()));
+        bth3ConditioningStatus.setText(Character.toString(bms.findRoom("Booth 3").getRequestState()));
 
         if(bth3ConditioningStatus.getText().equals("h"))
             bth3ConditioningStatus.setBackground(Color.ORANGE);
@@ -1314,7 +1343,7 @@ public class V2UITesting
 
         editCurrentTemp.setText(Double.toString(bms.findRoom("Edit").getCurrentTemp()));
         editTargetTemp.setText(Double.toString(bms.findRoom("Edit").getTargetTemp()));
-        editConditioningStatus.setText(Character.toString(bms.findRoom("Edit").getCoolHeat()));
+        editConditioningStatus.setText(Character.toString(bms.findRoom("Edit").getRequestState()));
 
         if(editConditioningStatus.getText().equals("h"))
             editConditioningStatus.setBackground(Color.ORANGE);

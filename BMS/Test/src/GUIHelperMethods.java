@@ -355,6 +355,24 @@ public class GUIHelperMethods
             }
 
             buttonEnabler(tButt, onOff, "Lights");
+
+            int runningOnCount =0;
+
+            if(V2UITesting.cr1LightsButton.isSelected())
+                runningOnCount++;
+            if(V2UITesting.cr2LightsButton.isSelected())
+                runningOnCount++;
+            if(V2UITesting.cr3LightsButton.isSelected())
+                runningOnCount++;
+
+            System.out.println("running lights = "+runningOnCount);
+
+            if(runningOnCount == 3)
+                GUIHelperMethods.buttonEnabler(V2UITesting.allLightsButton, true, "Lights");
+            else if(runningOnCount == 0)
+                GUIHelperMethods.buttonEnabler(V2UITesting.allLightsButton, false, "Lights");
+
+
             V2UITesting.itemListenerFlag =false;
 
 
@@ -422,6 +440,28 @@ public class GUIHelperMethods
                     bms.shutdownStudio3();
 
                 new singleRoomLightsWorker(room, false, lightsButton).execute();
+
+                int runningOnCount = 0;
+
+                if(V2UITesting.cr1PowerButton.isSelected())
+                    runningOnCount++;
+                if(V2UITesting.cr2PowerButton.isSelected())
+                    runningOnCount++;
+                if(V2UITesting.cr3PowerButton.isSelected())
+                    runningOnCount++;
+
+
+                if(runningOnCount == 3)
+                {
+                    GUIHelperMethods.buttonEnabler(V2UITesting.allPowerButton, true, "Power");
+                    GUIHelperMethods.buttonEnabler(V2UITesting.allLightsButton, true, "Lights");
+                }
+                else if(runningOnCount == 0)
+                {
+                    GUIHelperMethods.buttonEnabler(V2UITesting.allPowerButton, false, "Power");
+                    GUIHelperMethods.buttonEnabler(V2UITesting.allLightsButton, false, "Lights");
+                }
+
                 buttonEnabler(powerButton, false, "Power");
                 V2UITesting.itemListenerFlag =false;
 
@@ -430,6 +470,7 @@ public class GUIHelperMethods
             return null;
         }
     }
+
 
 
 }
