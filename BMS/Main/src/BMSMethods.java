@@ -616,18 +616,20 @@ public class BMSMethods
 			else
 			{
 				logPrint("relayBoard was already open!");
-			}				
+			}
+
+			//success message
+			this.logImportantPrint("Ports Opened SUCCESFULLY!!");
+
 		}//end try 
 		catch (SerialPortException e) 
 		{
 			// catches any port issues
 			e.printStackTrace();
 			this.warningPrint("PORT NOT OPENED CORRECTLY ISSUE PROBLEM");
-			System.exit(2);
+			//System.exit(2);
 		}
 
-		//success message
-		this.logImportantPrint("Ports Opened SUCCESFULLY!!");
 	}
 		
 	/**
