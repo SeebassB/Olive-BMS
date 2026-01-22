@@ -2,6 +2,8 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicToggleButtonUI;
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 public class GUIHelperMethods
 {
@@ -30,6 +32,7 @@ public class GUIHelperMethods
         button.setHorizontalTextPosition(SwingConstants.CENTER);
         button.setFocusPainted(false);
         button.setOpaque(true);
+        button.addFocusListener(new myFocus(button));
 
         return button;
     }
@@ -45,6 +48,7 @@ public class GUIHelperMethods
         tButton.setUI(new BasicToggleButtonUI());
         tButton.setHorizontalAlignment(SwingConstants.CENTER);
         tButton.setFocusPainted(false);
+        tButton.addFocusListener(new myFocus(tButton));
 
         return tButton;
     }
@@ -472,5 +476,41 @@ public class GUIHelperMethods
     }
 
 
+    private static class myFocus implements FocusListener
+    {
+        JButton button;
+        JToggleButton tButton;
+        Border selectedBorder = BorderFactory.createLineBorder(Color.MAGENTA, 4);
+        Border unSelectedBorder = BorderFactory.createLineBorder(Color.BLACK, 2);
 
+        private myFocus(JButton button)
+        {
+            this.button = button;
+        }
+
+        private myFocus(JToggleButton button)
+        {
+            this.tButton = button;
+        }
+
+        public void focusGained(FocusEvent e)
+        {
+            if(button != null)
+                button.setBorder(selectedBorder);
+            else
+            {
+                tButton.setBorder(selectedBorder);
+            }
+        }
+
+        public void focusLost(FocusEvent e)
+        {
+            if(button != null)
+                button.setBorder(unSelectedBorder);
+            else
+            {
+                tButton.setBorder(unSelectedBorder);
+            }
+        }
+}
 }

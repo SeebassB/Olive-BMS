@@ -1184,7 +1184,8 @@ public class BMSMethods
 		}
 		System.out.println("Updated the temperature log");
 	}
-	
+
+
 	public void stopHVAC()
 	{
 		//simply turns off all HVAC machines

@@ -10,7 +10,6 @@ import javax.swing.*;
 public class BMSMainController
 {
 
-
 	static String mainStatusFlag = "normal";
 	static BMSMethods bms;
 
@@ -22,19 +21,13 @@ public class BMSMainController
         }
 		catch (SerialPortException | InterruptedException e)
 		{
-			System.out.println("asdasda");
+			System.out.println("Error in BMSMainController, static try/catch block for bms");
 			throw new RuntimeException(e);
         }
     }
 
-
-
     public static void main(String[] args) throws InterruptedException, IOException
 	{
-
-
-
-
 
 		//start up BMS
 		bms.portOpen();
@@ -44,7 +37,6 @@ public class BMSMainController
 		while(!BMSMethods.relayBoard.isOpened())
 		{
 			System.out.println("Port not opened");
-
 			options = SerialPortList.getPortNames();
 
 			if(options.length == 0)
@@ -67,21 +59,15 @@ public class BMSMainController
 			Thread.sleep(2000);
 		}
 
-
-        bms.refreshAllRooms();
-        bms.printInfo();
-
 		//holds conditioning methods, split for clarity
 		ConditioningMethods cond = new ConditioningMethods();
 
 		//startup GUI
         GUIController gui = new GUIController(bms);
 
-
 		//main thread management loop
 		while(!mainStatusFlag.equalsIgnoreCase( "QUIT"))//while hvacThreadStatus is not -1 which signifies
 		{
-			System.out.println("before teh switch = "+mainStatusFlag);
             bms.refreshAllRooms();
 			gui.update(bms);
 			switch(mainStatusFlag)//regular operation
@@ -125,10 +111,7 @@ public class BMSMainController
 /*TODO
 * Make it prettier
 * Add pause mode
-* Add a direct relay manipulator
 * Add tab and space to hit buttons
 * Add shortcuts?
 * Rework logging
-* GUI Timer for power button
-* Power off double check
 */

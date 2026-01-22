@@ -101,10 +101,7 @@ public class GUIController
 
     static boolean itemListenerFlag = false;
 
-
     //TODO machine status to show more clearly when blue and red/orange
-
-    //TODO add port checker before running the program
 
     //TODO figure out fonts and stuff
 
@@ -1228,8 +1225,10 @@ public class GUIController
 
 
 
-
+        //final GUI setup
         //update(bms); //initial update
+
+
 
         frame.setVisible(true);
 
