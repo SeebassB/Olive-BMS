@@ -107,6 +107,8 @@ public class GUIController
 
     //TODO redo logging
 
+    //TODO add a shortcut to make it easier for cleaning?
+
     public GUIController(BMSMethods bms){
 
         UIManager.put("ToggleButton.select", onColor);
