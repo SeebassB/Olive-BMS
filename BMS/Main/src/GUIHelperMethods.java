@@ -81,6 +81,19 @@ public class GUIHelperMethods
         return panel;
     }
 
+    public static JLayeredPane createJLayeredPane(int x, int y, int width, int height, Border border, Color background)
+    {
+        JLayeredPane layeredPane = new JLayeredPane();
+        layeredPane.setBounds(x, y, width, height);
+        layeredPane.setBorder(border);
+        layeredPane.setBackground(background);
+        layeredPane.setOpaque(true);
+        layeredPane.setLayout(null);
+
+        return layeredPane;
+    }
+
+
     /**
      * Method used to update the color of the backgrounds of sets of three buttons
      * @param bms passed to give context to this method
@@ -480,7 +493,7 @@ public class GUIHelperMethods
     {
         JButton button;
         JToggleButton tButton;
-        Border selectedBorder = BorderFactory.createLineBorder(Color.MAGENTA, 4);
+        Border selectedBorder = BorderFactory.createLineBorder(Color.WHITE, 3);
         Border unSelectedBorder = BorderFactory.createLineBorder(Color.BLACK, 2);
 
         private myFocus(JButton button)
