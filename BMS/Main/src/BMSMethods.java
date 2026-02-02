@@ -65,7 +65,7 @@ public class BMSMethods
 	final int Damp_Out_Straight = 34;//Damper for the outside dumping, the straight pipe
 	final int Damp_Out_Angle    = 35;//damper for the outside dumping, the angled pipe
 	
-	static SerialPort relayBoard = new SerialPort("COM3");
+	static SerialPort relayBoard = new SerialPort("COM6");
 	
 	final static String on = "on";
 	final static String off = "off";
@@ -120,7 +120,7 @@ public class BMSMethods
 	 * @param in information to log
 	 * */
 	public static void logPrint(String in)
-	{	
+	{
 		try
 		{	
 			//debug print so that whatever is logged is also printed out into the console
@@ -414,6 +414,7 @@ public class BMSMethods
 		logPrint("Studio 1 powering down");
 		try
 		{
+
 			relayWrite(CR1_Lights,         on);
 				Thread.sleep(1000);
 			relayWrite(CR1_Middle_Speaker, on);
@@ -428,7 +429,8 @@ public class BMSMethods
 				Thread.sleep(1000);
 			findRoom("CR 1").setCoolHeat('n');
 				Thread.sleep(1000);
-			findRoom("BTH 1").setCoolHeat('n');
+			findRoom("Booth 1").setCoolHeat('n');
+
 			logImportantPrint("Studio 1 shutdown with no issues!");
 		}
 		catch( InterruptedException e)
@@ -494,7 +496,7 @@ public class BMSMethods
 				Thread.sleep(1000);
 			findRoom("CR 2").setCoolHeat('n');
 				Thread.sleep(1000);
-			findRoom("BTH 2").setCoolHeat('n');
+			findRoom("Booth 2").setCoolHeat('n');
 			logImportantPrint("Studio 2 shutdown with no issues!");
 		}
 		catch( InterruptedException e)
@@ -558,7 +560,7 @@ public class BMSMethods
 			relayWrite(CR3_Desk,           on);
 				Thread.sleep(1000);
 			findRoom("CR 3").setCoolHeat('n');
-			findRoom("BTH 3").setCoolHeat('n');
+			findRoom("Booth 3").setCoolHeat('n');
 			logImportantPrint("Studio 3 shutdown with no issues!");
 		}
 		catch( InterruptedException e)
@@ -1238,6 +1240,7 @@ public class BMSMethods
 			if(r.getRoomName().equals(name))
 				return r;
 		}
+		System.out.println("FIND ROOM FAILED "+name);
 		return null;
 	}
 
