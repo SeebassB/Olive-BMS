@@ -493,7 +493,7 @@ public class GUIHelperMethods
     {
         JButton button;
         JToggleButton tButton;
-        Border selectedBorder = BorderFactory.createLineBorder(Color.WHITE, 3);
+        Border selectedBorder = BorderFactory.createLineBorder(Color.LIGHT_GRAY, 3);
         Border unSelectedBorder = BorderFactory.createLineBorder(Color.BLACK, 2);
 
         private myFocus(JButton button)
