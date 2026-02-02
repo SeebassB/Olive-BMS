@@ -1,12 +1,14 @@
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.Objects;
 
+import jssc.SerialPort;
 import jssc.SerialPortException;
+import jssc.SerialPortList;
+
+import javax.swing.*;
 
 public class BMSMainController
 {
-
 
 	static String mainStatusFlag = "normal";
 	static BMSMethods bms;
@@ -19,36 +21,53 @@ public class BMSMainController
         }
 		catch (SerialPortException | InterruptedException e)
 		{
+			System.out.println("Error in BMSMainController, static try/catch block for bms");
 			throw new RuntimeException(e);
         }
     }
 
-
-
     public static void main(String[] args) throws InterruptedException, IOException
 	{
 
-
-		System.out.println("asdasdadsadas");
-
-		//TODO port selector tool if missing port
-
-
 		//start up BMS
 		bms.portOpen();
-        bms.refreshAllRooms();
-        bms.printInfo();
 
+		//this is here in case the port is missing (USB is unplugged)
+		Object[] options;
+		while(!BMSMethods.relayBoard.isOpened())
+		{
+			System.out.println("Port not opened");
+			options = SerialPortList.getPortNames();
+
+			if(options.length == 0)
+			{
+				System.out.println("NO PORTS IN LIST");
+			}
+			else if(options.length == 1)
+			{
+				System.out.println("ONLY ONE PORT, TRYING");
+				System.out.println("Port name = "+options[0]);
+				BMSMethods.relayBoard = (SerialPort) options[0];
+				bms.portOpen();
+				//TODO ADD IMPORTANT VERY IMPORTANT LOG
+			}
+			else {
+				BMSMethods.relayBoard = (SerialPort) JOptionPane.showInputDialog(null, "Choose", "Menu", JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				bms.portOpen();
+			}
+
+			Thread.sleep(2000);
+		}
+
+		//holds conditioning methods, split for clarity
 		ConditioningMethods cond = new ConditioningMethods();
 
 		//startup GUI
-        V2UITesting gui = new V2UITesting(bms);
-
+        GUIController gui = new GUIController(bms);
 
 		//main thread management loop
 		while(!mainStatusFlag.equalsIgnoreCase( "QUIT"))//while hvacThreadStatus is not -1 which signifies
 		{
-			System.out.println("before teh switch = "+mainStatusFlag);
             bms.refreshAllRooms();
 			gui.update(bms);
 			switch(mainStatusFlag)//regular operation
@@ -92,10 +111,7 @@ public class BMSMainController
 /*TODO
 * Make it prettier
 * Add pause mode
-* Add a direct relay manipulator
 * Add tab and space to hit buttons
 * Add shortcuts?
 * Rework logging
-* GUI Timer for power button
-* Power off double check
 */

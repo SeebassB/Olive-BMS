@@ -466,7 +466,10 @@ public class ConditioningMethods
 		System.out.println("Current dump leftover at="+currentRequested);
 	}
 
-
+	/**
+	 * Used to get the current conditioning state of the building
+	 * @return cooling, heating, or nothing depending on what the building is doing
+	 * */
 	static public String getCurrentConditioningState()
 	{
 		if(currentCoolMachine > 0)
