@@ -133,6 +133,7 @@ public class GUIHelperMethods
     {
         button.setEnabled(true);
 
+        //button is selected or not
         if (selected)
         {
             button.setSelected(true);
@@ -284,6 +285,7 @@ public class GUIHelperMethods
 
         protected Void doInBackground()
         {
+
             //double check
             int confirmation = JOptionPane.showConfirmDialog(new JFrame(), "Are you sure you want to shutdown all rooms?", "Exit?", JOptionPane.YES_NO_OPTION);
             boolean shutdownRequested = false;
