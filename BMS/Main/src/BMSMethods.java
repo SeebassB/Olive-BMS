@@ -113,6 +113,80 @@ public class BMSMethods
 	public Room[] getPrimary() { return primary;}
 	public Room[] getSecondary() { return secondary;}
 
+
+	/**
+	 * log stuff
+	 * */
+	public void logInfo(String in, String level)
+	{
+		if (level.equalsIgnoreCase("DEBUG"))
+			logInfo(in, 0);
+		else if (level.equalsIgnoreCase("INFO"))
+			logInfo(in, 1);
+		else if (level.equalsIgnoreCase("WARNING"))
+			logInfo(in, 2);
+		else
+			System.out.println("ERROR IN LOGINFO: " + level + " IS NOT A VALID LEVEL");
+	}
+
+	public static void logInfo(String in, int level)
+	{
+		try
+		{
+			DateFormat currentDayFormat = new SimpleDateFormat("yyyy-MM-dd");
+			DateFormat currentHourFormat = new SimpleDateFormat("HH:mm:ss");
+
+			String currentDay = currentDayFormat.format(new Date());
+			String currentHour = currentHourFormat.format(new Date());
+
+			File logFileDebug = new File(System.getProperty("user.dir") + "\\Desktop\\BMS Logs\\" + currentDay + "\\Debug.txt");
+			File logFileInfo = new File(System.getProperty("user.dir") + "\\Desktop\\BMS Logs\\" + currentDay + "\\Info.txt");
+			File logFileWarning = new File(System.getProperty("user.dir") + "\\Desktop\\BMS Logs\\" + currentDay + "\\Warning.txt");
+			File logFileImportant = new File(System.getProperty("user.dir") + "\\Desktop\\BMS Logs\\" + currentDay + "\\Important.txt");
+
+			//file array element number = level param
+			File[] fileArray = {logFileDebug, logFileInfo, logFileWarning, logFileImportant};
+			BufferedWriter logWriter;
+
+			//set up what you actually want to log
+
+			in = currentHour + " " + in;//add the time
+
+			if(level == 0)//debug
+			{
+				in = "[DEBUG]" + in;
+			}
+			else if(level == 1)//info
+			{
+
+			}
+			else if(level == 2)//warning
+			{
+
+			}
+			else if(level == 3)//important
+			{
+
+			}
+
+			//check to see if the file exists, append if it does, make a new file if it doesn't
+			logWriter = new BufferedWriter(new FileWriter(fileArray[level], fileArray[level].exists()));
+			logWriter.append(in);
+			logWriter.close();
+
+		}
+		catch(IOException e)
+		{
+			System.out.println("Logger is having issues");
+			System.out.println("level = " + level);
+			System.out.println("in = " + in);
+			System.out.println(e);
+		}
+	}
+
+
+
+
 	/**
 	 * Used to log almost everything into a log file
 	 * log files can be found at C:\\Users\\%USERNAME&\\Documents\\BMS Logs
@@ -349,17 +423,16 @@ public class BMSMethods
 		return out;	
 	}
 
-	/*
+	/**
 	 * Launch all studios
 	 * Calls each launchStudio#()
 	 * */
-	public boolean launchAll()
+	public void launchAll()
 	{
 		launchStudio1();
 		launchStudio2();
 		launchStudio3();
 		System.out.println("All Studios Launched");
-		return true;
 	}
 	/*
 	 * Shutdown all studios

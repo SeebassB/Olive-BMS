@@ -267,7 +267,7 @@ public class GUIHelperMethods
                 r.setTargetTemp(74.00);
                 r.setRequestState('c');
             }
-
+            BMSMethods.logInfo("Hello", 2);
 
             return null;
         }
