@@ -959,6 +959,23 @@ public class BMSMethods
 		
 		return  sansMRList.toArray(new Room[0]);
 	}
+
+	public Room[] removeMRs(Room[] roomsList)
+	{
+		//make an arraylist to hold the non machine room rooms
+		ArrayList<Room> sansMRList = new ArrayList<>();
+
+		//go through all lists and if the room is specifically "MR1" or "MR2" then add it to the arraylist
+		for(Room i : roomsList)
+		{
+			if(!i.roomName.equalsIgnoreCase("Machine Room 1") && !i.roomName.equalsIgnoreCase("Machine Room 2"))
+			{
+				sansMRList.add(i);
+			}
+		}
+
+		return  sansMRList.toArray(new Room[0]);
+	}
 	/**
 	 * Method used to find all of the rooms with the first  characters beign exactly "Mach"
 	 * Used specifically to find Machine Rooms, which are named as, no other room should start with the word machine for this to work

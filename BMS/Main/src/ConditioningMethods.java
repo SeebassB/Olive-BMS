@@ -101,7 +101,7 @@ public class ConditioningMethods
 		System.out.println("----------Exiting Room Decisions----------");
 
 		//get the total airflow needed this cycle
-		int airflowRequestedByRooms = bms.findTotalAirflowRequested(roomsOpenForThisCycle);
+		int airflowRequestedByRooms = bms.findTotalAirflowRequested(bms.removeMRs(roomsOpenForThisCycle));
 
 		//handle turning the machines on/off depending on which rooms request and heat/cool
 		handleHVACMachines(airflowRequestedByRooms, currentConditioningRequest);
