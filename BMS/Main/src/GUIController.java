@@ -133,8 +133,6 @@ public class GUIController
         frame.setLayout(null); // allow for absolute positioning of components
         frame.setResizable(false);
 
-
-
         //y levels for each room
         int allYLevel  = 10;
         int cr1YLevel  = 100;
@@ -1204,6 +1202,70 @@ public class GUIController
                    BMSMainController.mainStatusFlag = "maintenance";
                    new DebugGUI();
                 });
+
+
+
+
+
+
+        // Set up the keystroke listener
+        InputMap im = frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap am = frame.getRootPane().getActionMap();
+
+        im.put(KeyStroke.getKeyStroke('l'), "clickAllLights");// L key for allLights
+        im.put(KeyStroke.getKeyStroke('p'), "clickAllPower");// P key for allPower
+        im.put(KeyStroke.getKeyStroke('1'), "powerStudio1");// 1 turn on ST1
+        im.put(KeyStroke.getKeyStroke('2'), "powerStudio2");// 2 turn on ST2
+        im.put(KeyStroke.getKeyStroke('3'), "powerStudio3");// 3 turn on ST3
+
+
+
+        //perform the action when L is pressed
+        am.put("clickAllLights", new AbstractAction()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                allLightsButton.doClick();
+            }
+        });
+
+        //perform the action when P is pressed
+        am.put("clickAllPower", new AbstractAction()
+        {
+
+            public void actionPerformed(ActionEvent e)
+            {
+                allPowerButton.doClick();
+            }
+        });
+
+        //listen to 1 to turn on/off st1
+        am.put("powerStudio1", new AbstractAction()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                cr1PowerButton.doClick();
+            }
+        });
+
+        //listen to 2 to turn on/off st2
+        am.put("powerStudio2", new AbstractAction()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                cr2PowerButton.doClick();
+            }
+        });
+
+        //listen to 3 to turn on/off st3
+        am.put("powerStudio3", new AbstractAction()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                cr3PowerButton.doClick();
+            }
+        });
+
 
 
 

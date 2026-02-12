@@ -21,13 +21,18 @@ public class DebugGUI
         frame.setResizable(false);
 
 
-        JLabel instruction = GUIHelperMethods.createLabel("Relay Command: ", 10, 10, 100, 20, null, null, null, null);
+        JLabel instruction = GUIHelperMethods.createLabel("Relay Command: (relay on/off ##) ", 10, 10, 100, 20, null, null, null, null);
         frame.add(instruction);
 
         //text box for command input
         JTextArea commandInputArea = new JTextArea();
-        commandInputArea.setBounds(10, 50, 100, 20);
+        commandInputArea.setBounds(10, 50, 50, 20);
         frame.add(commandInputArea);
+
+        JTextArea commandSecondArea = new JTextArea();
+        commandSecondArea.setBounds(70, 50, 50, 20);
+        commandSecondArea.setText("##");
+        frame.add(commandSecondArea);
 
         JButton commandEnterButton = GUIHelperMethods.createButton("Enter Command", 10, 100, 100, 20, null, null, Color.GRAY, Color.BLACK);
         frame.add(commandEnterButton);
@@ -35,13 +40,10 @@ public class DebugGUI
 
             commandEnterButton.addActionListener(_ ->
             {
-                try {
-                    BMSMethods.relayBoard.writeString(commandInputArea.getText());
-                } catch (SerialPortException e) {
-                    throw new RuntimeException(e);
-                }
+                BMSMethods.relayWrite(Integer.parseInt(commandInputArea.getText()), commandSecondArea.getText());
+                System.out.println("Command run! "+commandInputArea.getText() +" "+ commandSecondArea.getText());
                 commandInputArea.setText("");
-                System.out.println("Command run!");
+                commandSecondArea.setText("##");
             });
 
         //button to stop everything

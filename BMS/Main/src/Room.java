@@ -5,13 +5,11 @@ public class Room
 {
 	double CUTOFF_AMOUNT = 1.5;//adjust this to alter the cutoff temp
 
-	//variables that are given once and never change
 	final String roomName;//name of the room
 	final int percentAirflow; //percentage of airflow that the room can take
 	final String sensorURL;//URL of the sensor for the room
 	final int damperNumber;//number of relay for the damper of the room
 
-	//variables found and altered as the program runs
 	double targetTemp;//target temperature of the room
 	double currentTemp;//current temperature of the room
 	char coolHeat;//does the client want the room heated or cooled, 0 is cool and 1 is heat
