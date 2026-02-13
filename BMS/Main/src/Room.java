@@ -17,7 +17,7 @@ public class Room
 	String damperState;//whether the damper is open or closed
 	char requestState;//how the room is feeling, -1 is satisfied, 0 is cooling, 1 is heating
 	char previousState;
-	
+
 	/**
 	 * A Room is designed to mimic one of the rooms in the building, holding information relevant to the HVAC
 	 * */
@@ -33,7 +33,6 @@ public class Room
 		sensorURL        = inURL;//final
 		damperNumber     = dampNum;//final
 		previousState    = 'n';
-		//refresh();
 	}
 
 	//gets and sets-----------------------------------------------------------------------------------
@@ -82,14 +81,17 @@ public class Room
 		return percentAirflow;
 	}
 
-	private void setDamperState(String damperState) throws SerialPortException, InterruptedException
+	public void setDamperState(String damperState)
 	{
 		this.damperState = damperState;
-		BMSMethods.relayWrite(damperNumber,this.damperState);
 	}
 	public String getDamperState()
 	{
 		return damperState;
+	}
+
+	public int getDamperNumber() {
+		return damperNumber;
 	}
 
 	public void setRequestState(char requestState)
@@ -111,28 +113,8 @@ public class Room
 	}
 
 
-	
-	/**
-	 * Refreshes the information of the room, updates the temperature then adjusts the request state
-	 * Then sets the damper state for the room to whatever it physically is
-	 * */
-	public void refresh()
-	{
 
-		updateTemp();
-		updateRequestState();
 
-		//update the damper state as well
-		try 
-		{
-			setDamperState(BMSMethods.relayRead(damperNumber));
-		} 
-		catch (SerialPortException | InterruptedException e)
-		{
-			e.printStackTrace();
-			System.err.println("Room.refresh(): failed");
-		}
-	}
 
 
 	/**
@@ -153,7 +135,7 @@ public class Room
 	 * This method also calls fixTargetCutoffTemp() which adjust the value for this room
 	 * This is done since the cutoff should always be reflected off of the temp
 	 */
-	private void updateTemp()
+	public void updateTemp()
 	{
 		try 
 		{
@@ -205,24 +187,6 @@ public class Room
 		}
 	}
 
-	/**
-	 * Used to open the room to receive conditioning
-	 * */
-	public void acceptHVAC() throws SerialPortException, InterruptedException
-	{
-		setDamperState("on");
-		BMSMethods.openDamper(damperNumber);
-		System.out.println(roomName+" is open");
-	}
-	
-	/**
-	 * Used to close the room after it has received conditioning
-	 * */
-	public void closeHVAC() throws SerialPortException, InterruptedException
-	{
-		setDamperState("off");
-		BMSMethods.closeDamper(damperNumber);
-		System.out.println(roomName+" is closed");
-	}
+
 
 }

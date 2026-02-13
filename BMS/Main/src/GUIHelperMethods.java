@@ -159,26 +159,33 @@ public class GUIHelperMethods
 
     static class allLightsOnWorker extends SwingWorker<Void, Void>
     {
+        BMSMethods bms;
+
+        public allLightsOnWorker(BMSMethods bms)
+        {
+            this.bms = bms;
+        }
+
         protected Void doInBackground() throws Exception
         {
 
-            BMSMethods.relayWrite(BMSMethods.CR1_Lights, "off");
+            bms.relayWrite(BMSMethods.CR1_Lights, "off");
             Thread.sleep(500);
-            BMSMethods.relayWrite(BMSMethods.BTH1_Power, "off");
+            bms.relayWrite(BMSMethods.BTH1_Power, "off");
             Thread.sleep(500);
             buttonEnabler(GUIController.cr1LightsButton, true, "Lights");
             System.out.println("Studio 1 lights are on");
 
-            BMSMethods.relayWrite(BMSMethods.CR2_Lights, "off");
+            bms.relayWrite(BMSMethods.CR2_Lights, "off");
             Thread.sleep(500);
-            BMSMethods.relayWrite(BMSMethods.BTH2_Power, "off");
+            bms.relayWrite(BMSMethods.BTH2_Power, "off");
             Thread.sleep(500);
             buttonEnabler(GUIController.cr2LightsButton, true, "Lights");
             System.out.println("Studio 2 lights are on");
 
-            BMSMethods.relayWrite(BMSMethods.CR3_Lights, "off");
+            bms.relayWrite(BMSMethods.CR3_Lights, "off");
             Thread.sleep(500);
-            BMSMethods.relayWrite(BMSMethods.BTH3_Power, "off");
+            bms.relayWrite(BMSMethods.BTH3_Power, "off");
             Thread.sleep(500);
             buttonEnabler(GUIController.cr3LightsButton, true, "Lights");
             System.out.println("Studio 3 lights are on");
@@ -197,25 +204,32 @@ public class GUIHelperMethods
 
     static class allLightsOffWorker extends SwingWorker<Void, Void>
     {
+        BMSMethods bms;
+
+        public allLightsOffWorker(BMSMethods bms)
+        {
+            this.bms = bms;
+        }
+
         protected Void doInBackground() throws InterruptedException {
 
-            BMSMethods.relayWrite(BMSMethods.CR1_Lights, "on");
+            bms.relayWrite(BMSMethods.CR1_Lights, "on");
             Thread.sleep(500);
-            BMSMethods.relayWrite(BMSMethods.BTH1_Power, "on");
+            bms.relayWrite(BMSMethods.BTH1_Power, "on");
             Thread.sleep(500);
             buttonEnabler(GUIController.cr1LightsButton, false, "Lights");
             System.out.println("Studio 1 lights are off");
 
-            BMSMethods.relayWrite(BMSMethods.CR2_Lights, "on");
+            bms.relayWrite(BMSMethods.CR2_Lights, "on");
             Thread.sleep(500);
-            BMSMethods.relayWrite(BMSMethods.BTH2_Power, "on");
+            bms.relayWrite(BMSMethods.BTH2_Power, "on");
             Thread.sleep(500);
             buttonEnabler(GUIController.cr2LightsButton, false, "Lights");
             System.out.println("Studio 2 lights are off");
 
-            BMSMethods.relayWrite(BMSMethods.CR3_Lights, "on");
+            bms.relayWrite(BMSMethods.CR3_Lights, "on");
             Thread.sleep(500);
-            BMSMethods.relayWrite(BMSMethods.BTH3_Power, "on");
+            bms.relayWrite(BMSMethods.BTH3_Power, "on");
             Thread.sleep(500);
             buttonEnabler(GUIController.cr3LightsButton, false, "Lights");
             System.out.println("Studio 3 lights are off");
@@ -267,7 +281,6 @@ public class GUIHelperMethods
                 r.setTargetTemp(74.00);
                 r.setRequestState('c');
             }
-            BMSMethods.logInfo("Hello", 2);
 
             return null;
         }
@@ -334,12 +347,14 @@ public class GUIHelperMethods
         private final int room;
         private final boolean onOff;
         private final JToggleButton tButt;
+        private final BMSMethods bms;
 
-        public singleRoomLightsWorker(int room, boolean onOff, JToggleButton tButt)
+        public singleRoomLightsWorker(int room, boolean onOff, JToggleButton tButt, BMSMethods bms)
         {
             this.room = room;
             this.onOff = onOff;
             this.tButt = tButt;
+            this.bms = bms;
         }
 
         protected Void doInBackground() throws InterruptedException {
@@ -361,16 +376,16 @@ public class GUIHelperMethods
             //lights on, these are inverted for some reason
             if(onOff)
             {
-                BMSMethods.relayWrite(currentRoomLights, "off");
+                bms.relayWrite(currentRoomLights, "off");
                 Thread.sleep(500);
-                BMSMethods.relayWrite(boothLights, "off");
+                bms.relayWrite(boothLights, "off");
             }
             //lights off
             else
             {
-                BMSMethods.relayWrite(currentRoomLights, "on");
+                bms.relayWrite(currentRoomLights, "on");
                 Thread.sleep(500);
-                BMSMethods.relayWrite(boothLights, "on");
+                bms.relayWrite(boothLights, "on");
             }
 
             buttonEnabler(tButt, onOff, "Lights");
@@ -432,7 +447,7 @@ public class GUIHelperMethods
                 if(room == 3)
                     bms.launchStudio3();
 
-                new singleRoomLightsWorker(room, true, lightsButton).execute();
+                new singleRoomLightsWorker(room, true, lightsButton, bms).execute();
                 buttonEnabler(powerButton, true, "Power");
 
             }
@@ -458,7 +473,7 @@ public class GUIHelperMethods
                 if(room == 3)
                     bms.shutdownStudio3();
 
-                new singleRoomLightsWorker(room, false, lightsButton).execute();
+                new singleRoomLightsWorker(room, false, lightsButton, bms).execute();
 
                 int runningOnCount = 0;
 

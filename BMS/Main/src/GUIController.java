@@ -182,9 +182,9 @@ public class GUIController
                     GUIHelperMethods.buttonDisabler(cr3LightsButton);
 
                     if(e.getStateChange() == ItemEvent.SELECTED)
-                        new GUIHelperMethods.allLightsOnWorker().execute();
+                        new GUIHelperMethods.allLightsOnWorker(bms).execute();
                     else if(e.getStateChange() == ItemEvent.DESELECTED)
-                        new GUIHelperMethods.allLightsOffWorker().execute();
+                        new GUIHelperMethods.allLightsOffWorker(bms).execute();
 
                 });
 
@@ -345,9 +345,9 @@ public class GUIController
                 GUIHelperMethods.buttonDisabler(cr1LightsButton);
 
                 if (e.getStateChange() == ItemEvent.SELECTED)
-                    new GUIHelperMethods.singleRoomLightsWorker(1, true, cr1LightsButton).execute();
+                    new GUIHelperMethods.singleRoomLightsWorker(1, true, cr1LightsButton, bms).execute();
                 else if(e.getStateChange() == ItemEvent.DESELECTED)
-                    new GUIHelperMethods.singleRoomLightsWorker(1, false, cr1LightsButton).execute();
+                    new GUIHelperMethods.singleRoomLightsWorker(1, false, cr1LightsButton, bms).execute();
 
             });
 
@@ -617,9 +617,9 @@ public class GUIController
                     GUIHelperMethods.buttonDisabler(cr2LightsButton);
 
                     if (e.getStateChange() == ItemEvent.SELECTED)
-                        new GUIHelperMethods.singleRoomLightsWorker(2, true, cr2LightsButton).execute();
+                        new GUIHelperMethods.singleRoomLightsWorker(2, true, cr2LightsButton, bms).execute();
                     else if(e.getStateChange() == ItemEvent.DESELECTED)
-                        new GUIHelperMethods.singleRoomLightsWorker(2, false, cr2LightsButton).execute();
+                        new GUIHelperMethods.singleRoomLightsWorker(2, false, cr2LightsButton, bms).execute();
 
                 });
 
@@ -882,9 +882,9 @@ public class GUIController
                     GUIHelperMethods.buttonDisabler(cr3LightsButton);
 
                     if(e.getStateChange() == ItemEvent.SELECTED)
-                        new GUIHelperMethods.singleRoomLightsWorker(3, true, cr3LightsButton).execute();
+                        new GUIHelperMethods.singleRoomLightsWorker(3, true, cr3LightsButton, bms).execute();
                     else if(e.getStateChange() == ItemEvent.DESELECTED)
-                        new GUIHelperMethods.singleRoomLightsWorker(3, false, cr3LightsButton).execute();
+                        new GUIHelperMethods.singleRoomLightsWorker(3, false, cr3LightsButton, bms).execute();
 
                 });
 
@@ -1200,7 +1200,7 @@ public class GUIController
                 {
                    System.out.println("debug start");
                    BMSMainController.mainStatusFlag = "maintenance";
-                   new DebugGUI();
+                   new DebugGUI(bms);
                 });
 
 
@@ -1396,18 +1396,18 @@ public class GUIController
 
 
         //HVAC machine state
-        if(BMSMethods.relayRead(50).equals("on"))
+        if(bms.relayRead(50).equals("on"))
             HVACMachine1Status.setText("Cool");
-        else if(BMSMethods.relayRead(51).equals("on"))
+        else if(bms.relayRead(51).equals("on"))
             HVACMachine1Status.setText("Heat");
         else
         {
             HVACMachine1Status.setText("None");
         }
 
-        if(BMSMethods.relayRead(53).equals("on"))
+        if(bms.relayRead(53).equals("on"))
             HVACMachine2Status.setText("Cool");
-        else if(BMSMethods.relayRead(54).equals("on"))
+        else if(bms.relayRead(54).equals("on"))
             HVACMachine2Status.setText("Heat");
         else
         {

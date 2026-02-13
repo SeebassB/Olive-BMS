@@ -8,9 +8,11 @@ import java.awt.event.WindowEvent;
 public class DebugGUI
 {
 
+    public BMSMethods bms;
 
-    public DebugGUI()
+    public DebugGUI(BMSMethods bms)
     {
+        this.bms = bms;
 
         JFrame frame = new JFrame("Debug");
         frame.setIconImage(new ImageIcon("BMS//Test//IglooLogo.png").getImage());
@@ -40,8 +42,8 @@ public class DebugGUI
 
             commandEnterButton.addActionListener(_ ->
             {
-                BMSMethods.relayWrite(Integer.parseInt(commandInputArea.getText()), commandSecondArea.getText());
-                System.out.println("Command run! "+commandInputArea.getText() +" "+ commandSecondArea.getText());
+                bms.relayWrite(Integer.parseInt(commandSecondArea.getText()), commandInputArea.getText());
+                System.out.println("Command run! "+commandSecondArea.getText() +" "+ commandInputArea.getText());
                 commandInputArea.setText("");
                 commandSecondArea.setText("##");
             });

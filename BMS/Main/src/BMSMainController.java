@@ -4,12 +4,15 @@ import java.util.Objects;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 
 public class BMSMainController
 {
 
+	private static final Logger log = LoggerFactory.getLogger(BMSMainController.class);
 	static String mainStatusFlag = "normal";
 	static BMSMethods bms;
 
@@ -21,7 +24,8 @@ public class BMSMainController
         }
 		catch (SerialPortException | InterruptedException e)
 		{
-			System.out.println("Error in BMSMainController, static try/catch block for bms");
+			BMSMethods.logInfo("BMS was unable to be created", "ERROR");
+			e.printStackTrace();
 			throw new RuntimeException(e);
         }
     }
@@ -34,33 +38,36 @@ public class BMSMainController
 
 		//this is here in case the port is missing (USB is unplugged)
 		Object[] options;
-		while(!BMSMethods.relayBoard.isOpened())
+		while(!bms.relayBoard.isOpened())
 		{
-			System.out.println("Port not opened");
+			BMSMethods.logInfo("PORT MISSING","WARNING");
 			options = SerialPortList.getPortNames();
 
 			if(options.length == 0)
 			{
-				System.out.println("NO PORTS IN LIST");
+				BMSMethods.logInfo("NO PORTS IN LIST", "WARNING");
 			}
 			else if(options.length == 1)
 			{
-				System.out.println("ONLY ONE PORT, TRYING");
-				System.out.println("Port name = "+options[0]);
-				BMSMethods.relayBoard = (SerialPort) options[0];
+				BMSMethods.logInfo("Only one COM port found, trying "+options[0], "WARNING");
+				bms.relayBoard = (SerialPort) options[0];
 				bms.portOpen();
-				//TODO ADD IMPORTANT VERY IMPORTANT LOG
+
 			}
-			else {
-				BMSMethods.relayBoard = (SerialPort) JOptionPane.showInputDialog(null, "Choose", "Menu", JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			else
+			{
+				BMSMethods.logInfo("Multiple COM ports found, asking user","WARNING");
+				bms.relayBoard = (SerialPort) JOptionPane.showInputDialog(null, "Choose", "Menu", JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				bms.portOpen();
 			}
 
 			Thread.sleep(2000);
 		}
 
+		BMSMethods.logInfo("Beginning of BMSMainController","IMPORTANT");
+
 		//holds conditioning methods, split for clarity
-		ConditioningMethods cond = new ConditioningMethods();
+		ConditioningMethods cond = new ConditioningMethods(bms);
 
 		//startup GUI
         GUIController gui = new GUIController(bms);
@@ -68,8 +75,12 @@ public class BMSMainController
 		//main thread management loop
 		while(!mainStatusFlag.equalsIgnoreCase( "QUIT"))//while hvacThreadStatus is not -1 which signifies
 		{
-            bms.refreshAllRooms();
+			BMSMethods.logInfo("Start BMS main loop","INFO");
+
+			bms.refreshAllRooms();
 			gui.update(bms);
+
+			BMSMethods.logInfo("BMSController status: "+mainStatusFlag,"INFO");
 			switch(mainStatusFlag)//regular operation
 			{
 				case "normal":
@@ -103,6 +114,7 @@ public class BMSMainController
 		}//mainStatusFlag while end
 
 
+		BMSMethods.logInfo("End of BMSMainController","IMPORTANT");
 		bms.portClose();
 	}//main end
 	
