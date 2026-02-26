@@ -1,11 +1,8 @@
-import jssc.SerialPortException;
-
 import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-
 
 public class GUIController
 {
@@ -103,11 +100,58 @@ public class GUIController
 
     //TODO machine status to show more clearly when blue and red/orange
 
-    //TODO figure out fonts and stuff
+    /*
+    * TODO
+    *   BMSMainController
+    *   jdoc
+    *   neaten
+    *   warning removal
+    * logging
+    *
+    *   BMSMethods
+    *   Javadoc
+    *   neaten
+    *   warnings
+    * logging
+    *
+    *   ConditioningMethods
+    *   jdoc
+    * neaten
+    * warnings
+    * logging
+    *
+    * ConditioningMethods
+    * jdoc
+    * neaten
+    * warnings
+    * logging
+    *
+    * DebugGUI
+    * jdoc
+    * neaten
+    * warnings
+    * logging
+    * make the UI better
+    *
+    * GUIController
+    * jdoc
+    * neaten
+    * warnings
+    * logging
+    * setup the mainflag display, observer? listener?
+    *
+    * GUIHelperMethods
+    * jdoc
+    * neaten
+    * warnings
+    * logging
+    *
+    * Room COMPLETELY DONE
+    * */
 
-    //TODO redo logging
 
-    //TODO add a shortcut to make it easier for cleaning?
+
+
 
     public GUIController(BMSMethods bms){
 
@@ -1199,6 +1243,7 @@ public class GUIController
                 debugOpenButton.addActionListener(_ ->
                 {
                    System.out.println("debug start");
+                   BMSMethods.logInfo("Starting Debug window","IMPORTANT");
                    BMSMainController.mainStatusFlag = "maintenance";
                    new DebugGUI(bms);
                 });
@@ -1270,14 +1315,14 @@ public class GUIController
 
 
 
-
+        //update(bms);
 
         frame.setVisible(true);
 
     }
 
 
-    public void update(BMSMethods bms) throws SerialPortException, InterruptedException
+    public void update(BMSMethods bms)
     {
 
         //CR1 update cool/heat buttons
@@ -1414,6 +1459,11 @@ public class GUIController
             HVACMachine2Status.setText("None");
         }
 
+        if(BMSMainController.mainStatusFlag.equals("PURGING"))
+        {
+            HVACMachine1Status.setText("PURGE");
+            HVACMachine2Status.setText("PURGE");
+        }
 
 
     }

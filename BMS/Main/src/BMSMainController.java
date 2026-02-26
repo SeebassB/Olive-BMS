@@ -4,15 +4,12 @@ import java.util.Objects;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 
 public class BMSMainController
 {
 
-	private static final Logger log = LoggerFactory.getLogger(BMSMainController.class);
 	static String mainStatusFlag = "normal";
 	static BMSMethods bms;
 
@@ -50,14 +47,14 @@ public class BMSMainController
 			else if(options.length == 1)
 			{
 				BMSMethods.logInfo("Only one COM port found, trying "+options[0], "WARNING");
-				bms.relayBoard = (SerialPort) options[0];
+				bms.setRelayBoard((SerialPort) options[0]);
 				bms.portOpen();
 
 			}
 			else
 			{
 				BMSMethods.logInfo("Multiple COM ports found, asking user","WARNING");
-				bms.relayBoard = (SerialPort) JOptionPane.showInputDialog(null, "Choose", "Menu", JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				bms.setRelayBoard((SerialPort) JOptionPane.showInputDialog(null, "Choose", "Menu", JOptionPane.PLAIN_MESSAGE, null, options, options[0]));
 				bms.portOpen();
 			}
 
@@ -119,11 +116,3 @@ public class BMSMainController
 	}//main end
 	
 }
-
-/*TODO
-* Make it prettier
-* Add pause mode
-* Add tab and space to hit buttons
-* Add shortcuts?
-* Rework logging
-*/

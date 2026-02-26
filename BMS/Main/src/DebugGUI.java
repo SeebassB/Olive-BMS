@@ -1,5 +1,3 @@
-import jssc.SerialPortException;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -62,6 +60,7 @@ public class DebugGUI
             public void windowClosing(WindowEvent e)
             {
                 BMSMainController.mainStatusFlag = "normal";
+                BMSMethods.logInfo("Closing DEBUG window","IMPORTANT");
                 super.windowClosing(e);
             }
         });

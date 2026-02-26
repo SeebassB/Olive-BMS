@@ -1,13 +1,12 @@
 import jssc.SerialPortException;
 
+import java.util.Arrays;
+
 public class ConditioningMethods
 {
 
-	static int currentCoolMachine = 0;
-	static int currentHeatMachine = 0;
-	int mr48 = 0;
-	int mr49 = 0;
-	int doubleOff =1;
+	static int currentCoolMachine = (int)(Math.random() * 2);
+	static int currentHeatMachine = (int)(Math.random() * 2);
 	BMSMethods bms;
 
 	public ConditioningMethods(BMSMethods bms)
@@ -20,7 +19,7 @@ public class ConditioningMethods
 	 * It determines which rooms need conditioning
 	 * @param bms passed to give information on the building
 	 * */
-	public void runConditioning(BMSMethods bms) throws SerialPortException, InterruptedException
+	public void runConditioning(BMSMethods bms) throws InterruptedException
 	{
 
 		//keep track of airflow requirements
@@ -33,7 +32,6 @@ public class ConditioningMethods
 		//print all temps to see what's going on
 		System.out.println("+-+-+-+-+START+-+-+-+-+");
 		bms.printInfo();
-		
 
 		//collect current room statuses
 		Room[] needCooling      = bms.requestingCold();//gather all C
@@ -118,9 +116,12 @@ public class ConditioningMethods
 			airflowRequestedByRooms -= 50;
 		if(airflowRequestedByRooms > 0)
 			airflowRequestedByRooms -= 50;
-		
-		
-		//handle dump zones
+		//reduce airflow needed by MR, if the open rooms contain dump then they are already accounted for
+		if(Arrays.asList(roomsOpenForThisCycle).contains(bms.findMRs()))
+			airflowRequestedByRooms -= 25;
+
+
+		//airflowRequestedByRooms = leftover
 		handleHVACDumpZones(airflowRequestedByRooms, currentConditioningRequest);
 		
 		//open dampers according to the rooms in openThisTime
@@ -148,13 +149,13 @@ public class ConditioningMethods
 	 * @param currentRequested the amount of air needed from the machines
 	 * @param hotCold whether you want heat or cold, c being cold, h being heat
 	 * */
-	public void handleHVACMachines(int currentRequested, char hotCold) throws SerialPortException, InterruptedException
+	private void handleHVACMachines(int currentRequested, char hotCold) throws InterruptedException
 	{
 
 		char previousHVAC = 'n';
 		BMSMainController.mainStatusFlag = "reading HVAC machines";
 
-		//50 and 51 are machine 1, the (south)?? machine
+		//50 and 51 are machine 1, the lower machine on the roof, closer to Victory
 		//arrays are both machines followed by their states
 		int[][] coolingMachines = {{50, 53} , {0,0}};
 		int[][] heatingMachines = {{51, 54} , {0,0}};
@@ -278,7 +279,7 @@ public class ConditioningMethods
 			}
 		}
 		//nothing requested
-		else if(currentRequested == 0)
+		else if(hotCold == 'n' || currentRequested == 0)
 		{
 			//all machines off
 			bms.relayWrite(50, "off");
@@ -289,14 +290,11 @@ public class ConditioningMethods
 			currentHeatMachine++;
 			System.out.println("Turning off all machines");
 			BMSMainController.mainStatusFlag = "ALL HAPPY";
-			//MRs set to open
-			mr48++;
-			mr49++;
 
 		}
 		//only 1 machine needed
 		else if(currentRequested > 0)
-		{
+		{ 
 			int totalCool = coolingMachines[1][0] + coolingMachines[1][1];
 			int totalHeat = heatingMachines[1][0] + heatingMachines[1][1];
 
@@ -325,9 +323,6 @@ public class ConditioningMethods
 					System.out.println("Opening MRs to allow for extra airflow temporarily");
 					bms.openDamper(48);
 					bms.openDamper(49);
-					doubleOff = 3;
-					mr48++;
-					mr49++;
 
 				}
 				else
@@ -369,7 +364,7 @@ public class ConditioningMethods
 	 * @param currentRequested the current Airflow being requested
 	 * @param hotCold whether the building is asking for hot/cold
 	 * */
-	public void handleHVACDumpZones(int currentRequested, char hotCold) throws SerialPortException, InterruptedException
+	private void handleHVACDumpZones(int currentRequested, char hotCold)
 	{
 		//adjustment int
 		int dumpActivateLevel = -30;
@@ -379,58 +374,31 @@ public class ConditioningMethods
 		{
 			System.out.println("----------\nDumpZones for Cold Air");
 
-			//starting from the top, subtract the dump zone's capacity until it reaches 0
-			if(currentRequested < dumpActivateLevel)
-			{
-				mr48++;
-				currentRequested += 13;
-				System.out.println("Requesting MR1(48) open, capacity= "+currentRequested);
-			}
-			//48 not requested
-			else
-			{
-				mr48=0;
-				System.out.println("MR1(48) not requested as dump zone");
-			}
-			//49 requested
-			if(currentRequested < dumpActivateLevel)
-			{
-				mr49++;
-				currentRequested += 13;
-				System.out.println("Requesting MR2(49) open, capacity= "+currentRequested);
-			}
-			//49 not requested
-			else
-			{
-				mr49=0;
-				System.out.println("MR2(49) not requested as dump zone");
-			}
-
 			//35 requested - OUTSIDE DUMP 1
 			if(currentRequested < dumpActivateLevel)
 			{
-				bms.openDamper(35);
+				bms.openDamper(bms.Damp_Out_Angle);
 				currentRequested += 13;
 				System.out.println("Requesting OUTSIDE 1 open, capacity= "+currentRequested);
 			}
 			//35 not requested - OUTSIDE DUMP 1
 			else
 			{
-				bms.closeDamper(35);
+				bms.closeDamper(bms.Damp_Out_Angle);
 				System.out.println("OUTSIDE DUMP 1 not requested");
 			}
 
 			//34 requested - OUTSIDE DUMP 2
 			if(currentRequested < dumpActivateLevel)
 			{
-				bms.openDamper(34);
+				bms.openDamper(bms.Damp_Out_Straight);
 				currentRequested += 13;
 				System.out.println("Requesting OUTSIDE 2 open, capacity= "+currentRequested);
 			}
 			//34 not requested - OUTSIDE DUMP 2
 			else
 			{
-				bms.closeDamper(34);
+				bms.closeDamper(bms.Damp_Out_Straight);
 				System.out.println("OUTSIDE 2 not requested as dump zone");
 			}
 
@@ -439,29 +407,25 @@ public class ConditioningMethods
 		//handle heat
 		else if(hotCold == 'h')
 		{
-			//47 is the damper for the phone booth
 
-			//Damp_Phone requested, opening
+			//Phone Booth Requested as dump zone
 			if((currentRequested < dumpActivateLevel) || (bms.relayRead(47).equals("on")))
 			{
-				bms.openDamper(47);
+				bms.openDamper(bms.Damp_Phone);
 				currentRequested += 9;
 				System.out.println("Opening Phone Booth(47), capacity= "+currentRequested);
 			}
 			//44 not requested, closing
 			else
 			{
-				bms.closeDamper(47);
+				bms.closeDamper(bms.Damp_Phone);
 				System.out.println("Phone Booth(47) not requested, final capacity= "+currentRequested);
 			}
 
 		}//hot else if end
 		else if(hotCold == 'n')
 		{
-
 			System.out.println("Leaving MRs open to circulate air and prevent overpressure when the machines are winding down");
-			mr48++;
-			mr49++;
 		}
 		else
 		{

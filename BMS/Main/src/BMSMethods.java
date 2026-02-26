@@ -18,8 +18,6 @@ import java.util.Objects;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 
-import static java.lang.Math.clamp;
-
 public class BMSMethods
 {
 
@@ -47,7 +45,7 @@ public class BMSMethods
 	static final int CR1_Lights         =  8; //Contactor 16  //Breakers 26 and 28
 	static final int CR2_Lights         = 11; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	static final int CR3_Lights         =  9; //Contactor 17  //Breakers 30 and 32
-	final int BthRm_Lights       = 10; //Contactor 18  //Breakers 34 and 36
+	//final int BthRm_Lights       = 10; //Contactor 18  //Breakers 34 and 36
 	//final int MR_Wallmount     = 11; //Contactor 19  //Breakers 38 and 40
 	
 	
@@ -110,6 +108,8 @@ public class BMSMethods
 		};
 
 		allRoomsList = addRoomLists(primary, secondary);
+		primary[6].setTargetTemp(80);//machine room 1 to 80
+		primary[7].setTargetTemp(80);//machine room 2 to 80
 		logInfo("BMS created", "INFO");
 	}
 
@@ -179,8 +179,7 @@ public class BMSMethods
 						System.out.println("Logger is having issues");
 						System.out.println("level = " + level);
 						System.out.println("in = " + message);
-						System.out.println(e);
-                }
+						e.printStackTrace();                }
 			}
 
     	}
@@ -221,7 +220,7 @@ public class BMSMethods
 		catch(SerialPortException | InterruptedException e)
 		{
 			logInfo("Error in relayWrite, tried to write to relay "+inRelay, "ERROR");
-			System.out.println(e);
+			e.printStackTrace();
 		}
 	}
 
@@ -322,9 +321,9 @@ public class BMSMethods
 		launchStudio1();
 		launchStudio2();
 		launchStudio3();
-		System.out.println("All Studios Launched");
 	}
-	/*
+
+	/**
 	 * Shutdown all studios
 	 * Calls each shutdownStudio#() method
 	 * */
@@ -333,14 +332,13 @@ public class BMSMethods
         shutdownStudio1();
         shutdownStudio2();
         shutdownStudio3();
-        System.out.println("All Studios shutdown!");
     }
 	
 	/**
 	 * Startup Studio 1 at the beginning of the day
 	 * Basically calls relayWrite() for all of Studio 1 with a delay in between
 	 */
-	public boolean launchStudio1()
+	public void launchStudio1()
 	{
 		logInfo("Studio 1 Starting up", "IMPORTANT");
 		try
@@ -357,15 +355,12 @@ public class BMSMethods
 				Thread.sleep(1000);
 			relayWrite(CR1_Desk,           off);
 				Thread.sleep(1000);
-			logInfo("Studio 1 started up with no issues!","IMPORTANT");
 		}
 		catch( InterruptedException e)
 		{
-			logInfo("Studio 1 Launch Interrupted!","IMPORTANT");
-			System.out.println(e);
-			return false;
+			logInfo("Studio 1 Launch Interrupted!","WARNING");
+			e.printStackTrace();
 		}
-		return true;
 	}
 
 	/**
@@ -394,12 +389,11 @@ public class BMSMethods
 				Thread.sleep(1000);
 			findRoom("Booth 1").setCoolHeat('n');
 
-			logInfo("Studio 1 shutdown with no issues!","IMPORTANT");
 		}
 		catch( InterruptedException e)
 		{
 			logInfo("Studio 1 shutdown Interrupted!","WARNING");
-			System.out.println(e);
+			e.printStackTrace();
 		}
 	}
 	
@@ -424,12 +418,11 @@ public class BMSMethods
 				Thread.sleep(1000);
 			relayWrite(CR2_Desk,           off);
 				Thread.sleep(1000);
-			logInfo("Studio 2 started up with no issues!","IMPORTANT");
 		}
 		catch( InterruptedException e)
 		{
-			logInfo("Studio 2 Launch Interrupted!", "IMPORTANT");
-			System.out.println(e);
+			logInfo("Studio 2 Launch Interrupted!", "WARNING");
+			e.printStackTrace();
 		}
 		
 	}
@@ -458,12 +451,11 @@ public class BMSMethods
 			findRoom("CR 2").setCoolHeat('n');
 				Thread.sleep(1000);
 			findRoom("Booth 2").setCoolHeat('n');
-			logInfo("Studio 2 shutdown with no issues!","IMPORTANT");
 		}
 		catch( InterruptedException e)
 		{
-			logInfo("Studio 2 Shutdown Interrupted!", "INFO");
-			System.out.println(e);
+			logInfo("Studio 2 Shutdown Interrupted!", "WARNING");
+			e.printStackTrace();
 		}
 		
 	}	
@@ -474,7 +466,7 @@ public class BMSMethods
 	 */
 	public void launchStudio3()
 	{
-		logInfo("Studio 3 Starting up","IMPORTANT");
+		logInfo("Studio 3 Starting up","INFO");
 		try
 		{
 			relayWrite(CR3_Lights,         off);
@@ -489,11 +481,10 @@ public class BMSMethods
 				Thread.sleep(1000);
 			relayWrite(CR3_Desk,           off);
 				Thread.sleep(1000);
-			logInfo("Studio 3 started up with no issues!", "IMPORTANT");
 		}
 		catch( InterruptedException e)
 		{
-			logInfo("Studio 3 Launch Interrupted!","INFO");
+			logInfo("Studio 3 Launch Interrupted!","WARNING");
 			System.out.println(e);
 		}
 		
@@ -505,7 +496,7 @@ public class BMSMethods
 	 */	
 	public void shutdownStudio3()
 	{
-		logInfo("Studio 3 Powering down","IMPORTANT");
+		logInfo("Studio 3 Powering down","INFO");
 		try
 		{
 			relayWrite(CR3_Lights,         on);
@@ -522,12 +513,11 @@ public class BMSMethods
 				Thread.sleep(1000);
 			findRoom("CR 3").setCoolHeat('n');
 			findRoom("Booth 3").setCoolHeat('n');
-			logInfo("Studio 3 shutdown with no issues!","IMPORTANT");
 		}
 		catch( InterruptedException e)
 		{
-			logInfo("Studio 3 Shutdown Interrupted!","IMPORTANT");
-			System.out.println(e);
+			logInfo("Studio 3 Shutdown Interrupted!","WARNING");
+			e.printStackTrace();
 		}
 		
 	}
@@ -616,7 +606,7 @@ public class BMSMethods
 		}
 		catch (IOException e)
 		{
-			System.out.println(e);
+			e.printStackTrace();
 			System.out.println("IOException error in readSensor for "+inURL);
 			return 73;
 		}
@@ -651,9 +641,6 @@ public class BMSMethods
 		
 		return out;
 	}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-	//room methods
 	
 
 	/**
@@ -664,6 +651,7 @@ public class BMSMethods
 	public void massSetPreviousState(Room[] list, char in)
 	{
         for (Room room : list) room.setPreviousState(in);
+		logInfo("Mass set previous rooms to " + in,"DEBUG");
 	}
 	
 	/**
@@ -830,22 +818,6 @@ public class BMSMethods
 		return  sansMRList.toArray(new Room[0]);
 	}
 
-	public Room[] removeMRs(Room[] roomsList)
-	{
-		//make an arraylist to hold the non machine room rooms
-		ArrayList<Room> sansMRList = new ArrayList<>();
-
-		//go through all lists and if the room is specifically "MR1" or "MR2" then add it to the arraylist
-		for(Room i : roomsList)
-		{
-			if(!i.roomName.equalsIgnoreCase("Machine Room 1") && !i.roomName.equalsIgnoreCase("Machine Room 2"))
-			{
-				sansMRList.add(i);
-			}
-		}
-
-		return  sansMRList.toArray(new Room[0]);
-	}
 	/**
 	 * Method used to find all of the rooms with the first  characters beign exactly "Mach"
 	 * Used specifically to find Machine Rooms, which are named as, no other room should start with the word machine for this to work
@@ -981,13 +953,14 @@ public class BMSMethods
 	 * Method to close a Room list for HVAC
 	 * @param list list of rooms you want to close for HVAC
 	 * */
-	public void closeRoomForHVAC(Room[] list) throws SerialPortException, InterruptedException
+	public void closeRoomForHVAC(Room[] list) throws InterruptedException
 	{
 		for(Room i : list)
 		{	
 			closeDamper(i.getDamperNumber());
 			Thread.sleep(200);
 		}
+		logInfo("Closing Room for HVAC: "+printRoomNames(list), "INFO");
 	}
 	
 	/**
@@ -995,13 +968,14 @@ public class BMSMethods
 	 * opens the damper for the rooms
 	 * @param list list of rooms you want to open for HVAC
 	 * */
-	public void openRoomsForHVAC(Room[] list) throws SerialPortException, InterruptedException
+	public void openRoomsForHVAC(Room[] list) throws InterruptedException
 	{
 		for(Room i : list)
 		{	
 			openDamper(i.getDamperNumber());
 			Thread.sleep(200);
 		}
+		logInfo("Opening rooms for HVAC: "+printRoomNames(list),"INFO");
 	}
 	
 	/**
@@ -1069,18 +1043,15 @@ public class BMSMethods
 	 * @param list list of all of the rooms in the building to log
 	 * @param coolHeat coolHeat, the current state of the building, with 0 being cool and 1 being heat, -1 is satisfied
 	 * */
-	public void logBuildingStatus(Room[] list, int coolHeat) throws SerialPortException, InterruptedException
+	public void logBuildingStatus(Room[] list, int coolHeat)
 	{
 	
 
 		//set up the current date and time
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd,HH:mm,");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = new Date();
 		String currentDate = dateFormat.format(date);
-	
-		//setup a shorter date for the log
-		DateFormat dateShort = new SimpleDateFormat("yyyy MM dd");
-		String shortDate = dateShort.format(date);
+
 	
 		//handle the string that is added into the log, all the current stats of the building
 		//year, month, day, hour:minute, coolHeat, 50, 53, 51, 54, cr1 temp, cr1 damper,-,-,-,-,-, edit, -, -, -
@@ -1113,7 +1084,8 @@ public class BMSMethods
 		out.append("\n");
 	
 		//set up a writer, that makes a new log file each day
-		File target = new File("C:\\Users\\BMS Machine\\Documents\\BMS Logs\\Temperature Logs\\"+ shortDate+" templog.txt");
+		//File target = new File("C:\\Users\\BMS Machine\\Documents\\BMS Logs\\Temperature Logs\\"+ shortDate+" templog.txt");
+		File target = new File(System.getProperty("user.home") + "\\Desktop\\BMS Logs\\" + currentDate +"\\BuildingStatus.txt");
 		BufferedWriter writer;
 		try 
 		{	
@@ -1143,6 +1115,7 @@ public class BMSMethods
 		{
 			System.out.println(e +"\n");
 			System.out.println("writer is having issues");
+			logInfo("logBuildingStatus is having issues","WARNING");
 		}
 		System.out.println("Updated the temperature log");
 	}
@@ -1190,13 +1163,9 @@ public class BMSMethods
 			if(r.getRoomName().equals(name))
 				return r;
 		}
-		System.out.println("FIND ROOM FAILED "+name);
+		logInfo("Room not found! roomName = "+name,"WARNING");
 		return null;
 	}
-
-
-
-
 
 
 
