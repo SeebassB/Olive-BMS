@@ -37,6 +37,19 @@ public class GUIHelperMethods
         return button;
     }
 
+    /**
+     * Used to make a toggle button
+     * @param text the text on the button
+     * @param x the x int location of the top left corner of the button
+     * @param y the y int location of the top left corner of the button
+     * @param width the width of the button
+     * @param height the height of the button
+     * @param border the border for the button
+     * @param font the font for the button
+     * @param background the color of the background of the button
+     * @param foreground the color of the foreground
+     * @return a JToggleButton
+     * */
     public static JToggleButton createToggleButton(String text, int x, int y, int width, int height, Border border, Font font, Color background, Color foreground)
     {
         JToggleButton tButton = new JToggleButton(text);
@@ -53,7 +66,19 @@ public class GUIHelperMethods
         return tButton;
     }
 
-
+    /**
+     * Used to make a label
+     * @param text the text on the label
+     * @param x the x int location of the top left corner of the label
+     * @param y the y int location of the top left corner of the label
+     * @param width the width of the label
+     * @param height the height of the label
+     * @param border the border for the label
+     * @param font the font for the label
+     * @param background the color of the background of the label
+     * @param foreground the color of the foreground of the label
+     * @return a JLabel
+     * */
     public static JLabel createLabel(String text, int x, int y, int width, int height, Border border, Font font, Color background, Color foreground)
     {
         JLabel label = new JLabel(text);
@@ -69,6 +94,16 @@ public class GUIHelperMethods
         return label;
     }
 
+    /**
+     * Used to create a panel
+     * @param x the x int location of the top left corner of the panel
+     * @param y the y int location of the top left corner of the panel
+     * @param width the width of the panel
+     * @param height the height of the panel
+     * @param border the border for the panel
+     * @param background the color of the background of the panel
+     * @return a panel
+     * */
     public static JPanel createPanel(int x, int y, int width, int height, Border border, Color background)
     {
         JPanel panel = new JPanel();
@@ -81,6 +116,16 @@ public class GUIHelperMethods
         return panel;
     }
 
+    /**
+     * Used to create a layeredPane
+     * @param x the x int location of the top left corner of the pane
+     * @param y the y int location of the top left corner of the pane
+     * @param width the width of the pane
+     * @param height the height of the pane
+     * @param border the border for the pane
+     * @param background the color of the background of the pane
+     * @return a JLayeredPane
+     * */
     public static JLayeredPane createJLayeredPane(int x, int y, int width, int height, Border border, Color background)
     {
         JLayeredPane layeredPane = new JLayeredPane();
@@ -129,8 +174,15 @@ public class GUIHelperMethods
 
     }
 
+    /**
+     * Used to enable a button after it has been disabled
+     * @param button the button you want to enable
+     * @param selected whether you want the button to be selected or not
+     * @param textIn the text you want to display on the button
+     * */
     public static void buttonEnabler(JToggleButton button, boolean selected, String textIn)
     {
+        BMSMethods.logInfo("Enabling button " + button.getName() + ", the button's selected is " +selected, "DEBUG");
         button.setEnabled(true);
 
         //button is selected or not
@@ -147,38 +199,55 @@ public class GUIHelperMethods
         button.setText(textIn);
     }
 
+    /**
+     * Used to disable a button
+     * @param button the button you want to disable
+     * */
     public static void buttonDisabler(JToggleButton button)
     {
         button.setEnabled(true);
         button.setText("<html>Please<br>Wait</html>");
         button.setBackground(GUIController.disabledColor);
+        BMSMethods.logInfo("Disabling button " + button.getName(),"DEBUG");
     }
 
 
 
-
+    /**
+     * Used to turn lights on without stopping the GUI
+     * */
     static class allLightsOnWorker extends SwingWorker<Void, Void>
     {
+        BMSMethods bms;
+
+        /**
+         * Used to run a background swing worker that turns on every room
+         * */
+        public allLightsOnWorker(BMSMethods bms)
+        {
+            this.bms = bms;
+        }
+
         protected Void doInBackground() throws Exception
         {
-
-            BMSMethods.relayWrite(BMSMethods.CR1_Lights, "off");
+            BMSMethods.logInfo("Turning on all lights","INFO");
+            bms.relayWrite(BMSMethods.CR1_Lights, "off");
             Thread.sleep(500);
-            BMSMethods.relayWrite(BMSMethods.BTH1_Power, "off");
+            bms.relayWrite(BMSMethods.BTH1_Power, "off");
             Thread.sleep(500);
             buttonEnabler(GUIController.cr1LightsButton, true, "Lights");
             System.out.println("Studio 1 lights are on");
 
-            BMSMethods.relayWrite(BMSMethods.CR2_Lights, "off");
+            bms.relayWrite(BMSMethods.CR2_Lights, "off");
             Thread.sleep(500);
-            BMSMethods.relayWrite(BMSMethods.BTH2_Power, "off");
+            bms.relayWrite(BMSMethods.BTH2_Power, "off");
             Thread.sleep(500);
             buttonEnabler(GUIController.cr2LightsButton, true, "Lights");
             System.out.println("Studio 2 lights are on");
 
-            BMSMethods.relayWrite(BMSMethods.CR3_Lights, "off");
+            bms.relayWrite(BMSMethods.CR3_Lights, "off");
             Thread.sleep(500);
-            BMSMethods.relayWrite(BMSMethods.BTH3_Power, "off");
+            bms.relayWrite(BMSMethods.BTH3_Power, "off");
             Thread.sleep(500);
             buttonEnabler(GUIController.cr3LightsButton, true, "Lights");
             System.out.println("Studio 3 lights are on");
@@ -194,28 +263,42 @@ public class GUIHelperMethods
 
     }
 
-
+    /**
+     * Used to turn off all lights without stopping the GUI
+     * */
     static class allLightsOffWorker extends SwingWorker<Void, Void>
     {
-        protected Void doInBackground() throws InterruptedException {
+        BMSMethods bms;
 
-            BMSMethods.relayWrite(BMSMethods.CR1_Lights, "on");
+        public allLightsOffWorker(BMSMethods bms)
+        {
+            this.bms = bms;
+        }
+
+        /**
+         * Used to run a background swing worker that turns on every room
+         * */
+        protected Void doInBackground() throws InterruptedException
+        {
+
+            BMSMethods.logInfo("Turning off all lights","INFO");
+            bms.relayWrite(BMSMethods.CR1_Lights, "on");
             Thread.sleep(500);
-            BMSMethods.relayWrite(BMSMethods.BTH1_Power, "on");
+            bms.relayWrite(BMSMethods.BTH1_Power, "on");
             Thread.sleep(500);
             buttonEnabler(GUIController.cr1LightsButton, false, "Lights");
             System.out.println("Studio 1 lights are off");
 
-            BMSMethods.relayWrite(BMSMethods.CR2_Lights, "on");
+            bms.relayWrite(BMSMethods.CR2_Lights, "on");
             Thread.sleep(500);
-            BMSMethods.relayWrite(BMSMethods.BTH2_Power, "on");
+            bms.relayWrite(BMSMethods.BTH2_Power, "on");
             Thread.sleep(500);
             buttonEnabler(GUIController.cr2LightsButton, false, "Lights");
             System.out.println("Studio 2 lights are off");
 
-            BMSMethods.relayWrite(BMSMethods.CR3_Lights, "on");
+            bms.relayWrite(BMSMethods.CR3_Lights, "on");
             Thread.sleep(500);
-            BMSMethods.relayWrite(BMSMethods.BTH3_Power, "on");
+            bms.relayWrite(BMSMethods.BTH3_Power, "on");
             Thread.sleep(500);
             buttonEnabler(GUIController.cr3LightsButton, false, "Lights");
             System.out.println("Studio 3 lights are off");
@@ -231,7 +314,9 @@ public class GUIHelperMethods
 
 
 
-
+    /**
+     * Used to turn on all power without stopping the GUI
+     * */
     static class allPowerOnWorker extends SwingWorker<Void, Void>
     {
 
@@ -242,10 +327,14 @@ public class GUIHelperMethods
             this.bms = bms;
         }
 
+        /**
+         * Runs a background thread to turn on all studios
+         * */
         protected Void doInBackground()
         {
+            BMSMethods.logInfo("Powering on all rooms","INFO");
+
             bms.launchAll();
-            System.out.println("All power ON");
 
             //re-enable all power buttons when done
             buttonEnabler(GUIController.allPowerButton, true, "Power");
@@ -267,7 +356,6 @@ public class GUIHelperMethods
                 r.setTargetTemp(74.00);
                 r.setRequestState('c');
             }
-            BMSMethods.logInfo("Hello", 2);
 
             return null;
         }
@@ -334,12 +422,14 @@ public class GUIHelperMethods
         private final int room;
         private final boolean onOff;
         private final JToggleButton tButt;
+        private final BMSMethods bms;
 
-        public singleRoomLightsWorker(int room, boolean onOff, JToggleButton tButt)
+        public singleRoomLightsWorker(int room, boolean onOff, JToggleButton tButt, BMSMethods bms)
         {
             this.room = room;
             this.onOff = onOff;
             this.tButt = tButt;
+            this.bms = bms;
         }
 
         protected Void doInBackground() throws InterruptedException {
@@ -347,13 +437,18 @@ public class GUIHelperMethods
             int boothLights       = 0;
 
 
-            if (room == 1) {
+            if (room == 1)
+            {
                 currentRoomLights = BMSMethods.CR1_Lights;
                 boothLights = BMSMethods.BTH1_Power;
-            } else if (room == 2) {
+            }
+            else if (room == 2)
+            {
                 currentRoomLights = BMSMethods.CR2_Lights;
                 boothLights = BMSMethods.BTH2_Power;
-            } else if (room == 3) {
+            }
+            else if (room == 3)
+            {
                 currentRoomLights = BMSMethods.CR3_Lights;
                 boothLights = BMSMethods.BTH3_Power;
             }
@@ -361,20 +456,22 @@ public class GUIHelperMethods
             //lights on, these are inverted for some reason
             if(onOff)
             {
-                BMSMethods.relayWrite(currentRoomLights, "off");
+                bms.relayWrite(currentRoomLights, "off");
                 Thread.sleep(500);
-                BMSMethods.relayWrite(boothLights, "off");
+                bms.relayWrite(boothLights, "off");
             }
             //lights off
             else
             {
-                BMSMethods.relayWrite(currentRoomLights, "on");
+                bms.relayWrite(currentRoomLights, "on");
                 Thread.sleep(500);
-                BMSMethods.relayWrite(boothLights, "on");
+                bms.relayWrite(boothLights, "on");
             }
 
             buttonEnabler(tButt, onOff, "Lights");
 
+            //check to see if allLights button should be turned on/off
+            //if running count = 3 that means that all the lights are on, 0 is all off
             int runningOnCount =0;
 
             if(GUIController.cr1LightsButton.isSelected())
@@ -432,7 +529,7 @@ public class GUIHelperMethods
                 if(room == 3)
                     bms.launchStudio3();
 
-                new singleRoomLightsWorker(room, true, lightsButton).execute();
+                new singleRoomLightsWorker(room, true, lightsButton, bms).execute();
                 buttonEnabler(powerButton, true, "Power");
 
             }
@@ -458,7 +555,7 @@ public class GUIHelperMethods
                 if(room == 3)
                     bms.shutdownStudio3();
 
-                new singleRoomLightsWorker(room, false, lightsButton).execute();
+                new singleRoomLightsWorker(room, false, lightsButton, bms).execute();
 
                 int runningOnCount = 0;
 

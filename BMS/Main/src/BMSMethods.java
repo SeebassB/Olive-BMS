@@ -4,14 +4,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
-
-import javax.swing.*;
 
 import jssc.SerialPort;
 import jssc.SerialPortException;
@@ -43,7 +45,7 @@ public class BMSMethods
 	static final int CR1_Lights         =  8; //Contactor 16  //Breakers 26 and 28
 	static final int CR2_Lights         = 11; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	static final int CR3_Lights         =  9; //Contactor 17  //Breakers 30 and 32
-	final int BthRm_Lights       = 10; //Contactor 18  //Breakers 34 and 36
+	//final int BthRm_Lights       = 10; //Contactor 18  //Breakers 34 and 36
 	//final int MR_Wallmount     = 11; //Contactor 19  //Breakers 38 and 40
 	
 	
@@ -65,7 +67,7 @@ public class BMSMethods
 	final int Damp_Out_Straight = 34;//Damper for the outside dumping, the straight pipe
 	final int Damp_Out_Angle    = 35;//damper for the outside dumping, the angled pipe
 	
-	static SerialPort relayBoard = new SerialPort("COM6");
+	SerialPort relayBoard = new SerialPort("COM6");
 	
 	final static String on = "on";
 	final static String off = "off";
@@ -106,213 +108,89 @@ public class BMSMethods
 		};
 
 		allRoomsList = addRoomLists(primary, secondary);
-
+		primary[6].setTargetTemp(80);//machine room 1 to 80
+		primary[7].setTargetTemp(80);//machine room 2 to 80
+		logInfo("BMS created", "INFO");
 	}
 
+	public void setRelayBoard(SerialPort relay)
+	{
+		this.relayBoard = relay;
+	}
 
 	public Room[] getPrimary() { return primary;}
 	public Room[] getSecondary() { return secondary;}
 
 
 	/**
-	 * log stuff
+	 * Write to log files depending on the importance. This method is an overload and simply replaces the number with
+	 * @param message What you want to log
+	 * @param severity The severity of the log in word form
 	 * */
-	public void logInfo(String in, String level)
+	public static void logInfo(String message, String severity)
 	{
-		if (level.equalsIgnoreCase("DEBUG"))
-			logInfo(in, 0);
-		else if (level.equalsIgnoreCase("INFO"))
-			logInfo(in, 1);
-		else if (level.equalsIgnoreCase("WARNING"))
-			logInfo(in, 2);
-		else
-			System.out.println("ERROR IN LOGINFO: " + level + " IS NOT A VALID LEVEL");
-	}
+		//determine level of severity as an int
+		int level = -1;
 
-	public static void logInfo(String in, int level)
-	{
+		if (severity.equalsIgnoreCase("DEBUG"))
+			level = 0;
+		else if (severity.equalsIgnoreCase("INFO"))
+			level = 1;
+		else if (severity.equalsIgnoreCase("IMPORTANT"))
+			level = 2;
+		else if(severity.equalsIgnoreCase("ERROR"))
+			level = 3;
+
+
+		//set up formatting for time and day
+		final DateFormat currentDayFormat = new SimpleDateFormat("yyyy-MM-dd");
+		final DateFormat currentHourFormat = new SimpleDateFormat("HH:mm:ss");
+
+		String currentDay = currentDayFormat.format(new Date());
+		String currentHour = currentHourFormat.format(new Date());
+
+		//add the time to the log entry
+		message = "["+currentHour + "], " + message + "\n";//add the time
+
+		//file path
+		String filePath = System.getProperty("user.home") + "\\Desktop\\BMS Logs\\" + currentDay;
+		String[] fileNames = {"Debug.txt", "Info.txt", "Important.txt", "Error.txt"};
+
 		try
 		{
-			DateFormat currentDayFormat = new SimpleDateFormat("yyyy-MM-dd");
-			DateFormat currentHourFormat = new SimpleDateFormat("HH:mm:ss");
+			//where the files will go
+			Path dir = Path.of(filePath);
+			Files.createDirectories(dir);
 
-			String currentDay = currentDayFormat.format(new Date());
-			String currentHour = currentHourFormat.format(new Date());
-
-			File logFileDebug = new File(System.getProperty("user.dir") + "\\Desktop\\BMS Logs\\" + currentDay + "\\Debug.txt");
-			File logFileInfo = new File(System.getProperty("user.dir") + "\\Desktop\\BMS Logs\\" + currentDay + "\\Info.txt");
-			File logFileWarning = new File(System.getProperty("user.dir") + "\\Desktop\\BMS Logs\\" + currentDay + "\\Warning.txt");
-			File logFileImportant = new File(System.getProperty("user.dir") + "\\Desktop\\BMS Logs\\" + currentDay + "\\Important.txt");
-
-			//file array element number = level param
-			File[] fileArray = {logFileDebug, logFileInfo, logFileWarning, logFileImportant};
-			BufferedWriter logWriter;
-
-			//set up what you actually want to log
-
-			in = currentHour + " " + in;//add the time
-
-			if(level == 0)//debug
+			for (int i = level; i >= 0; i--)
 			{
-				in = "[DEBUG]" + in;
-			}
-			else if(level == 1)//info
-			{
+				Path logFile = dir.resolve(fileNames[i]);
 
-			}
-			else if(level == 2)//warning
-			{
+				try (BufferedWriter writer = Files.newBufferedWriter(logFile,
+						StandardCharsets.UTF_8,
+						StandardOpenOption.CREATE,
+						StandardOpenOption.WRITE,
+						StandardOpenOption.APPEND)) {
+					writer.write(message);
+				}
 
-			}
-			else if(level == 3)//important
-			{
-
+				catch (IOException e)
+				{
+						System.out.println("Logger is having issues");
+						System.out.println("level = " + level);
+						System.out.println("in = " + message);
+						e.printStackTrace();                }
 			}
 
-			//check to see if the file exists, append if it does, make a new file if it doesn't
-			logWriter = new BufferedWriter(new FileWriter(fileArray[level], fileArray[level].exists()));
-			logWriter.append(in);
-			logWriter.close();
-
-		}
-		catch(IOException e)
+    	}
+		catch (IOException e)
 		{
-			System.out.println("Logger is having issues");
-			System.out.println("level = " + level);
-			System.out.println("in = " + in);
-			System.out.println(e);
-		}
-	}
+			System.out.println("Directory error");
+			throw new RuntimeException(e);
+    	}
+    }
 
 
-
-
-	/**
-	 * Used to log almost everything into a log file
-	 * log files can be found at C:\\Users\\%USERNAME&\\Documents\\BMS Logs
-	 * Each day a new log is created
-	 * @param in information to log
-	 * */
-	public static void logPrint(String in)
-	{
-		try
-		{	
-			//debug print so that whatever is logged is also printed out into the console
-			//this.debugPrint("LOG: "+in);
-			
-			//set up a date for the timestamp on the log file and log file name
-			DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-			DateFormat currentDay = new SimpleDateFormat("yyyy-MM-dd");
-			Date date = new Date();
-			
-			//format the date into just day/month/year
-			String smalldate = currentDay.format(date);
-			//format the date as a timestamp for the log file
-			String logOutput = dateFormat.format(date)+"     "+in+"\n";
-			
-			
-			//set up a writer, that makes a new log file each day
-			File target = new File("C:\\Users\\BMS Machine\\Documents\\BMS Logs\\"+smalldate+" log.txt");
-			BufferedWriter writer;
-
-			//if the file exists, then you dont need to make a new one
-			//if it dosn't make a new file with the date in it's title
-			if(target.exists())
-			{
-				writer = new BufferedWriter(new FileWriter(target, true));
-				writer.append(logOutput);
-			}
-			else
-			{
-				writer = new BufferedWriter(new FileWriter(target));
-				writer.write(logOutput);
-			}
-			writer.close();	
-		}//end try
-		catch( IOException e)
-		{
-			//debugPrint(String.valueOf(e));
-			//debugPrint("writer is having issues");
-		}
-	}
-
-	/**
-	 * Used to log only the important stuff
-	 * The default log will still log everything, this one will just filter out the not important stuff 
-	 *
-	 *	@param in what you want logged
-	 */
-	public void logImportantPrint(String in)
-	{	
-		try
-		{	
-			//anything logged into important log is automatically logged into the normal log
-			logPrint(in);
-			//debug print so that whatever is logged is also printed out into the console
-			debugPrint("IMPORTANT LOG: "+in);
-			
-			//setup a date for the timestamp on the log file and log file name
-			DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-			DateFormat currentDay = new SimpleDateFormat("yyyy-MM-dd");
-			Date date = new Date();
-			
-			//format the date into just day/month/year
-			String smalldate = currentDay.format(date);
-			//format the date as a timestamp for the log file
-			String logOutput = dateFormat.format(date)+"     "+in+"\n";
-			
-			
-			//set up a writer, that makes a new log file each day
-			File target = new File("C:\\Users\\BMS Machine\\Documents\\BMS Logs\\"+smalldate+" important log.txt");
-			BufferedWriter writer;
-
-			//if the file exists, then you don't need to make a new one
-			//if it doesn't make a new file with the date in it's title
-			if(target.exists())
-			{
-				writer = new BufferedWriter(new FileWriter(target, true));
-				writer.append(logOutput);
-			}
-			else
-			{
-				writer = new BufferedWriter(new FileWriter(target));
-				writer.write(logOutput);
-			}
-			writer.close();	
-		}//end try
-		catch( IOException e)
-		{
-			debugPrint(e+"\n");
-			debugPrint("writer is having issues");
-		}
-	}
-	
-	/**
-	 *	System.out.printlns the input
-	 *	@param in inputs what you want to print
-	 */
-	public static void debugPrint(String in)
-	{
-		//just a print to see stuff in the console
-		System.out.println(in);
-	}
-	
-	/**
-	 *  Displays an important error in a dialogPane
-	 *  also writes the message to the log
-	 *  if the global int WARNING_SUPPRESSION is non-zero, will suppress warnings
-	 * @param in inputs what you want to warn about
-     */
-	public void warningPrint(String in) {
-		//append in WARNING: so it reads in both the log and the option pane
-
-			in = "WARNING: "+in;
-			logPrint(in);
-			//option pane stuff
-			JFrame f = new JFrame();
-			JOptionPane.showMessageDialog(f,in);
-
-	}
 		
 	/**
 	 * Used to write the position of a relay from the relay board
@@ -321,7 +199,7 @@ public class BMSMethods
 	 * @param inRelay         which relay you want to write
 	 * @param onoff           which state you want the relay to be
 	 * */
-	public static void relayWrite(int inRelay, String onoff)
+	public void relayWrite(int inRelay, String onoff)
 	{
 		try
 		{
@@ -333,16 +211,16 @@ public class BMSMethods
 				number += inRelay;
 			}
 			//send the command to the port, then tell the log it happened
-			relayBoard.writeString("relay " + onoff.toLowerCase() + " " + number + "\r");
+			this.relayBoard.writeString("relay " + onoff.toLowerCase() + " " + number + "\r");
 			Thread.sleep(100);
-			relayBoard.purgePort(SerialPort.PURGE_RXCLEAR & SerialPort.PURGE_TXCLEAR);
+			this.relayBoard.purgePort(SerialPort.PURGE_RXCLEAR & SerialPort.PURGE_TXCLEAR);
 
-			logPrint("Relay " + number + " set to " + onoff + ". ");
+			logInfo("Relay " + number + " set to " + onoff + ". ", "DEBUG");
 		}
 		catch(SerialPortException | InterruptedException e)
 		{
-			logPrint("Error in relayWrite, tried to write to relay "+inRelay);
-			logPrint(e.toString());
+			logInfo("Error in relayWrite, tried to write to relay "+inRelay, "ERROR");
+			e.printStackTrace();
 		}
 	}
 
@@ -353,30 +231,41 @@ public class BMSMethods
 	 * @param inRelay which relay you want to write
 	 * @return String the result of a formatOutput() relay read XX
 	 * */
-	public static String relayRead(int inRelay) throws SerialPortException, InterruptedException
+	public String relayRead(int inRelay)
 	{
-		
-		//process the inRelay number since it has to be formatted into X0 if less than 10
-		String number = "";
-		if(inRelay < 10)
-			number = "0"+inRelay;
-		else
-		{
-			number += inRelay;
-		}	
-		//send the command to the port, then tell the log it happened
-		relayBoard.purgePort(SerialPort.PURGE_RXCLEAR & SerialPort.PURGE_TXCLEAR);		
 
-		relayBoard.writeString("relay read "+number+"\r");
-		Thread.sleep(100);
-		relayBoard.purgePort(SerialPort.PURGE_RXCLEAR & SerialPort.PURGE_TXCLEAR);		
-		
-		String relayReadResult = relayBoard.readString();
-		//System.out.println("RESULT IN METHOD\n"+relayReadResult+"\n---------------");
-		String out = formatOutput(relayReadResult);
-		logPrint("Relay "+number+" reads "+out +"  .");
-		
-		return out;
+		String out;
+
+			//process the inRelay number since it has to be formatted into X0 if less than 10
+			String number = "";
+			if (inRelay < 10)
+				number = "0" + inRelay;
+			else {
+				number += inRelay;
+			}
+
+		try {
+			//send the command to the port, then tell the log it happened
+			relayBoard.purgePort(SerialPort.PURGE_RXCLEAR & SerialPort.PURGE_TXCLEAR);
+
+			relayBoard.writeString("relay read " + number + "\r");
+			Thread.sleep(100);
+			relayBoard.purgePort(SerialPort.PURGE_RXCLEAR & SerialPort.PURGE_TXCLEAR);
+
+			String relayReadResult = relayBoard.readString();
+			//System.out.println("RESULT IN METHOD\n"+relayReadResult+"\n---------------");
+			out = formatOutput(relayReadResult);
+			logInfo("Relay " + number + " reads " + out + "  .", "INFORMATION");
+		}
+
+		 catch (SerialPortException | InterruptedException e)
+		 {
+
+			 throw new RuntimeException(e);
+        }
+
+
+        return out;
 	}	
 	
 	/**
@@ -418,7 +307,7 @@ public class BMSMethods
 		}
 		catch(StringIndexOutOfBoundsException e)
 		{
-			debugPrint("formating failed");
+			logInfo("formating failed","INFORMATION");
 		}	
 		return out;	
 	}
@@ -432,9 +321,9 @@ public class BMSMethods
 		launchStudio1();
 		launchStudio2();
 		launchStudio3();
-		System.out.println("All Studios Launched");
 	}
-	/*
+
+	/**
 	 * Shutdown all studios
 	 * Calls each shutdownStudio#() method
 	 * */
@@ -443,16 +332,15 @@ public class BMSMethods
         shutdownStudio1();
         shutdownStudio2();
         shutdownStudio3();
-        System.out.println("All Studios shutdown!");
     }
 	
 	/**
 	 * Startup Studio 1 at the beginning of the day
 	 * Basically calls relayWrite() for all of Studio 1 with a delay in between
 	 */
-	public boolean launchStudio1()
+	public void launchStudio1()
 	{
-		logPrint("Studio 1 Starting up");
+		logInfo("Studio 1 Starting up", "IMPORTANT");
 		try
 		{
 			relayWrite(CR1_Lights,         off);
@@ -467,24 +355,21 @@ public class BMSMethods
 				Thread.sleep(1000);
 			relayWrite(CR1_Desk,           off);
 				Thread.sleep(1000);
-			logImportantPrint("Studio 1 started up with no issues!");
 		}
 		catch( InterruptedException e)
 		{
-			logImportantPrint("Studio 1 Launch Interrupted!");
-			logPrint(e.toString());
-			return false;
+			logInfo("Studio 1 Launch Interrupted!","WARNING");
+			e.printStackTrace();
 		}
-		return true;
 	}
 
 	/**
 	 * Shutdown Studio 1 at the end of the day
 	 * Basically calls relayWrite() for all of Studio 1 with a delay in between
 	 */
-	public boolean shutdownStudio1()
+	public void shutdownStudio1()
 	{
-		logPrint("Studio 1 powering down");
+		logInfo("Studio 1 powering down", "IMPORTANT");
 		try
 		{
 
@@ -504,15 +389,12 @@ public class BMSMethods
 				Thread.sleep(1000);
 			findRoom("Booth 1").setCoolHeat('n');
 
-			logImportantPrint("Studio 1 shutdown with no issues!");
 		}
 		catch( InterruptedException e)
 		{
-			logPrint("Studio 1 shutdown Interrupted!");
-			logPrint(e.toString());
-			return false;
+			logInfo("Studio 1 shutdown Interrupted!","WARNING");
+			e.printStackTrace();
 		}
-		return true;
 	}
 	
 	/**
@@ -521,7 +403,7 @@ public class BMSMethods
 	 */
 	public void launchStudio2()
 	{
-		logPrint("Studio 2 Starting up");
+		logInfo("Studio 2 Starting up", "IMPORTANT");
 		try
 		{
 			relayWrite(CR2_Lights,         off);
@@ -536,12 +418,11 @@ public class BMSMethods
 				Thread.sleep(1000);
 			relayWrite(CR2_Desk,           off);
 				Thread.sleep(1000);
-			logImportantPrint("Studio 2 started up with no issues!");
 		}
 		catch( InterruptedException e)
 		{
-			logPrint("Studio 2 Launch Interrupted!");
-			logPrint(e.toString());
+			logInfo("Studio 2 Launch Interrupted!", "WARNING");
+			e.printStackTrace();
 		}
 		
 	}
@@ -552,7 +433,7 @@ public class BMSMethods
 	 */	
 	public void shutdownStudio2()
 	{
-		logPrint("Studio 2 Powering down");
+		logInfo("Studio 2 Powering down","INFO");
 		try
 		{
 			relayWrite(CR2_Lights,         on);
@@ -570,12 +451,11 @@ public class BMSMethods
 			findRoom("CR 2").setCoolHeat('n');
 				Thread.sleep(1000);
 			findRoom("Booth 2").setCoolHeat('n');
-			logImportantPrint("Studio 2 shutdown with no issues!");
 		}
 		catch( InterruptedException e)
 		{
-			logPrint("Studio 2 Shutdown Interrupted!");
-			logPrint(e.toString());
+			logInfo("Studio 2 Shutdown Interrupted!", "WARNING");
+			e.printStackTrace();
 		}
 		
 	}	
@@ -586,7 +466,7 @@ public class BMSMethods
 	 */
 	public void launchStudio3()
 	{
-		logPrint("Studio 3 Starting up");
+		logInfo("Studio 3 Starting up","INFO");
 		try
 		{
 			relayWrite(CR3_Lights,         off);
@@ -601,12 +481,11 @@ public class BMSMethods
 				Thread.sleep(1000);
 			relayWrite(CR3_Desk,           off);
 				Thread.sleep(1000);
-			logImportantPrint("Studio 3 started up with no issues!");
 		}
 		catch( InterruptedException e)
 		{
-			logPrint("Studio 3 Launch Interrupted!");
-			logPrint(e.toString());
+			logInfo("Studio 3 Launch Interrupted!","WARNING");
+			System.out.println(e);
 		}
 		
 	}
@@ -617,7 +496,7 @@ public class BMSMethods
 	 */	
 	public void shutdownStudio3()
 	{
-		logPrint("Studio 3 Powering down");
+		logInfo("Studio 3 Powering down","INFO");
 		try
 		{
 			relayWrite(CR3_Lights,         on);
@@ -634,12 +513,11 @@ public class BMSMethods
 				Thread.sleep(1000);
 			findRoom("CR 3").setCoolHeat('n');
 			findRoom("Booth 3").setCoolHeat('n');
-			logImportantPrint("Studio 3 shutdown with no issues!");
 		}
 		catch( InterruptedException e)
 		{
-			logPrint("Studio 3 Shutdown Interrupted!");
-			logPrint(e.toString());
+			logInfo("Studio 3 Shutdown Interrupted!","WARNING");
+			e.printStackTrace();
 		}
 		
 	}
@@ -650,10 +528,10 @@ public class BMSMethods
 	 * 
 	 * @param inDamper which damper to open by number
      */
-	public static void openDamper(int inDamper)
+	public void openDamper(int inDamper)
 	{
 		relayWrite(inDamper,"on");
-		logPrint("Opened Damper "+inDamper+".");
+		logInfo("Opened Damper "+inDamper+".","DEBUG");
 	}
 	
 	/**
@@ -662,72 +540,51 @@ public class BMSMethods
 	 * 
 	 * @param inDamper which damper to open by number
 	 */
-	public static void closeDamper(int inDamper)
+	public void closeDamper(int inDamper)
 	{
 		relayWrite(inDamper,"off");
-		logPrint("Closed Damper "+inDamper+".");
+		logInfo("Closed Damper "+inDamper+".","INFO");
 	}
 	
 	/** 
-	 * Method used to open the port
+	 * Opens the port, the connection between the program and the relay board.
 	 * */
 	public void portOpen()
 	{
-		//method used to open ports
-		//assumes the ports are in order, which is why it runs the portRectifier() first
-		//assumes the 2 ports are the correct ones
-		
-		//this.portRectifier();
-		logPrint("Opening the ports!");
-		
-		try {
-			//open relayBoard
-			//checks to see if the port is open already
+		logInfo("Starting portOpen","DEBUG");
+
+		try
+		{
+			//attempt to open relayBoard
 			if(!relayBoard.isOpened())
-			{
-				logPrint("Opening relayBoard port!");
-				relayBoard.openPort();		
-			}	
-			else
-			{
-				logPrint("relayBoard was already open!");
-			}
+				relayBoard.openPort();
 
 			//success message
-			this.logImportantPrint("Ports Opened SUCCESFULLY!!");
-
-		}//end try 
+			logInfo("portOpen success", "IMPORTANT");
+		}
 		catch (SerialPortException e) 
 		{
-			// catches any port issues
 			e.printStackTrace();
-			this.warningPrint("PORT NOT OPENED CORRECTLY ISSUE PROBLEM");
-			//System.exit(2);
+			logInfo("portOpen failed", "WARNING");
 		}
-
 	}
 		
 	/**
-	 * Method to close the port
-	 * handles errors if the port wasn't open
-	 *
+	 * Closes the port, run at the end of the program ,unsure if necessary.
 	 */	
 	public void portClose()
 	{
-		logPrint("Closing the port!");
+		logInfo("portClose starting", "DEBUG");
 		try 
 		{
-			//close the ports
 			relayBoard.closePort();
+			logInfo("portClose success", "IMPORTANT");
 		}
 		catch (SerialPortException e) 
 		{
-			//will probably happen a bunch since the port might be open
-			//if this comes up it is because the port was already closed/not open
-			//final result is still all ports closed
-			this.logImportantPrint("Closure of serial port failed, might not have been open, not necessarily bad.");
+			logInfo("Closure of serial port failed, might not have been open, not necessarily bad.", "DEBUG");
 		}
-		this.logImportantPrint("Port successfully closed!");
+		logInfo("Port successfully closed!", "DEBUG");
 	}
 	
 	/**
@@ -749,7 +606,7 @@ public class BMSMethods
 		}
 		catch (IOException e)
 		{
-			System.out.println(e);
+			e.printStackTrace();
 			System.out.println("IOException error in readSensor for "+inURL);
 			return 73;
 		}
@@ -784,9 +641,6 @@ public class BMSMethods
 		
 		return out;
 	}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-	//room methods
 	
 
 	/**
@@ -797,6 +651,7 @@ public class BMSMethods
 	public void massSetPreviousState(Room[] list, char in)
 	{
         for (Room room : list) room.setPreviousState(in);
+		logInfo("Mass set previous rooms to " + in,"DEBUG");
 	}
 	
 	/**
@@ -834,10 +689,13 @@ public class BMSMethods
 	{
         for (Room room : allRoomsList)
 		{
-            room.refresh();
-        }
+            room.updateTemp();
+			room.updateRequestState();
+        	room.setDamperState(relayRead(room.getDamperNumber()));
+		}
 	}
-	
+
+
 	/**
 	 * Complies a list of rooms that are requesting cold above the cutoff
 	 *@return Room[] list of rooms who meet the criteria
@@ -960,22 +818,6 @@ public class BMSMethods
 		return  sansMRList.toArray(new Room[0]);
 	}
 
-	public Room[] removeMRs(Room[] roomsList)
-	{
-		//make an arraylist to hold the non machine room rooms
-		ArrayList<Room> sansMRList = new ArrayList<>();
-
-		//go through all lists and if the room is specifically "MR1" or "MR2" then add it to the arraylist
-		for(Room i : roomsList)
-		{
-			if(!i.roomName.equalsIgnoreCase("Machine Room 1") && !i.roomName.equalsIgnoreCase("Machine Room 2"))
-			{
-				sansMRList.add(i);
-			}
-		}
-
-		return  sansMRList.toArray(new Room[0]);
-	}
 	/**
 	 * Method used to find all of the rooms with the first  characters beign exactly "Mach"
 	 * Used specifically to find Machine Rooms, which are named as, no other room should start with the word machine for this to work
@@ -1111,13 +953,14 @@ public class BMSMethods
 	 * Method to close a Room list for HVAC
 	 * @param list list of rooms you want to close for HVAC
 	 * */
-	public void closeRoomForHVAC(Room[] list) throws SerialPortException, InterruptedException
+	public void closeRoomForHVAC(Room[] list) throws InterruptedException
 	{
 		for(Room i : list)
 		{	
-			i.closeHVAC();
+			closeDamper(i.getDamperNumber());
 			Thread.sleep(200);
 		}
+		logInfo("Closing Room for HVAC: "+printRoomNames(list), "INFO");
 	}
 	
 	/**
@@ -1125,13 +968,14 @@ public class BMSMethods
 	 * opens the damper for the rooms
 	 * @param list list of rooms you want to open for HVAC
 	 * */
-	public void openRoomsForHVAC(Room[] list) throws SerialPortException, InterruptedException
+	public void openRoomsForHVAC(Room[] list) throws InterruptedException
 	{
 		for(Room i : list)
 		{	
-			i.acceptHVAC();
+			openDamper(i.getDamperNumber());
 			Thread.sleep(200);
 		}
+		logInfo("Opening rooms for HVAC: "+printRoomNames(list),"INFO");
 	}
 	
 	/**
@@ -1199,18 +1043,15 @@ public class BMSMethods
 	 * @param list list of all of the rooms in the building to log
 	 * @param coolHeat coolHeat, the current state of the building, with 0 being cool and 1 being heat, -1 is satisfied
 	 * */
-	public void logBuildingStatus(Room[] list, int coolHeat) throws SerialPortException, InterruptedException
+	public void logBuildingStatus(Room[] list, int coolHeat)
 	{
 	
 
 		//set up the current date and time
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd,HH:mm,");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = new Date();
 		String currentDate = dateFormat.format(date);
-	
-		//setup a shorter date for the log
-		DateFormat dateShort = new SimpleDateFormat("yyyy MM dd");
-		String shortDate = dateShort.format(date);
+
 	
 		//handle the string that is added into the log, all the current stats of the building
 		//year, month, day, hour:minute, coolHeat, 50, 53, 51, 54, cr1 temp, cr1 damper,-,-,-,-,-, edit, -, -, -
@@ -1243,7 +1084,8 @@ public class BMSMethods
 		out.append("\n");
 	
 		//set up a writer, that makes a new log file each day
-		File target = new File("C:\\Users\\BMS Machine\\Documents\\BMS Logs\\Temperature Logs\\"+ shortDate+" templog.txt");
+		//File target = new File("C:\\Users\\BMS Machine\\Documents\\BMS Logs\\Temperature Logs\\"+ shortDate+" templog.txt");
+		File target = new File(System.getProperty("user.home") + "\\Desktop\\BMS Logs\\" + currentDate +"\\BuildingStatus.txt");
 		BufferedWriter writer;
 		try 
 		{	
@@ -1273,20 +1115,12 @@ public class BMSMethods
 		{
 			System.out.println(e +"\n");
 			System.out.println("writer is having issues");
+			logInfo("logBuildingStatus is having issues","WARNING");
 		}
 		System.out.println("Updated the temperature log");
 	}
 
 
-	public void stopHVAC()
-	{
-		//simply turns off all HVAC machines
-        relayWrite(50, off);
-        relayWrite(51, off);
-        relayWrite(53, off);
-        relayWrite(54, off);
-
-    }
 	
 	
 	public void printInfo()
@@ -1299,7 +1133,6 @@ public class BMSMethods
         System.out.println("hotCold"+printCurrentRequest(primary)   +printCurrentRequest(secondary));
     }
 
-	
 
 
 	/**
@@ -1330,78 +1163,11 @@ public class BMSMethods
 			if(r.getRoomName().equals(name))
 				return r;
 		}
-		System.out.println("FIND ROOM FAILED "+name);
+		logInfo("Room not found! roomName = "+name,"WARNING");
 		return null;
 	}
 
-	/**
-	 * Blanket sets temps of all rooms to a desired number
-	 * @param list the list of rooms you want to set the temp of
-	 * @param input the number degrees you want to set to
-	 * */
-	public void setAllRoomTemps(Room[] list, int input)
-	{
-		for(Room r : list)
-		{
-			r.setTargetTemp(input);
-		}
-	}
 
-	/**
-	 *
-	 * */
-	public void setAllRoomsRequest(Room[] list, char request)
-	{
-		for(Room r : list)
-		{
-			r.setRequestState(request);
-		}
-	}
-	
-
-	public void allLightsOn()
-	{
-		try
-		{
-			relayWrite(CR1_Lights, "on");//CR1_Lights = 8
-			Thread.sleep(500);
-			relayWrite(BTH1_Power, "on");
-			Thread.sleep(500);
-			relayWrite(CR2_Lights, "on");//CR2_Lights
-			Thread.sleep(500);
-			relayWrite(BTH2_Power, "on");
-			Thread.sleep(500);
-			relayWrite(CR3_Lights, "on");
-			//LOG
-			System.out.println("allLightsOn");
-		}
-		catch (InterruptedException e)
-		{
-			System.err.println("allLightsOn error");
-			throw new RuntimeException(e);
-		}
-
-	}
-
-	public void allLightsOff()
-	{
-		try
-		{
-			BMSMethods.relayWrite(CR1_Lights, "off");//CR1_Lights = 8
-			Thread.sleep(500);
-			BMSMethods.relayWrite(CR2_Lights, "off");//CR2_Lights
-			Thread.sleep(500);
-			BMSMethods.relayWrite(CR3_Lights, "off");
-			//LOG
-			System.out.println("allLightsOff");
-
-		}
-		catch (InterruptedException e)
-		{
-            System.err.println("allLightsOff error");
-			throw new RuntimeException(e);
-        }
-    }
 
 
 }//big end

@@ -1,11 +1,8 @@
-import jssc.SerialPortException;
-
 import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-
 
 public class GUIController
 {
@@ -103,11 +100,58 @@ public class GUIController
 
     //TODO machine status to show more clearly when blue and red/orange
 
-    //TODO figure out fonts and stuff
+    /*
+    * TODO
+    *   BMSMainController
+    *   jdoc
+    *   neaten
+    *   warning removal
+    * logging
+    *
+    *   BMSMethods
+    *   Javadoc
+    *   neaten
+    *   warnings
+    * logging
+    *
+    *   ConditioningMethods
+    *   jdoc
+    * neaten
+    * warnings
+    * logging
+    *
+    * ConditioningMethods
+    * jdoc
+    * neaten
+    * warnings
+    * logging
+    *
+    * DebugGUI
+    * jdoc
+    * neaten
+    * warnings
+    * logging
+    * make the UI better
+    *
+    * GUIController
+    * jdoc
+    * neaten
+    * warnings
+    * logging
+    * setup the mainflag display, observer? listener?
+    *
+    * GUIHelperMethods
+    * jdoc
+    * neaten
+    * warnings
+    * logging
+    *
+    * Room COMPLETELY DONE
+    * */
 
-    //TODO redo logging
 
-    //TODO add a shortcut to make it easier for cleaning?
+
+
 
     public GUIController(BMSMethods bms){
 
@@ -182,9 +226,9 @@ public class GUIController
                     GUIHelperMethods.buttonDisabler(cr3LightsButton);
 
                     if(e.getStateChange() == ItemEvent.SELECTED)
-                        new GUIHelperMethods.allLightsOnWorker().execute();
+                        new GUIHelperMethods.allLightsOnWorker(bms).execute();
                     else if(e.getStateChange() == ItemEvent.DESELECTED)
-                        new GUIHelperMethods.allLightsOffWorker().execute();
+                        new GUIHelperMethods.allLightsOffWorker(bms).execute();
 
                 });
 
@@ -345,9 +389,9 @@ public class GUIController
                 GUIHelperMethods.buttonDisabler(cr1LightsButton);
 
                 if (e.getStateChange() == ItemEvent.SELECTED)
-                    new GUIHelperMethods.singleRoomLightsWorker(1, true, cr1LightsButton).execute();
+                    new GUIHelperMethods.singleRoomLightsWorker(1, true, cr1LightsButton, bms).execute();
                 else if(e.getStateChange() == ItemEvent.DESELECTED)
-                    new GUIHelperMethods.singleRoomLightsWorker(1, false, cr1LightsButton).execute();
+                    new GUIHelperMethods.singleRoomLightsWorker(1, false, cr1LightsButton, bms).execute();
 
             });
 
@@ -617,9 +661,9 @@ public class GUIController
                     GUIHelperMethods.buttonDisabler(cr2LightsButton);
 
                     if (e.getStateChange() == ItemEvent.SELECTED)
-                        new GUIHelperMethods.singleRoomLightsWorker(2, true, cr2LightsButton).execute();
+                        new GUIHelperMethods.singleRoomLightsWorker(2, true, cr2LightsButton, bms).execute();
                     else if(e.getStateChange() == ItemEvent.DESELECTED)
-                        new GUIHelperMethods.singleRoomLightsWorker(2, false, cr2LightsButton).execute();
+                        new GUIHelperMethods.singleRoomLightsWorker(2, false, cr2LightsButton, bms).execute();
 
                 });
 
@@ -882,9 +926,9 @@ public class GUIController
                     GUIHelperMethods.buttonDisabler(cr3LightsButton);
 
                     if(e.getStateChange() == ItemEvent.SELECTED)
-                        new GUIHelperMethods.singleRoomLightsWorker(3, true, cr3LightsButton).execute();
+                        new GUIHelperMethods.singleRoomLightsWorker(3, true, cr3LightsButton, bms).execute();
                     else if(e.getStateChange() == ItemEvent.DESELECTED)
-                        new GUIHelperMethods.singleRoomLightsWorker(3, false, cr3LightsButton).execute();
+                        new GUIHelperMethods.singleRoomLightsWorker(3, false, cr3LightsButton, bms).execute();
 
                 });
 
@@ -1199,8 +1243,9 @@ public class GUIController
                 debugOpenButton.addActionListener(_ ->
                 {
                    System.out.println("debug start");
+                   BMSMethods.logInfo("Starting Debug window","IMPORTANT");
                    BMSMainController.mainStatusFlag = "maintenance";
-                   new DebugGUI();
+                   new DebugGUI(bms);
                 });
 
 
@@ -1270,14 +1315,14 @@ public class GUIController
 
 
 
-
+        //update(bms);
 
         frame.setVisible(true);
 
     }
 
 
-    public void update(BMSMethods bms) throws SerialPortException, InterruptedException
+    public void update(BMSMethods bms)
     {
 
         //CR1 update cool/heat buttons
@@ -1396,24 +1441,29 @@ public class GUIController
 
 
         //HVAC machine state
-        if(BMSMethods.relayRead(50).equals("on"))
+        if(bms.relayRead(50).equals("on"))
             HVACMachine1Status.setText("Cool");
-        else if(BMSMethods.relayRead(51).equals("on"))
+        else if(bms.relayRead(51).equals("on"))
             HVACMachine1Status.setText("Heat");
         else
         {
             HVACMachine1Status.setText("None");
         }
 
-        if(BMSMethods.relayRead(53).equals("on"))
+        if(bms.relayRead(53).equals("on"))
             HVACMachine2Status.setText("Cool");
-        else if(BMSMethods.relayRead(54).equals("on"))
+        else if(bms.relayRead(54).equals("on"))
             HVACMachine2Status.setText("Heat");
         else
         {
             HVACMachine2Status.setText("None");
         }
 
+        if(BMSMainController.mainStatusFlag.equals("PURGING"))
+        {
+            HVACMachine1Status.setText("PURGE");
+            HVACMachine2Status.setText("PURGE");
+        }
 
 
     }
