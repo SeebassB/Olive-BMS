@@ -33,33 +33,7 @@ public class BMSMainController
 		//start up BMS
 		bms.portOpen();
 
-		//this is here in case the port is missing (USB is unplugged)
-		Object[] options;
-		while(!bms.relayBoard.isOpened())
-		{
-			BMSMethods.logInfo("PORT MISSING","WARNING");
-			options = SerialPortList.getPortNames();
 
-			if(options.length == 0)
-			{
-				BMSMethods.logInfo("NO PORTS IN LIST", "WARNING");
-			}
-			else if(options.length == 1)
-			{
-				BMSMethods.logInfo("Only one COM port found, trying "+options[0], "WARNING");
-				bms.setRelayBoard((SerialPort) options[0]);
-				bms.portOpen();
-
-			}
-			else
-			{
-				BMSMethods.logInfo("Multiple COM ports found, asking user","WARNING");
-				bms.setRelayBoard((SerialPort) JOptionPane.showInputDialog(null, "Choose", "Menu", JOptionPane.PLAIN_MESSAGE, null, options, options[0]));
-				bms.portOpen();
-			}
-
-			Thread.sleep(2000);
-		}
 
 		BMSMethods.logInfo("Beginning of BMSMainController","IMPORTANT");
 
@@ -73,6 +47,12 @@ public class BMSMainController
 		while(!mainStatusFlag.equalsIgnoreCase( "QUIT"))//while hvacThreadStatus is not -1 which signifies
 		{
 			BMSMethods.logInfo("Start BMS main loop","INFO");
+
+			if(!bms.relayBoard.isOpened())
+			{
+				BMSMethods.logInfo("PORT ERROR, CABLE DISCONNECTED?", "WARNING");
+				portCheck();
+			}
 
 			bms.refreshAllRooms();
 			gui.update(bms);
@@ -114,5 +94,44 @@ public class BMSMainController
 		BMSMethods.logInfo("End of BMSMainController","IMPORTANT");
 		bms.portClose();
 	}//main end
-	
+
+
+	/**
+	 * Check to see if the port is still connected.
+	 * If not then enter a while loop until a port is selected.
+	 * Presents a dialog box that will hopefully aid in the rectification of the issue.
+	 * */
+	public static void portCheck() throws InterruptedException {
+		//this is here in case the port is missing (USB is unplugged)
+		Object[] options;
+		while(!bms.relayBoard.isOpened())
+		{
+			BMSMethods.logInfo("RUNNING PORT FIXER","WARNING");
+			options = SerialPortList.getPortNames();
+
+			if(options.length == 0)
+			{
+				BMSMethods.logInfo("NO PORTS IN LIST", "WARNING");
+				Thread.sleep(3 * 1000);
+			}
+			else if(options.length == 1)
+			{
+				BMSMethods.logInfo("Only one COM port found, trying "+options[0], "WARNING");
+				bms.setRelayBoard((SerialPort) options[0]);
+				bms.portOpen();
+
+			}
+			else
+			{
+				BMSMethods.logInfo("Multiple COM ports found, asking user","WARNING");
+				bms.setRelayBoard((SerialPort) JOptionPane.showInputDialog(null, "Choose", "Menu", JOptionPane.PLAIN_MESSAGE, null, options, options[0]));
+				bms.portOpen();
+
+			}
+			if(bms.relayBoard.isOpened())
+				return;
+		}
+		return;
+	}
+
 }

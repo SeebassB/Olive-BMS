@@ -102,51 +102,12 @@ public class GUIController
 
     /*
     * TODO
-    *   BMSMainController
-    *   jdoc
-    *   neaten
-    *   warning removal
-    * logging
-    *
-    *   BMSMethods
-    *   Javadoc
-    *   neaten
-    *   warnings
-    * logging
-    *
-    *   ConditioningMethods
-    *   jdoc
-    * neaten
-    * warnings
-    * logging
-    *
-    * ConditioningMethods
-    * jdoc
-    * neaten
-    * warnings
-    * logging
-    *
     * DebugGUI
     * jdoc
     * neaten
     * warnings
     * logging
     * make the UI better
-    *
-    * GUIController
-    * jdoc
-    * neaten
-    * warnings
-    * logging
-    * setup the mainflag display, observer? listener?
-    *
-    * GUIHelperMethods
-    * jdoc
-    * neaten
-    * warnings
-    * logging
-    *
-    * Room COMPLETELY DONE
     * */
 
 
@@ -1321,7 +1282,10 @@ public class GUIController
 
     }
 
-
+    /**
+     * Refresh the GUI
+     * Update all temperatures and current HVAC statuses
+     * */
     public void update(BMSMethods bms)
     {
 
