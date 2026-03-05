@@ -27,7 +27,7 @@ public class BMSMainController
         }
     }
 
-    public static void main(String[] args) throws InterruptedException, IOException
+    public static void main(String[] args) throws InterruptedException
 	{
 
 		//start up BMS
@@ -64,11 +64,11 @@ public class BMSMainController
 					//UPDATE GUI
                     cond.runConditioning(bms);
 					bms.printInfo();
-					Thread.sleep(1 * 60 * 1000);//sleep this main thread for X time, one minute
+					Thread.sleep(60 * 1000);//sleep this main thread for X time, one minute
 					gui.update(bms);
-					Thread.sleep(1 * 60 * 1000);
+					Thread.sleep(60 * 1000);
 					gui.update(bms);
-					Thread.sleep(1 * 60 * 1000);
+					Thread.sleep(60 * 1000);
 					gui.update(bms);
 					break;
 
@@ -131,7 +131,5 @@ public class BMSMainController
 			if(bms.relayBoard.isOpened())
 				return;
 		}
-		return;
-	}
-
+	}//portCheck ending
 }

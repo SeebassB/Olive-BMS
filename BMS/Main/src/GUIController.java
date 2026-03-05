@@ -98,22 +98,6 @@ public class GUIController
 
     static boolean itemListenerFlag = false;
 
-    //TODO machine status to show more clearly when blue and red/orange
-
-    /*
-    * TODO
-    * DebugGUI
-    * jdoc
-    * neaten
-    * warnings
-    * logging
-    * make the UI better
-    * */
-
-
-
-
-
     public GUIController(BMSMethods bms){
 
         UIManager.put("ToggleButton.select", onColor);

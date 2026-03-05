@@ -485,7 +485,7 @@ public class BMSMethods
 		catch( InterruptedException e)
 		{
 			logInfo("Studio 3 Launch Interrupted!","WARNING");
-			System.out.println(e);
+			e.printStackTrace();
 		}
 		
 	}
