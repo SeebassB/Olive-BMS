@@ -98,61 +98,6 @@ public class GUIController
 
     static boolean itemListenerFlag = false;
 
-    //TODO machine status to show more clearly when blue and red/orange
-
-    /*
-    * TODO
-    *   BMSMainController
-    *   jdoc
-    *   neaten
-    *   warning removal
-    * logging
-    *
-    *   BMSMethods
-    *   Javadoc
-    *   neaten
-    *   warnings
-    * logging
-    *
-    *   ConditioningMethods
-    *   jdoc
-    * neaten
-    * warnings
-    * logging
-    *
-    * ConditioningMethods
-    * jdoc
-    * neaten
-    * warnings
-    * logging
-    *
-    * DebugGUI
-    * jdoc
-    * neaten
-    * warnings
-    * logging
-    * make the UI better
-    *
-    * GUIController
-    * jdoc
-    * neaten
-    * warnings
-    * logging
-    * setup the mainflag display, observer? listener?
-    *
-    * GUIHelperMethods
-    * jdoc
-    * neaten
-    * warnings
-    * logging
-    *
-    * Room COMPLETELY DONE
-    * */
-
-
-
-
-
     public GUIController(BMSMethods bms){
 
         UIManager.put("ToggleButton.select", onColor);
@@ -1321,7 +1266,10 @@ public class GUIController
 
     }
 
-
+    /**
+     * Refresh the GUI
+     * Update all temperatures and current HVAC statuses
+     * */
     public void update(BMSMethods bms)
     {
 

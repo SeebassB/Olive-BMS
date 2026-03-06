@@ -371,6 +371,9 @@ public class GUIHelperMethods
             this.bms = bms;
         }
 
+        /**
+         * Turns off all rooms power and lights
+         * */
         protected Void doInBackground()
         {
 
@@ -432,6 +435,10 @@ public class GUIHelperMethods
             this.bms = bms;
         }
 
+        /**
+         * Turns on the lights in a room.
+         * Additionally turns on/off allLights button if all rooms are on/off
+         * */
         protected Void doInBackground() throws InterruptedException {
             int currentRoomLights = 0;
             int boothLights       = 0;
@@ -516,6 +523,10 @@ public class GUIHelperMethods
             this.powerButton = powerButton;
         }
 
+        /**
+         * Power on a single room. This also turns on the lights for the room.
+         * Additionally also checks to see if all rooms are on or off to adjust the allLights/allPower button.
+         * */
         protected Void doInBackground()
         {
 
@@ -587,7 +598,9 @@ public class GUIHelperMethods
         }
     }
 
-
+    /**
+     * Used to make the border of your selected button a different color
+     * */
     private static class myFocus implements FocusListener
     {
         JButton button;
