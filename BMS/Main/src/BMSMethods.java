@@ -91,7 +91,7 @@ public class BMSMethods
 			new Room("CR 3", 'n', 17, "http://192.168.1.209/getData.json", Damp_CR3),//2
 
 			new Room("Booth 1",  'n',  16, "http://192.168.1.208/getData.json", Damp_BTH1),//3
-			new Room("Booth 2",  'n',  16, "http://192.168.1.212/getData.json", Damp_BTH2),//4
+			new Room("Booth 2",  'n',  16, "http://192.168.1.252/getData.json", Damp_BTH2),//4
 			new Room("Booth 3",  'n',  16, "http://192.168.1.214/getData.json", Damp_BTH3),//5
 
 			new Room("Machine Room 1", 'c', 13, "http://192.168.1.206/getData.json", Damp_MR1),//6
@@ -104,7 +104,7 @@ public class BMSMethods
 			//  Room Name, HotCold, percentage, IP, damper number, BMS, damperPosition
 			new Room("Kitchen",     'n', 13, "http://192.168.1.213/getData.json", Damp_Lounge),//0
 			new Room("Hallway",     'n', 13, "http://192.168.1.250/getData.json", Damp_Hall),//1
-			new Room("Phone Booth", 'n', 9,  "http://192.168.1.252/getData.json", Damp_Phone) //2
+			new Room("Phone Booth", 'n', 9,  "http://192.168.1.212/getData.json", Damp_Phone) //2
 		};
 
 		allRoomsList = addRoomLists(primary, secondary);
@@ -1167,8 +1167,30 @@ public class BMSMethods
 		return null;
 	}
 
+	/**
+	 * Check on every room in primary to make sure it isnt at an EXTREME level
+	 * Less than 60 or greater than 85 are considered extreme
+	 * */
+	public void extremeTempCheck()
+	{
+		boolean out = false;
 
+		for(Room r: primary)
+		{
+			if(r.getCurrentTemp() < 60)
+			{
+				r.setTargetTemp(74);
+				r.setRequestState('h');
+				logInfo(r.getRoomName() + " HAS TRIGGERED EXTREME TEMP CHECK HEAT AT "+r.getCurrentTemp(),"WARNING");
+			}
+			else if(r.getCurrentTemp() < 85)
+			{
+				r.setTargetTemp(74);
+				r.setRequestState('c');
+				logInfo(r.getRoomName() + " HAS TRIGGERED EXTREME TEMP CHECK COOL AT "+r.getCurrentTemp(),"WARNING");
+			}
+		}
+	}
 
-
-}//big end
+}//main class end
 

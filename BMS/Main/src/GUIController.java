@@ -361,10 +361,7 @@ public class GUIController
             });
 
 
-
         //booth  1--------------------------------------------------------------------------------------------------
-
-
 
         //room name label
         JLabel bth1NameLabel = GUIHelperMethods.createLabel("Booth 1", labelXLevel, bth1YLevel+30, 80, 40, lineBorder2, serif, Color.GRAY, Color.BLACK);
@@ -473,10 +470,7 @@ public class GUIController
                 });
 
 
-
         //CR2-------------------------------------------------------------------------------------
-
-
 
         //room name label
         JLabel cr2NameLabel = GUIHelperMethods.createLabel("<html>Control<br>Room 2</html>", labelXLevel, cr2YLevel+15, 80, 60, lineBorder2, serif, Color.GRAY, Color.BLACK);
@@ -522,7 +516,6 @@ public class GUIController
                     GUIHelperMethods.updateRoomCoolHeatButtons(bms, "CR 2", cr2HeatButton, cr2CoolButton, cr2ConditioningOffButton);
                     System.out.println("Current st2 conditioning set to none");
                 });
-
 
 
         // cr2 information box

@@ -566,34 +566,37 @@ public class GUIHelperMethods
                 if(room == 3)
                     bms.shutdownStudio3();
 
+                bms.findRoom("CR "+room).setCoolHeat('n');
+                bms.findRoom("Booth "+room).setCoolHeat('n');
                 new singleRoomLightsWorker(room, false, lightsButton, bms).execute();
-
-                int runningOnCount = 0;
-
-                if(GUIController.cr1PowerButton.isSelected())
-                    runningOnCount++;
-                if(GUIController.cr2PowerButton.isSelected())
-                    runningOnCount++;
-                if(GUIController.cr3PowerButton.isSelected())
-                    runningOnCount++;
-
-
-                if(runningOnCount == 3)
-                {
-                    GUIHelperMethods.buttonEnabler(GUIController.allPowerButton, true, "Power");
-                    GUIHelperMethods.buttonEnabler(GUIController.allLightsButton, true, "Lights");
-                }
-                else if(runningOnCount == 0)
-                {
-                    GUIHelperMethods.buttonEnabler(GUIController.allPowerButton, false, "Power");
-                    GUIHelperMethods.buttonEnabler(GUIController.allLightsButton, false, "Lights");
-                }
-
-                buttonEnabler(powerButton, false, "Power");
-                GUIController.itemListenerFlag =false;
-
-
             }
+
+            int runningOnCount = 0;
+
+            if(GUIController.cr1PowerButton.isSelected())
+                runningOnCount++;
+            if(GUIController.cr2PowerButton.isSelected())
+                runningOnCount++;
+            if(GUIController.cr3PowerButton.isSelected())
+                runningOnCount++;
+
+
+            if(runningOnCount == 3)//all 3 rooms are on
+            {
+                GUIHelperMethods.buttonEnabler(GUIController.allPowerButton, true, "Power");
+                GUIHelperMethods.buttonEnabler(GUIController.allLightsButton, true, "Lights");
+            }
+            else if(runningOnCount == 0)//all rooms are off
+            {
+                GUIHelperMethods.buttonEnabler(GUIController.allPowerButton, false, "Power");
+                GUIHelperMethods.buttonEnabler(GUIController.allLightsButton, false, "Lights");
+            }
+
+            buttonEnabler(powerButton, false, "Power");
+            GUIController.itemListenerFlag =false;
+
+
+
             return null;
         }
     }

@@ -55,6 +55,7 @@ public class BMSMainController
 			}
 
 			bms.refreshAllRooms();
+			bms.extremeTempCheck();
 			gui.update(bms);
 
 			BMSMethods.logInfo("BMSController status: "+mainStatusFlag,"INFO");
