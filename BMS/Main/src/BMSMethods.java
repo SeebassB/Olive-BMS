@@ -613,7 +613,7 @@ public class BMSMethods
 
 
 		//set up needed variables to use
-		double out;
+		double out = -1;
 		StringBuilder pulledJSON = new StringBuilder();
 		String found = "";
 		int cp;
@@ -624,7 +624,8 @@ public class BMSMethods
 			pulledJSON.append((char) cp);
 			
 		}
-				
+		is.close();
+/*
 		//look for the "ext sensor" which denotes the temp will be found 23-28 char after
 		for(int j=0;j<pulledJSON.length()-10;j++)
 		{
@@ -632,13 +633,31 @@ public class BMSMethods
 				found = pulledJSON.substring(j+23,j+28);
 			if(pulledJSON.substring(j,j+8).equalsIgnoreCase("sensor 2"))
 					found = pulledJSON.substring(j+19,j+23);
-		}//end for
 
-		//parse the temp found above from string to double and output it
-		out = Double.parseDouble(found);
-		is.close();
-		
-		
+		}//end for
+*/
+		if(pulledJSON.indexOf("ext sensor") != -1)
+		{
+			out = Double.parseDouble(pulledJSON.substring(1390, 1395));
+			System.out.println("ext sensor="+out);
+		}
+		else if(pulledJSON.indexOf("sensor 2") != -1)
+		{
+			out = Double.parseDouble(pulledJSON.substring(650, 655));
+			System.out.println("sensor 2="+out);
+		}
+		else if(pulledJSON.indexOf("schema") != -1)//contains
+		{
+			found = pulledJSON.substring(1650, 1655);
+			System.out.println("schema="+out);
+			//these new ones are in centigrade for some reason
+
+			out = Double.parseDouble(found);
+			out = out * 9;
+			out = out / 5;
+			out = out + 32;//out has been converted from C to F
+		}
+
 		return out;
 	}
 	

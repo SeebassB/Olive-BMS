@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/BMS/BMS.iml" filepath="$PROJECT_DIR$/BMS/BMS.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/Olive-BMS.iml" filepath="$PROJECT_DIR$/.idea/Olive-BMS.iml" />
       <module fileurl="file://$PROJECT_DIR$/TestTools/TestTools.iml" filepath="$PROJECT_DIR$/TestTools/TestTools.iml" />
     </modules>
   </component>

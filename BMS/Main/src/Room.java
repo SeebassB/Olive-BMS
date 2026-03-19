@@ -17,6 +17,7 @@ public class Room
 	char requestState;//how the room is feeling, -1 is satisfied, 0 is cooling, 1 is heating
 	char previousState;
 
+
 	/**
 	 * Represents a room in the building
 	 * @param inName the name of the room
