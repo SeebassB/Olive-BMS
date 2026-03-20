@@ -24,8 +24,11 @@ public class DebugGUI
         JLabel title = GUIHelperMethods.createLabel("MAINTENANCE MODE", 0, 0, 350, 40, null, new Font("Ubuntu", Font.BOLD, 25), null, null);
         frame.add(title);
 
-        JLabel titleExtras = GUIHelperMethods.createLabel("<html>This window is to help with maintenance.\nIt allows you to manually change the relays while pausing the HVAC cycles.\n" +
-                                                               " you will still be able to see the temperatures update on the main GUI.\nSOME OF THESE MAY BE INVERTED, IDK WHICH</html>",
+        JLabel titleExtras = GUIHelperMethods.createLabel("""
+                        <html>This window is to help with maintenance.
+                        It allows you to manually change the relays while pausing the HVAC cycles.
+                         you will still be able to see the temperatures update on the main GUI.
+                        SOME OF THESE MAY BE INVERTED, IDK WHICH</html>""",
                                                                 0, 40, 300, 80, null, null, null, null);
         frame.add(titleExtras);
 

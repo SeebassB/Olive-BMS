@@ -123,7 +123,7 @@ public class Room
 	 * Adjusts this room's targetCutoffTemp based on CUTOFF_AMOUNT up or down<br>
 	 * Used when adjusting the temp of the room
 	 * */
-	private void fixTargetCutoffTemp()
+    void fixTargetCutoffTemp()
 	{
 		if(coolHeat == 'c' || coolHeat == 'C' || coolHeat == 'n')
 			targetCutoffTemp = targetTemp + CUTOFF_AMOUNT;

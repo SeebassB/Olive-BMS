@@ -2,8 +2,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 
 class RoomTest
@@ -101,31 +103,105 @@ class RoomTest
         assertEquals("off", dummyRoom.getDamperState());
     }
 
-    @org.junit.jupiter.api.Test
-    void getDamperNumber() {
-    }
-
-    @org.junit.jupiter.api.Test
-    void setRequestState() {
+    @Test
+    void getDamperNumber()
+    {
+        assertEquals(0, dummyRoom.getDamperNumber());
     }
 
     @Test
-    void getRequestState() {
+    void setRequestState()
+    {
+        dummyRoom.setRequestState('H');
+        assertEquals('H', dummyRoom.getRequestState());
     }
 
     @Test
-    void setPreviousState() {
+    void getRequestState()
+    {
+        //default is none
+        assertEquals('n', dummyRoom.getRequestState());
     }
 
     @Test
-    void getPreviousState() {
+    void setPreviousState()
+    {
+        dummyRoom.setPreviousState('h');
+        assertEquals('h', dummyRoom.getPreviousState());
     }
 
     @Test
-    void updateTemp() {
+    void getPreviousState()
+    {
+        assertEquals('n', dummyRoom.getPreviousState());
     }
 
     @Test
-    void updateRequestState() {
+    void fixTargetCutoffTempC()
+    {
+        //default target temp is 74
+        dummyRoom.setCoolHeat('C');
+        dummyRoom.fixTargetCutoffTemp();
+        assertEquals(75.5, dummyRoom.getTargetCutoffTemp());
+    }
+
+    @Test
+    void fixTargetCutoffTempc()
+    {
+        //default target temp is 74
+        dummyRoom.setCoolHeat('c');
+        dummyRoom.fixTargetCutoffTemp();
+        assertEquals(75.5, dummyRoom.getTargetCutoffTemp());
+    }
+
+    @Test
+    void fixTargetCutoffTempn()
+    {
+        //default target temp is 74
+        dummyRoom.setCoolHeat('n');
+        dummyRoom.fixTargetCutoffTemp();
+        assertEquals(75.5, dummyRoom.getTargetCutoffTemp());
+    }
+
+    @Test
+    void fixTargetCutoffTemph()
+    {
+        //default target temp is 74
+        dummyRoom.setCoolHeat('h');
+        dummyRoom.fixTargetCutoffTemp();
+        assertEquals(72.5, dummyRoom.getTargetCutoffTemp());
+    }
+
+    @Test
+    void fixTargetCutoffTempH()
+    {
+        //default target temp is 74
+        dummyRoom.setCoolHeat('H');
+        dummyRoom.fixTargetCutoffTemp();
+        assertEquals(75.5, dummyRoom.getTargetCutoffTemp());
+    }
+
+    @Test
+    void updateTemp()
+    {
+        Room mockRoom = spy(new Room("mock", 'c', 10, "test", 0));
+
+        try (MockedStatic<BMSMethods> mockedBMS = mockStatic(BMSMethods.class))
+        {
+            mockedBMS.when(() -> BMSMethods.readSensor("test")).thenReturn(80.0);
+
+            mockRoom.updateTemp();
+
+            mockedBMS.verify(() -> BMSMethods.readSensor("test"));
+            verify(mockRoom).fixTargetCutoffTemp();
+
+        }
+
+    }
+
+    @Test
+    void updateRequestState()
+    {
+
     }
 }

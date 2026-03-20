@@ -18,6 +18,8 @@ import java.util.Objects;
 
 import jssc.SerialPort;
 import jssc.SerialPortException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class BMSMethods
 {
@@ -599,11 +601,13 @@ public class BMSMethods
 	{
 		
 		InputStream is;
+		String jsonText;
 		
 		try {
 		
 		//preset IP for the machine room thermometer, should never change
 		 is = new URI(inURL).toURL().openStream();
+		 jsonText = new String(is.readAllBytes(), StandardCharsets.UTF_8);
 		}
 		catch (IOException | URISyntaxException e)
 		{
@@ -612,53 +616,61 @@ public class BMSMethods
 			return 73;
 		}
 
-        //set up needed variables to use
-		double out = -1;
-		StringBuilder pulledJSON = new StringBuilder();
-		String found = "";
-		int cp;
-		
-		//transfer the JSON data from the is to a usable string
-		while((cp = is.read()) != -1)
-		{
-			pulledJSON.append((char) cp);
-			
-		}
 		is.close();
-/*
-		//look for the "ext sensor" which denotes the temp will be found 23-28 char after
-		for(int j=0;j<pulledJSON.length()-10;j++)
-		{
-			if(pulledJSON.substring(j,j+10).equalsIgnoreCase("ext sensor"))
-				found = pulledJSON.substring(j+23,j+28);
-			if(pulledJSON.substring(j,j+8).equalsIgnoreCase("sensor 2"))
-					found = pulledJSON.substring(j+19,j+23);
 
-		}//end for
-*/
-		if(pulledJSON.indexOf("ext sensor") != -1)
-		{
-			out = Double.parseDouble(pulledJSON.substring(1390, 1395));
-			System.out.println("ext sensor="+out);
-		}
-		else if(pulledJSON.indexOf("sensor 2") != -1)
-		{
-			out = Double.parseDouble(pulledJSON.substring(650, 655));
-			System.out.println("sensor 2="+out);
-		}
-		else if(pulledJSON.indexOf("schema") != -1)//contains
-		{
-			found = pulledJSON.substring(1650, 1655);
-			System.out.println("schema="+out);
-			//these new ones are in centigrade for some reason
 
-			out = Double.parseDouble(found);
-			out = out * 9;
-			out = out / 5;
-			out = out + 32;//out has been converted from C to F
-		}
+		try
+		{
+			JSONObject pulledJSON = new JSONObject(jsonText);
 
-		return out;
+			if(pulledJSON.has("general") && pulledJSON.has("digitalSensors"))
+			{
+				JSONArray sensors = pulledJSON.getJSONArray("digitalSensors");
+				for (int i = 0; i < sensors.length(); i++) {
+					JSONObject sensor = sensors.getJSONObject(i);
+					String label = sensor.optString("label", "");
+
+					if (label.equalsIgnoreCase("Ext Sensor 1")) {
+						double temp = sensor.getDouble("temperature");
+						System.out.println(inURL + " " + temp);
+						temp = ((temp*9)/5)+32;//convert C to F
+						return temp;
+					}
+				}
+			}
+
+			else if(pulledJSON.has("sensor"))
+			{
+				JSONArray sensors = pulledJSON.getJSONArray("sensor");
+
+				for (int i = 0; i < sensors.length(); i++) {
+					JSONObject sensor = sensors.getJSONObject(i);
+					String label = sensor.optString("label", "");
+
+					// Format 2 target
+					if (label.equalsIgnoreCase("Ext Sensor 1")) {
+						double tempC = Double.parseDouble(sensor.getString("tempc"));
+						System.out.println(inURL + " " + tempC);
+						return tempC;
+					}
+
+					// Format 3 target
+					if (label.equalsIgnoreCase("Sensor 2")) {
+						double tempC = Double.parseDouble(sensor.getString("tempc"));
+						System.out.println(inURL + " " + tempC);
+						return tempC;
+					}
+				}
+			}
+
+		}//try end
+		catch(Exception e)
+		{
+			System.out.println("IOException error in readSensor for "+inURL);
+			logInfo("Sensor missing! URL= " + inURL, "WARNING");
+			return 73;
+		}
+		return 73;
 	}
 	
 
