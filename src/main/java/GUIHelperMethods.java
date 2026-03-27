@@ -411,6 +411,7 @@ public class GUIHelperMethods
             for(Room r : bms.getPrimary())
             {
                 r.setRequestState('n');
+                r.setTargetTemp(74);
             }
 
 
@@ -567,7 +568,9 @@ public class GUIHelperMethods
                     bms.shutdownStudio3();
 
                 bms.findRoom("CR "+room).setCoolHeat('n');
+                bms.findRoom("CR "+room).setTargetTemp(74);
                 bms.findRoom("Booth "+room).setCoolHeat('n');
+                bms.findRoom("Booth "+room).setTargetTemp(74);
                 new singleRoomLightsWorker(room, false, lightsButton, bms).execute();
             }
 

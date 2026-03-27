@@ -186,6 +186,12 @@ public class Room
 			else
 				setRequestState('n');
 		}
+		else//this is when coolheat = n
+		{
+			setRequestState('n');
+		}
+
+
 		BMSMethods.logInfo(" UpdateRequestState for room " + roomName + " request state set to "+ requestState, "DEBUG");
 	}
 

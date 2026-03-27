@@ -837,10 +837,10 @@ public class BMSMethods
 		//make an arraylist to hold the non machine room rooms
 		ArrayList<Room> sansMRList = new ArrayList<>();
 		
-		//go through all lists and if the room is specifically "MR1" or "MR2" then add it to the arraylist
+		//go through primary and returns a list of primary without MRs
 		for(Room i : primary)
 		{
-			if(!i.roomName.equalsIgnoreCase("Machine Room 1") && !i.roomName.equalsIgnoreCase("Machine Room 2"))
+			if(!i.roomName.contains("Machine"))
 			{	
 				sansMRList.add(i);
 			}
