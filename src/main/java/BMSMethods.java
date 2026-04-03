@@ -16,8 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
-import jssc.SerialPort;
-import jssc.SerialPortException;
+import com.fazecast.jSerialComm.SerialPort;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -70,7 +69,7 @@ public class BMSMethods
 	final int Damp_Out_Straight = 34;//Damper for the outside dumping, the straight pipe
 	final int Damp_Out_Angle    = 35;//damper for the outside dumping, the angled pipe
 	
-	SerialPort relayBoard = new SerialPort("COM6");
+	SerialPort relayBoard = SerialPort.getCommPort("COM6");
 	
 	final static String on = "on";
 	final static String off = "off";
@@ -83,7 +82,7 @@ public class BMSMethods
 	
 	//----------------------------------------------------------------------------------------------
 
-	public BMSMethods() throws SerialPortException, InterruptedException
+	public BMSMethods() throws InterruptedException
 	{
 
 		primary = new Room[]
@@ -204,27 +203,15 @@ public class BMSMethods
 	 * */
 	public void relayWrite(int inRelay, String onoff)
 	{
-		try
-		{
-			//process the inRelay number since it has to be formatted into X0 if less than 10
-			String number = "";
-			if (inRelay < 10)
-				number = "0" + inRelay;
-			else {
-				number += inRelay;
-			}
-			//send the command to the port, then tell the log it happened
-			this.relayBoard.writeString("relay " + onoff.toLowerCase() + " " + number + "\r");
-			Thread.sleep(100);
-			this.relayBoard.purgePort(SerialPort.PURGE_RXCLEAR & SerialPort.PURGE_TXCLEAR);
+		//add a 0 to the relay number if less than 10, necessary for the relayboard
+		String relayNumber = (inRelay < 10) ? "0"+inRelay : String.valueOf(inRelay);
 
-			logInfo("Relay " + number + " set to " + onoff + ". ", "DEBUG");
-		}
-		catch(SerialPortException | InterruptedException e)
-		{
-			logInfo("Error in relayWrite, tried to write to relay "+inRelay, "ERROR");
-			e.printStackTrace();
-		}
+		//send the command to the port, then tell the log it happened
+		String command = "relay " + onoff.toLowerCase() + " " + relayNumber + "\r";
+		byte[] commandBytes = command.getBytes(StandardCharsets.UTF_8);
+		this.relayBoard.writeBytes(commandBytes, commandBytes.length);
+
+		logInfo("Relay " + relayNumber + " set to " + onoff + ". ", "DEBUG");
 	}
 
 	/**
@@ -239,36 +226,33 @@ public class BMSMethods
 
 		String out;
 
-			//process the inRelay number since it has to be formatted into X0 if less than 10
-			String number = "";
-			if (inRelay < 10)
-				number = "0" + inRelay;
-			else {
-				number += inRelay;
-			}
+		try
+		{
 
-		try {
-			//send the command to the port, then tell the log it happened
-			relayBoard.purgePort(SerialPort.PURGE_RXCLEAR & SerialPort.PURGE_TXCLEAR);
+			//add a 0 to the relay number if less than 10, necessary for the relayboard
+			String relayNumber = (inRelay < 10) ? "0"+inRelay : String.valueOf(inRelay);
 
-			relayBoard.writeString("relay read " + number + "\r");
+			String command = "relay read " + relayNumber + "\r";
+			byte[] commandBytes = command.getBytes(StandardCharsets.UTF_8);
+			this.relayBoard.writeBytes(commandBytes, commandBytes.length);
+
 			Thread.sleep(100);
-			relayBoard.purgePort(SerialPort.PURGE_RXCLEAR & SerialPort.PURGE_TXCLEAR);
 
-			String relayReadResult = relayBoard.readString();
-			//System.out.println("RESULT IN METHOD\n"+relayReadResult+"\n---------------");
+			byte[] answer = new byte[1024];
+			int bytesReadNumber = this.relayBoard.readBytes(answer, answer.length);
+			String relayReadResult = (bytesReadNumber > 0) ? new String(answer, 0, bytesReadNumber) : "";
 			out = formatOutput(relayReadResult);
-			logInfo("Relay " + number + " reads " + out + "  .", "INFORMATION");
+			logInfo("Relay " + relayNumber + " reads " + out + "  .", "INFORMATION");
+
+		}
+		catch (InterruptedException e)
+		{
+			logInfo("RELAY READ FAIL, tried to read relay #" + inRelay, "WARNING");
+			throw new RuntimeException(e);
 		}
 
-		 catch (SerialPortException | InterruptedException e)
-		 {
 
-			 throw new RuntimeException(e);
-        }
-
-
-        return out;
+		return out;
 	}	
 	
 	/**
@@ -552,42 +536,45 @@ public class BMSMethods
 	/** 
 	 * Opens the port, the connection between the program and the relay board.
 	 * */
-	public void portOpen()
+	public boolean portOpen()
 	{
 		logInfo("Starting portOpen","DEBUG");
 
-		try
-		{
-			//attempt to open relayBoard
-			if(!relayBoard.isOpened())
-				relayBoard.openPort();
+		boolean out = false;
 
-			//success message
-			logInfo("portOpen success", "IMPORTANT");
-		}
-		catch (SerialPortException e) 
+		//attempt to open relayBoard
+		if(!relayBoard.isOpen())
 		{
-			e.printStackTrace();
-			logInfo("portOpen failed", "WARNING");
+			out = relayBoard.openPort();
 		}
+
+		if(out)
+			logInfo("portOpen success", "IMPORTANT");//success message
+		if(!out)
+			logInfo("portOpen failure", "WARNING");
+
+		return out;
 	}
 		
 	/**
 	 * Closes the port, run at the end of the program ,unsure if necessary.
 	 */	
-	public void portClose()
+	public boolean portClose()
 	{
 		logInfo("portClose starting", "DEBUG");
-		try 
+		boolean out = false;
+
+		if(relayBoard != null && relayBoard.isOpen())
 		{
-			relayBoard.closePort();
+			out = relayBoard.closePort();
+		}
+
+		if(out)
 			logInfo("portClose success", "IMPORTANT");
-		}
-		catch (SerialPortException e) 
-		{
+		if(!out)
 			logInfo("Closure of serial port failed, might not have been open, not necessarily bad.", "DEBUG");
-		}
-		logInfo("Port successfully closed!", "DEBUG");
+
+		return out;
 	}
 	
 	/**

@@ -125,9 +125,9 @@ public class Room
 	 * */
     void fixTargetCutoffTemp()
 	{
-		if(coolHeat == 'c' || coolHeat == 'C' || coolHeat == 'n')
+		if(coolHeat == 'c' || coolHeat == 'n')
 			targetCutoffTemp = targetTemp + CUTOFF_AMOUNT;
-		else if(coolHeat == 'h' || coolHeat == 'H')
+		else if(coolHeat == 'h')
 			targetCutoffTemp = targetTemp - CUTOFF_AMOUNT;
 		BMSMethods.logInfo("Fixing temp for "+ roomName +" to "+targetCutoffTemp, "DEBUG");
 	}
@@ -165,10 +165,13 @@ public class Room
 	 * request H = below cutoff<br>
 	 * request h = below target and above cutoff<br>
 	 * request n = nothing
+	 * <p>
+	 * FOR COOLHEAT = n<br>
+	 * request any = n
 	 */
 	public void updateRequestState()
 	{
-		if(coolHeat == 'c' || coolHeat == 'C')
+		if(coolHeat == 'c')
 		{
 			if (currentTemp >= targetCutoffTemp)
 				setRequestState('C');
@@ -177,7 +180,7 @@ public class Room
 			else
 				setRequestState('n');
 		}
-		else if(coolHeat == 'h' || coolHeat == 'H')
+		else if(coolHeat == 'h')
 		{
 			if(currentTemp <= targetCutoffTemp)
 				setRequestState('H');
@@ -186,7 +189,7 @@ public class Room
 			else
 				setRequestState('n');
 		}
-		else//this is when coolheat = n
+		else//  coolheat = n
 		{
 			setRequestState('n');
 		}

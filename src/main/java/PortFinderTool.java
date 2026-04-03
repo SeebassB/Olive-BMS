@@ -1,5 +1,4 @@
-import jssc.SerialPortList; //import jssc SerialPortList
-
+import com.fazecast.jSerialComm.SerialPort;
 import java.util.Scanner;
 
 public class PortFinderTool 
@@ -11,7 +10,7 @@ public class PortFinderTool
 		while(!lineIn.equals("quit"))
 		{
 			//make a list of ports
-        	String[] portNames = SerialPortList.getPortNames();
+        	SerialPort[] portNames = SerialPort.getCommPorts();
 	
 			System.out.println("Here's a list of all of the serial ports\n----------");
 			//detect if the list of ports is 0 and send a message saying no ports
@@ -21,11 +20,12 @@ public class PortFinderTool
 			}
 
 			//run through the list of serial ports and print them out
-        	for (String portName : portNames)
+        	for (SerialPort port : portNames)
 			{
-            	System.out.println(portName);
+            	System.out.println(port.toString());
         	}
 			lineIn = scanner.nextLine();
 		}
 	}
 }
+ 
