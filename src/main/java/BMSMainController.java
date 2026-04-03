@@ -1,8 +1,7 @@
 import java.util.Objects;
 
-import jssc.SerialPort;
-import jssc.SerialPortException;
-import jssc.SerialPortList;
+import com.fazecast.jSerialComm.SerialPort;
+
 
 import javax.swing.*;
 
@@ -18,7 +17,7 @@ public class BMSMainController
 		{
             bms = new BMSMethods();
         }
-		catch (SerialPortException | InterruptedException e)
+		catch (InterruptedException e)
 		{
 			BMSMethods.logInfo("BMS was unable to be created", "ERROR");
 			e.printStackTrace();
@@ -47,7 +46,7 @@ public class BMSMainController
 		{
 			BMSMethods.logInfo("Start BMS main loop","INFO");
 
-			if(!bms.relayBoard.isOpened())
+			if(!bms.relayBoard.isOpen())
 			{
 				BMSMethods.logInfo("PORT ERROR, CABLE DISCONNECTED?", "WARNING");
 				portCheck();
@@ -104,10 +103,10 @@ public class BMSMainController
 	public static void portCheck() throws InterruptedException {
 		//this is here in case the port is missing (USB is unplugged)
 		Object[] options;
-		while(!bms.relayBoard.isOpened())
+		while(!bms.relayBoard.isOpen())
 		{
 			BMSMethods.logInfo("RUNNING PORT FIXER","WARNING");
-			options = SerialPortList.getPortNames();
+			options = SerialPort.getCommPorts();
 
 			if(options.length == 0)
 			{
@@ -128,7 +127,7 @@ public class BMSMainController
 				bms.portOpen();
 
 			}
-			if(bms.relayBoard.isOpened())
+			if(bms.relayBoard.isOpen())
 				return;
 		}
 	}//portCheck ending
