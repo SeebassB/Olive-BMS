@@ -134,7 +134,7 @@ public class ConditioningMethods
 		bms.closeRoomForHVAC(roomsClosedForThisCycle);
 		bms.massSetPreviousState(roomsClosedForThisCycle, 'n');
 		System.out.println(bms.printRoomNames(roomsClosedForThisCycle));
-
+		System.out.println("----------");
 		//run the logging method with a full list of all rooms
 		bms.logBuildingStatus(bms.addRoomLists(roomsOpenForThisCycle, roomsClosedForThisCycle), currentConditioningRequest);
 		

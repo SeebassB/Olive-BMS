@@ -353,8 +353,9 @@ public class GUIHelperMethods
 
             for(Room r : bms.getPrimary())
             {
-                r.setTargetTemp(74.00);
                 r.setRequestState('c');
+                if(!r.getRoomName().contains("Machine Room"))
+                    r.setTargetTemp(74.00);
             }
 
             return null;
@@ -411,7 +412,8 @@ public class GUIHelperMethods
             for(Room r : bms.getPrimary())
             {
                 r.setRequestState('n');
-                r.setTargetTemp(74);
+                if(!r.getRoomName().contains("Machine Room"))
+                    r.setTargetTemp(74);
             }
 
 

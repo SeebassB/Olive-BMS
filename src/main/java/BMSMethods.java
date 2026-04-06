@@ -104,7 +104,7 @@ public class BMSMethods
 		secondary = new Room[]
 		{
 			//  Room Name, HotCold, percentage, IP, damper number, BMS, damperPosition
-			new Room("Kitchen",     'n', 13, "http://192.168.1.213/getData.json", Damp_Lounge),//0
+			new Room("Kitchen",     'n', 13, "http://192.168.1.165/getData.json", Damp_Lounge),//0
 			new Room("Hallway",     'n', 13, "http://192.168.1.250/getData.json", Damp_Hall),//1
 			new Room("Phone Booth", 'n', 9,  "http://192.168.1.212/getData.json", Damp_Phone) //2
 		};
@@ -511,9 +511,7 @@ public class BMSMethods
 			logInfo("Studio 3 Shutdown Interrupted!","WARNING");
 			e.printStackTrace();
 		}
-		
 	}
-
 
 	/**
 	 * Method to open a damper
@@ -536,50 +534,6 @@ public class BMSMethods
 	{
 		relayWrite(inDamper,"off");
 		logInfo("Closed Damper "+inDamper+".","INFO");
-	}
-	
-	/** 
-	 * Opens the port, the connection between the program and the relay board.
-	 * */
-	public boolean portOpen()
-	{
-		logInfo("Starting portOpen","DEBUG");
-
-		boolean out = false;
-
-		//attempt to open relayBoard
-		if(!relayBoard.isOpen())
-		{
-			out = relayBoard.openPort();
-		}
-
-		if(out)
-			logInfo("portOpen success", "IMPORTANT");//success message
-		if(!out)
-			logInfo("portOpen failure", "WARNING");
-
-		return out;
-	}
-		
-	/**
-	 * Closes the port, run at the end of the program ,unsure if necessary.
-	 */	
-	public boolean portClose()
-	{
-		logInfo("portClose starting", "DEBUG");
-		boolean out = false;
-
-		if(relayBoard != null && relayBoard.isOpen())
-		{
-			out = relayBoard.closePort();
-		}
-
-		if(out)
-			logInfo("portClose success", "IMPORTANT");
-		if(!out)
-			logInfo("Closure of serial port failed, might not have been open, not necessarily bad.", "DEBUG");
-
-		return out;
 	}
 	
 	/**
@@ -904,8 +858,10 @@ public class BMSMethods
 		//iterate through each element in the array given and print the roomName
 		for(Room i : list)
 		{	
-				out.append(" ").append(i.roomName);
+				out.append(String.format("%-10s", i.roomName));
 		}
+
+
 		return out.toString();
 	}
 	
@@ -920,7 +876,7 @@ public class BMSMethods
 		StringBuilder out = new StringBuilder();
 		out.append("    ");
 		for(Room i : list)
-			out.append(" ").append(df2.format(i.getCurrentTemp()));
+			out.append(String.format("%-10s", df2.format(i.getCurrentTemp())));
 		return out.toString();
 	}
 	
@@ -935,7 +891,7 @@ public class BMSMethods
 		StringBuilder out = new StringBuilder();
 		out.append("    ");
 		for(Room i : list)
-			out.append(" ").append(df2.format(i.getTargetTemp()));
+			out.append(String.format("%-10s",df2.format(i.getTargetTemp())));
 		return out.toString();
 	}	
 
@@ -951,7 +907,7 @@ public class BMSMethods
 		//go through each room and add the previousState to the out line
 		for(Room i : list)
 		{
-			out.append("    ").append(i.getPreviousState());
+			out.append("      ").append(i.getPreviousState());
 		}	
 		return out.toString();
 	}
@@ -968,7 +924,7 @@ public class BMSMethods
 		//go through each room and add the current hotCold to the out line
 		for(Room i : list)
 		{
-			out.append("     ").append(i.getCoolHeat());
+			out.append("      ").append(i.getCoolHeat());
 		}	
 		return out.toString();
 	}
