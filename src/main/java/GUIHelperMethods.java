@@ -572,6 +572,7 @@ public class GUIHelperMethods
                 bms.findRoom("Booth "+room).setCoolHeat('n');
                 bms.findRoom("Booth "+room).setTargetTemp(74);
                 new singleRoomLightsWorker(room, false, lightsButton, bms).execute();
+                buttonEnabler(powerButton, false, "Power");
             }
 
             int runningOnCount = 0;
@@ -595,7 +596,6 @@ public class GUIHelperMethods
                 GUIHelperMethods.buttonEnabler(GUIController.allLightsButton, false, "Lights");
             }
 
-            buttonEnabler(powerButton, false, "Power");
             GUIController.itemListenerFlag =false;
 
 

@@ -110,8 +110,8 @@ public class BMSMethods
 		};
 
 		allRoomsList = addRoomLists(primary, secondary);
-		primary[6].setTargetTemp(80);//machine room 1 to 80
-		primary[7].setTargetTemp(80);//machine room 2 to 80
+		primary[6].setTargetTemp(79);//machine room 1 to 79 this is according to best practices for server room temps
+		primary[7].setTargetTemp(79);//machine room 2 to 79
 		logInfo("BMS created", "INFO");
 	}
 
@@ -375,6 +375,11 @@ public class BMSMethods
 			findRoom("CR 1").setCoolHeat('n');
 				Thread.sleep(1000);
 			findRoom("Booth 1").setCoolHeat('n');
+				Thread.sleep(1000);
+			findRoom("CR 1").setTargetTemp(74);
+				Thread.sleep(1000);
+			findRoom("Booth 1").setTargetTemp(74);
+				Thread.sleep(1000);
 
 		}
 		catch( InterruptedException e)
@@ -619,7 +624,7 @@ public class BMSMethods
 
 					if (label.equalsIgnoreCase("Ext Sensor 1")) {
 						double temp = sensor.getDouble("temperature");
-						System.out.println(inURL + " " + temp);
+						//System.out.println(inURL + " A " + temp);
 						temp = ((temp*9)/5)+32;//convert C to F
 						return temp;
 					}
@@ -636,15 +641,15 @@ public class BMSMethods
 
 					// Format 2 target
 					if (label.equalsIgnoreCase("Ext Sensor 1")) {
-						double tempC = Double.parseDouble(sensor.getString("tempc"));
-						System.out.println(inURL + " " + tempC);
+						double tempC = Double.parseDouble(sensor.getString("tempf"));
+						//System.out.println(inURL + " B " + tempC);
 						return tempC;
 					}
 
 					// Format 3 target
 					if (label.equalsIgnoreCase("Sensor 2")) {
-						double tempC = Double.parseDouble(sensor.getString("tempc"));
-						System.out.println(inURL + " " + tempC);
+						double tempC = Double.parseDouble(sensor.getString("tempf"));
+						//System.out.println(inURL + " C " + tempC);
 						return tempC;
 					}
 				}
@@ -713,6 +718,24 @@ public class BMSMethods
 		}
 	}
 
+	/**
+	 * Returns a list of rooms with the requesting state of the given parameter
+	 * @param x the char of what you want to find (H,h,n,c,C)
+	 * @return Room[] list of rooms that match
+	 * */
+	public Room[] roomsRequestingX(char x)
+	{
+		//arraylist since the room quantity is unknown
+		ArrayList<Room> roomsAsking = new ArrayList<>();
+
+		for(Room i : primary)
+		{
+			if(i.getRequestState() == x)
+				roomsAsking.add(i);
+		}
+
+		return roomsAsking.toArray(new Room[0]);
+	}
 
 	/**
 	 * Complies a list of rooms that are requesting cold above the cutoff
@@ -895,6 +918,7 @@ public class BMSMethods
 	public String printCurrentTemps(Room[] list)
 	{
 		StringBuilder out = new StringBuilder();
+		out.append("    ");
 		for(Room i : list)
 			out.append(" ").append(df2.format(i.getCurrentTemp()));
 		return out.toString();
@@ -909,6 +933,7 @@ public class BMSMethods
 	public String printTargetTemps(Room[] list)
 	{
 		StringBuilder out = new StringBuilder();
+		out.append("    ");
 		for(Room i : list)
 			out.append(" ").append(df2.format(i.getTargetTemp()));
 		return out.toString();
@@ -958,6 +983,7 @@ public class BMSMethods
 	{
 		//return this string, build it up in the for each loop be printing out the difference in the desired and current temps
 		StringBuilder out = new StringBuilder();
+		out.append("    ");
 		for(Room i : list)
 		{	double x = i.getCurrentTemp()-i.getTargetCutoffTemp();
 			if(x>0)
@@ -1156,7 +1182,7 @@ public class BMSMethods
 	/**
 	 * Method used to add up a room list's total airflow
 	 * @param input list of rooms you want to add up
-	 * @return the total airflow of the list
+	 * @return an integer, the total airflow of the list
 	 */
 	public int findTotalAirflowRequested(Room[] input)
 	{

@@ -64,10 +64,13 @@ public class BMSMainController
                     cond.runConditioning(bms);
 					bms.printInfo();
 					Thread.sleep(60 * 1000);//sleep this main thread for X time, one minute
+					bms.refreshAllRooms();
 					gui.update(bms);
 					Thread.sleep(60 * 1000);
+					bms.refreshAllRooms();
 					gui.update(bms);
 					Thread.sleep(60 * 1000);
+					bms.refreshAllRooms();
 					gui.update(bms);
 					break;
 
@@ -76,6 +79,7 @@ public class BMSMainController
 					while(!Objects.equals(mainStatusFlag, "normal"))
 					{
 						Thread.sleep(1 * 30 * 1000);//sleep for a minute
+						bms.refreshAllRooms();
 						gui.update(bms);
 						bms.printInfo();
 					}

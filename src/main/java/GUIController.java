@@ -1400,7 +1400,7 @@ public class GUIController
             HVACMachine2Status.setText("None");
         }
 
-        if(BMSMainController.mainStatusFlag.equals("PURGING"))
+        if(BMSMainController.mainStatusFlag.equals("purging"))
         {
             HVACMachine1Status.setText("PURGE");
             HVACMachine2Status.setText("PURGE");
