@@ -1,3 +1,7 @@
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 public class ConditioningMethods
@@ -28,23 +32,22 @@ public class ConditioningMethods
 		bms.refreshAllRooms();
 
 		//print all temps to see what's going on
-		System.out.println("+-+-+-+-+START+-+-+-+-+");
+		DateTimeFormatter form = DateTimeFormatter.ofPattern("HH:mm");
+		System.out.println("+-+-+-+-+START+-+-+-+-+" + LocalDateTime.now().format(form));
 		bms.printInfo();
 
 		//collect current room statuses
-		Room[] needCooling      = bms.requestingCold();//gather all C
-		Room[] needCoolingStill = bms.removeFromListPrevious(bms.requestingCutoffCooling(), 'n');//remove from c all prev n
+		Room[] needCooling      = bms.roomsRequestingX('C');//gather all C
+		Room[] needCoolingStill = bms.removeFromListPrevious(bms.roomsRequestingX('c'), 'n');//remove from c all prev n
 		Room[] needTotalCooling = bms.addRoomLists(needCooling, needCoolingStill);//combine above 2
 
-		Room[] needHeating      = bms.requestingHeat();
-		Room[] needHeatingStill = bms.removeFromListPrevious(bms.requestingCutoffHeating(bms.getPrimary()), 'n');
+		Room[] needHeating      = bms.roomsRequestingX('H');
+		Room[] needHeatingStill = bms.removeFromListPrevious(bms.roomsRequestingX('h'), 'n');
 		Room[] needTotalHeating = bms.addRoomLists(needHeating, needHeatingStill);
 
-		Room[] needNothing      = bms.requestingNothing(bms.getPrimary());
+		Room[] needNothing      = bms.roomsRequestingX('n');
 		Room[] roomsOpenForThisCycle; //rooms that will open for this cycle
 		Room[] roomsClosedForThisCycle; //rooms that will close for this cycle
-		Room[] machineRooms = bms.findMRs();
-
 
 		System.out.println("----------Entering Room Decisions----------");
 
@@ -58,8 +61,7 @@ public class ConditioningMethods
 
 			//generate the open rooms list
 			roomsOpenForThisCycle = needTotalCooling; //open the rooms asking for cold
-			bms.massSetPreviousState(needCooling, 'C'); //set the rooms asking for cold's previous state to 0 (cooling)
-			bms.massSetPreviousState(needCoolingStill, 'c');
+			bms.massSetPreviousState(needTotalCooling, 'C'); //set the rooms asking for cold's previous state to C (cooling)
 
 			//generate the closed rooms list
 			roomsClosedForThisCycle = bms.addRoomLists(needNothing, needTotalHeating); //close the rooms that are not asking for anything
@@ -74,8 +76,7 @@ public class ConditioningMethods
 
 			//generate the open rooms list
 			roomsOpenForThisCycle = needTotalHeating;//get the rooms requesting heat
-			bms.massSetPreviousState(needHeating, 'H');
-			bms.massSetPreviousState(needHeatingStill, 'h');
+			bms.massSetPreviousState(needTotalHeating, 'H');
 
 			//generate the closed rooms list
 			roomsClosedForThisCycle = bms.addRoomLists(needNothing, needTotalCooling);
@@ -89,7 +90,7 @@ public class ConditioningMethods
 			System.out.println("Every room is satisfied!");
 
 			//open the MRs and close all other rooms
-			roomsOpenForThisCycle = machineRooms;
+			roomsOpenForThisCycle = bms.findMRs();
 			bms.massSetPreviousState(roomsOpenForThisCycle, 'n');
 			roomsClosedForThisCycle = bms.addRoomLists(bms.removeMRs(), bms.getSecondary());
 			bms.massSetPreviousState(roomsClosedForThisCycle, 'n');
@@ -126,13 +127,13 @@ public class ConditioningMethods
 		System.out.println("----------");
 		System.out.println("Open Rooms");
 		bms.openRoomsForHVAC(roomsOpenForThisCycle);
-		bms.printRoomNames(roomsOpenForThisCycle);
+		System.out.println(bms.printRoomNames(roomsOpenForThisCycle));
 
 		//close dampers not in use, found in closeThisTime
 		System.out.println("----------\nClosed Rooms");
 		bms.closeRoomForHVAC(roomsClosedForThisCycle);
 		bms.massSetPreviousState(roomsClosedForThisCycle, 'n');
-		bms.printRoomNames(roomsClosedForThisCycle);
+		System.out.println(bms.printRoomNames(roomsClosedForThisCycle));
 
 		//run the logging method with a full list of all rooms
 		bms.logBuildingStatus(bms.addRoomLists(roomsOpenForThisCycle, roomsClosedForThisCycle), currentConditioningRequest);
