@@ -29,7 +29,8 @@ public class BMSMainController
 	{
 
 		//start up BMS
-		bms.portOpen();
+		if(!bms.relayBoard.isOpen())
+			bms.relayBoard.openPort();
 
 
 
@@ -95,7 +96,7 @@ public class BMSMainController
 
 
 		BMSMethods.logInfo("End of BMSMainController","IMPORTANT");
-		bms.portClose();
+		bms.relayBoard.closePort();
 	}//main end
 
 
@@ -121,14 +122,14 @@ public class BMSMainController
 			{
 				BMSMethods.logInfo("Only one COM port found, trying "+options[0], "WARNING");
 				bms.setRelayBoard((SerialPort) options[0]);
-				bms.portOpen();
+				bms.relayBoard.openPort();
 
 			}
 			else
 			{
 				BMSMethods.logInfo("Multiple COM ports found, asking user","WARNING");
 				bms.setRelayBoard((SerialPort) JOptionPane.showInputDialog(null, "Choose", "Menu", JOptionPane.PLAIN_MESSAGE, null, options, options[0]));
-				bms.portOpen();
+				bms.relayBoard.openPort();
 
 			}
 			if(bms.relayBoard.isOpen())
