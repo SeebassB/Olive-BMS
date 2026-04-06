@@ -20,6 +20,8 @@ import com.fazecast.jSerialComm.SerialPort;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.swing.*;
+
 public class BMSMethods
 {
 
@@ -571,13 +573,15 @@ public class BMSMethods
 
 			if(pulledJSON.has("general") && pulledJSON.has("digitalSensors"))
 			{
+				System.out.println("HAS");
 				JSONArray sensors = pulledJSON.getJSONArray("digitalSensors");
+
 				for (int i = 0; i < sensors.length(); i++) {
 					JSONObject sensor = sensors.getJSONObject(i);
 					String label = sensor.optString("label", "");
 
-					if (label.equalsIgnoreCase("Ext Sensor 1")) {
-						double temp = sensor.getDouble("temperature");
+					if ("Ext Sensor 1".equalsIgnoreCase(label)) {
+						double temp = sensor.optDouble("temperature");
 						//System.out.println(inURL + " A " + temp);
 						temp = ((temp*9)/5)+32;//convert C to F
 						return temp;
@@ -858,7 +862,12 @@ public class BMSMethods
 		//iterate through each element in the array given and print the roomName
 		for(Room i : list)
 		{	
-				out.append(String.format("%-10s", i.roomName));
+				if(i.getRoomName().contains("Machine"))
+					out.append("Machine   ");
+				else
+				{
+					out.append(String.format("%-10s", i.roomName));
+				}
 		}
 
 
@@ -1125,12 +1134,12 @@ public class BMSMethods
 	
 	public void printInfo()
 	{
-		System.out.println("Room names "+printRoomNames(primary)  +printRoomNames(secondary));
-		System.out.println("current"+printCurrentTemps(primary)   +printCurrentTemps(secondary));
-		System.out.println("target "+printTargetTemps(primary)    +printTargetTemps(secondary));
-		System.out.println("diff   "+tempDifference(primary) 	   +tempDifference(secondary));
-		System.out.println("prev   "+printPreviousStates(primary) +printPreviousStates(secondary));
-        System.out.println("hotCold"+printCurrentRequest(primary)   +printCurrentRequest(secondary));
+		System.out.println("Room names "+printRoomNames(allRoomsList));
+		System.out.println("current"+printCurrentTemps(allRoomsList));
+		System.out.println("target "+printTargetTemps(allRoomsList));
+		System.out.println("diff   "+tempDifference(allRoomsList));
+		System.out.println("prev   "+printPreviousStates(allRoomsList));
+        System.out.println("hotCold"+printCurrentRequest(allRoomsList));
     }
 
 
