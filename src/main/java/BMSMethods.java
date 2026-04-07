@@ -106,7 +106,7 @@ public class BMSMethods
 		secondary = new Room[]
 		{
 			//  Room Name, HotCold, percentage, IP, damper number, BMS, damperPosition
-			new Room("Kitchen",     'n', 13, "http://192.168.1.165/getData.json", Damp_Lounge),//0
+			new Room("Kitchen",     'n', 13, "http://192.168.1.165/status.json", Damp_Lounge),//0
 			new Room("Hallway",     'n', 13, "http://192.168.1.250/getData.json", Damp_Hall),//1
 			new Room("Phone Booth", 'n', 9,  "http://192.168.1.212/getData.json", Damp_Phone) //2
 		};
@@ -551,11 +551,10 @@ public class BMSMethods
 		InputStream is;
 		String jsonText;
 		
-		try {
-		
-		//preset IP for the machine room thermometer, should never change
-		 is = new URI(inURL).toURL().openStream();
-		 jsonText = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+		try
+		{
+		 	is = new URI(inURL).toURL().openStream();
+		 	jsonText = new String(is.readAllBytes(), StandardCharsets.UTF_8);
 		}
 		catch (IOException | URISyntaxException e)
 		{
@@ -566,14 +565,12 @@ public class BMSMethods
 
 		is.close();
 
-
 		try
 		{
 			JSONObject pulledJSON = new JSONObject(jsonText);
 
 			if(pulledJSON.has("general") && pulledJSON.has("digitalSensors"))
 			{
-				System.out.println("HAS");
 				JSONArray sensors = pulledJSON.getJSONArray("digitalSensors");
 
 				for (int i = 0; i < sensors.length(); i++) {
@@ -584,6 +581,7 @@ public class BMSMethods
 						double temp = sensor.optDouble("temperature");
 						//System.out.println(inURL + " A " + temp);
 						temp = ((temp*9)/5)+32;//convert C to F
+						temp = Math.round(temp * 100)/100.0;
 						return temp;
 					}
 				}
@@ -593,30 +591,26 @@ public class BMSMethods
 			{
 				JSONArray sensors = pulledJSON.getJSONArray("sensor");
 
-				for (int i = 0; i < sensors.length(); i++) {
+				for (int i = 0; i < sensors.length(); i++)
+				{
 					JSONObject sensor = sensors.getJSONObject(i);
 					String label = sensor.optString("label", "");
 
 					// Format 2 target
-					if (label.equalsIgnoreCase("Ext Sensor 1")) {
-						double tempC = Double.parseDouble(sensor.getString("tempf"));
-						//System.out.println(inURL + " B " + tempC);
-						return tempC;
-					}
+					if (label.equalsIgnoreCase("Ext Sensor 1"))
+						return Double.parseDouble(sensor.getString("tempf"));
 
 					// Format 3 target
-					if (label.equalsIgnoreCase("Sensor 2")) {
-						double tempC = Double.parseDouble(sensor.getString("tempf"));
-						//System.out.println(inURL + " C " + tempC);
-						return tempC;
-					}
+					if (label.equalsIgnoreCase("Sensor 2"))
+						return Double.parseDouble(sensor.getString("tempf"));
+
 				}
 			}
 
 		}//try end
 		catch(Exception e)
 		{
-			System.out.println("IOException error in readSensor for "+inURL);
+			System.out.println("Normal Exception error in readSensor for "+inURL);
 			logInfo("Sensor missing! URL= " + inURL, "WARNING");
 			return 73;
 		}
@@ -631,7 +625,8 @@ public class BMSMethods
 	 * */
 	public void massSetPreviousState(Room[] list, char in)
 	{
-        for (Room room : list) room.setPreviousState(in);
+        for (Room room : list)
+			room.setPreviousState(in);
 		logInfo("Mass set previous rooms to " + in,"DEBUG");
 	}
 	
@@ -695,105 +690,6 @@ public class BMSMethods
 		return roomsAsking.toArray(new Room[0]);
 	}
 
-	/**
-	 * Complies a list of rooms that are requesting cold above the cutoff
-	 *@return Room[] list of rooms who meet the criteria
-	 * */
-	public Room[] requestingCold()
-	{
-		//arraylist since the rooms quantity is unknown
-		ArrayList<Room> roomsAsking = new ArrayList<>();
-		
-		for(Room i : primary)
-		{
-			if(i.getRequestState()=='C')
-				roomsAsking.add(i);
-		}
-		
-		return  roomsAsking.toArray(new Room[0]);
-	}	
-	
-	/**
-	 * Method used to see which rooms are requesting heat
-	 * Takes a list of rooms and cuts out all rooms who are not requesting heat, excluding the MRS
-	 *@return Room[] list of rooms who are requesting heat
-	 * */
-	public Room[] requestingHeat()
-	{
-		//arraylist to sort out the rooms asking for cold
-		ArrayList<Room> roomsAsking = new ArrayList<>();
-		
-		for(Room i : primary)
-		{	//add in all room requesting heat except for the machine rooms, they will never receive heat
-			if(i.getRequestState()=='H')
-				roomsAsking.add(i);
-		}
-
-		return  roomsAsking.toArray(new Room[0]);
-	}
-	
-	/**
-	 * Method used to check all rooms in a list if they are below the cutoffTemp
-	 * Used in conjunction to keep the rooms cooling after they initially request cold 
-	 * through the other method requestingCold()
-	 * 
-	 * @return Room[] list of all rooms that are still above their cutoffTemp
-	 * */
-	public Room[] requestingCutoffCooling()
-	{
-		//arraylist to sort out the rooms asking for cold
-		ArrayList<Room> roomsAsking = new ArrayList<>();
-		
-		for(Room i : primary)
-		{
-			if(i.getRequestState() == 'c')
-				roomsAsking.add(i);
-		}
-		
-		return  roomsAsking.toArray(new Room[0]);
-	}
-	
-	/**
-	 * Method used to check all rooms in a list if they are above the cutoffTemp
-	 * Used in conjunction to keep the rooms heating after they initially request heat 
-	 * through the other method requestingHeat()
-	 * 
-	 * @param list list of the rooms you want to check
-	 * @return Room[] list of all rooms that are still below their cutoffTemp
-	 * */
-	public Room[] requestingCutoffHeating(Room[] list)
-	{
-		//arraylist to sort out the rooms asking for heat
-		ArrayList<Room> roomsAsking = new ArrayList<>();
-		
-		for(Room i : list)
-		{
-			if(i.getRequestState() == 'h')
-				roomsAsking.add(i);
-		}
-		
-		return  roomsAsking.toArray(new Room[0]);
-	}
-	
-	/**
-	 * Method used to find if a room is satisfied.
-	 * This is done by checking if
-	 * @param list list of rooms you want to check
-	 * @return Room[] list of rooms who are satisfied
-	 * */
-	public Room[] requestingNothing(Room[] list)
-	{
-		//arraylist to sort out the rooms asking for nothing
-		ArrayList<Room> roomsAsking = new ArrayList<>();
-		
-		for(Room i : list)
-		{
-			if(i.getRequestState() == 'n')
-				roomsAsking.add(i);
-		}
-		
-		return  roomsAsking.toArray(new Room[0]);
-	}
 	
 	/**
 	 * Method used to remove the MRs from an array by specific name
@@ -818,10 +714,10 @@ public class BMSMethods
 	}
 
 	/**
-	 * Method used to find all of the rooms with the first  characters beign exactly "Mach"
+	 * Method used to find all rooms with the first  characters begin with exactly "Mach"
 	 * Used specifically to find Machine Rooms, which are named as, no other room should start with the word machine for this to work
 	 * 
-	 * @return	Room[] list of all of the machine rooms in the list given
+	 * @return	Room[] list of all machine rooms in the list given
 	 * 
 	 **/
 	public Room[] findMRs()
@@ -878,7 +774,7 @@ public class BMSMethods
 	 * Method used to find the current temps of a list of rooms
 	 * Intended to be used in conjunction with the 4 different prints: RoomNames, CurrentTemps, TargetTemps, PreviousStates, and tempDifference
 	 * @param list list of rooms you want to get the currentTemps of
-	 * @return String return a line of all of the currentTemp of the given lsit
+	 * @return String return a line of all currentTemp of the given list
 	 * */
 	public String printCurrentTemps(Room[] list)
 	{
@@ -913,11 +809,9 @@ public class BMSMethods
 	public String printPreviousStates(Room[] list)
 	{
 		StringBuilder out = new StringBuilder();
-		//go through each room and add the previousState to the out line
 		for(Room i : list)
-		{
-			out.append("      ").append(i.getPreviousState());
-		}	
+			out.append(String.format("%-10s",df2.format(i.getPreviousState())));
+
 		return out.toString();
 	}
 	
@@ -930,11 +824,9 @@ public class BMSMethods
 	public String printCurrentRequest(Room[] list)
 	{
 		StringBuilder out = new StringBuilder();
-		//go through each room and add the current hotCold to the out line
 		for(Room i : list)
-		{
-			out.append("      ").append(i.getCoolHeat());
-		}	
+			out.append(String.format("%-10s",df2.format(i.getCoolHeat())));
+
 		return out.toString();
 	}
 	
@@ -950,10 +842,9 @@ public class BMSMethods
 		StringBuilder out = new StringBuilder();
 		out.append("    ");
 		for(Room i : list)
-		{	double x = i.getCurrentTemp()-i.getTargetCutoffTemp();
-			if(x>0)
-				out.append(" ");
-			out.append(" ").append(df2sans0.format(x));
+		{
+			double x = i.getCurrentTemp()-i.getTargetCutoffTemp();
+			out.append(String.format("%-10s",df2.format(df2sans0.format(x))));
 		}
 		return out.toString();
 	}
@@ -1191,7 +1082,7 @@ public class BMSMethods
 				r.setRequestState('h');
 				logInfo(r.getRoomName() + " HAS TRIGGERED EXTREME TEMP CHECK HEAT AT "+r.getCurrentTemp(),"WARNING");
 			}
-			else if(r.getCurrentTemp() < 85)
+			else if(r.getCurrentTemp() > 85)
 			{
 				r.setTargetTemp(74);
 				r.setRequestState('c');

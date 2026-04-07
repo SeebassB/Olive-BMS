@@ -29,7 +29,7 @@ public class BMSMainController
 	{
 
 		//start up BMS
-		if(!bms.relayBoard.isOpen())
+		//if(!bms.relayBoard.isOpen()) TO BE WORKED ON
 			bms.relayBoard.openPort();
 
 
