@@ -20,8 +20,6 @@ import com.fazecast.jSerialComm.SerialPort;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.swing.*;
-
 public class BMSMethods
 {
 
@@ -108,7 +106,7 @@ public class BMSMethods
 			//  Room Name, HotCold, percentage, IP, damper number, BMS, damperPosition
 			new Room("Kitchen",     'n', 13, "http://192.168.1.165/status.json", Damp_Lounge),//0
 			new Room("Hallway",     'n', 13, "http://192.168.1.250/getData.json", Damp_Hall),//1
-			new Room("Phone Booth", 'n', 9,  "http://192.168.1.212/getData.json", Damp_Phone) //2
+			new Room("Phone Booth", 'n', 9,  "http://192.168.1.107/status.json", Damp_Phone) //2
 		};
 
 		allRoomsList = addRoomLists(primary, secondary);
@@ -1021,8 +1019,6 @@ public class BMSMethods
 	}
 
 
-	
-	
 	public void printInfo()
 	{
 		System.out.println("Room names "+printRoomNames(allRoomsList));
@@ -1032,7 +1028,6 @@ public class BMSMethods
 		System.out.println("prev   "+printPreviousStates(allRoomsList));
         System.out.println("hotCold"+printCurrentRequest(allRoomsList));
     }
-
 
 
 	/**

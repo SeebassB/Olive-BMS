@@ -1274,14 +1274,6 @@ public class GUIController
         cr1TargetTemp.setText(Double.toString(bms.findRoom("CR 1").getTargetTemp()));
         cr1ConditioningStatus.setText(Character.toString(bms.findRoom("CR 1").getRequestState()));
 
-        //set the color of the temp status
-       // if(cr1ConditioningStatus.getText().equals("h"))
-        //    cr1ConditioningStatus.setBackground(Color.ORANGE);
-       // else if(cr1ConditioningStatus.getText().equals("c"))
-        //    cr1ConditioningStatus.setBackground(Color.BLUE);
-       // else
-       //     cr1ConditioningStatus.setBackground(Color.GRAY);
-
 
         //bth 1
         GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Booth 1", bth1HeatButton, bth1CoolButton, bth1ConditioningOffButton);
@@ -1290,14 +1282,7 @@ public class GUIController
         bth1TargetTemp.setText(Double.toString(bms.findRoom("Booth 1").getTargetTemp()));
         bth1ConditioningStatus.setText(Character.toString(bms.findRoom("Booth 1").getRequestState()));
 
-        /*//set the color of the temp status
-        if(bth1ConditioningStatus.getText().equals("h"))
-            bth1ConditioningStatus.setBackground(Color.ORANGE);
-        else if(bth1ConditioningStatus.getText().equals("c"))
-            bth1ConditioningStatus.setBackground(Color.BLUE);
-        else
-            bth1ConditioningStatus.setBackground(Color.GRAY);
-*/
+
 
         //CR 2
         GUIHelperMethods.updateRoomCoolHeatButtons(bms, "CR 2", cr2HeatButton, cr2CoolButton, cr2ConditioningOffButton);
@@ -1306,15 +1291,7 @@ public class GUIController
         cr2TargetTemp.setText(Double.toString(bms.findRoom("CR 2").getTargetTemp()));
         cr2ConditioningStatus.setText(Character.toString(bms.findRoom("CR 2").getRequestState()));
 
-        /*
 
-        if(cr2ConditioningStatus.getText().equals("h"))
-            cr2ConditioningStatus.setBackground(Color.ORANGE);
-        else if(cr2ConditioningStatus.getText().equals("c"))
-            cr2ConditioningStatus.setBackground(Color.BLUE);
-        else
-            cr2ConditioningStatus.setBackground(Color.GRAY);
-*/
 
         //bth2
         GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Booth 2", bth2HeatButton, bth2CoolButton, bth2ConditioningOffButton);
@@ -1322,14 +1299,7 @@ public class GUIController
         bth2CurrentTemp.setText(Double.toString(bms.findRoom("Booth 2").getCurrentTemp()));
         bth2TargetTemp.setText(Double.toString(bms.findRoom("Booth 2").getTargetTemp()));
         bth2ConditioningStatus.setText(Character.toString(bms.findRoom("Booth 2").getRequestState()));
-/*
-        if(bth2ConditioningStatus.getText().equals("h"))
-            bth2ConditioningStatus.setBackground(Color.ORANGE);
-        else if(bth2ConditioningStatus.getText().equals("c"))
-            bth2ConditioningStatus.setBackground(Color.BLUE);
-        else
-            bth2ConditioningStatus.setBackground(Color.GRAY);
-*/
+
 
         //CR3
         GUIHelperMethods.updateRoomCoolHeatButtons(bms, "CR 3", cr3HeatButton, cr3CoolButton, cr3ConditioningOffButton);
@@ -1337,14 +1307,7 @@ public class GUIController
         cr3CurrentTemp.setText(Double.toString(bms.findRoom("CR 3").getCurrentTemp()));
         cr3TargetTemp.setText(Double.toString(bms.findRoom("CR 3").getTargetTemp()));
         cr3ConditioningStatus.setText(Character.toString(bms.findRoom("CR 3").getRequestState()));
-/*
-        if(cr3ConditioningStatus.getText().equals("h"))
-            cr3ConditioningStatus.setBackground(Color.ORANGE);
-        else if(cr3ConditioningStatus.getText().equals("c"))
-            cr3ConditioningStatus.setBackground(Color.BLUE);
-        else
-            cr3ConditioningStatus.setBackground(Color.GRAY);
-*/
+
 
         //bth3
         GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Booth 3", bth3HeatButton, bth3CoolButton, bth3ConditioningOffButton);
@@ -1352,28 +1315,14 @@ public class GUIController
         bth3CurrentTemp.setText(Double.toString(bms.findRoom("Booth 3").getCurrentTemp()));
         bth3TargetTemp.setText(Double.toString(bms.findRoom("Booth 3").getTargetTemp()));
         bth3ConditioningStatus.setText(Character.toString(bms.findRoom("Booth 3").getRequestState()));
-/*
-        if(bth3ConditioningStatus.getText().equals("h"))
-            bth3ConditioningStatus.setBackground(Color.ORANGE);
-        else if(bth3ConditioningStatus.getText().equals("c"))
-            bth3ConditioningStatus.setBackground(Color.BLUE);
-        else
-            bth3ConditioningStatus.setBackground(Color.GRAY);
-*/
+
         //edit
         GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Edit", editHeatButton, editCoolButton, editConditioningOffButton);
 
         editCurrentTemp.setText(Double.toString(bms.findRoom("Edit").getCurrentTemp()));
         editTargetTemp.setText(Double.toString(bms.findRoom("Edit").getTargetTemp()));
         editConditioningStatus.setText(Character.toString(bms.findRoom("Edit").getRequestState()));
-/*
-        if(editConditioningStatus.getText().equals("h"))
-            editConditioningStatus.setBackground(Color.ORANGE);
-        else if(editConditioningStatus.getText().equals("c"))
-            editConditioningStatus.setBackground(Color.BLUE);
-        else
-            editConditioningStatus.setBackground(Color.GRAY);
-*/
+
 
         //others
 
@@ -1390,7 +1339,7 @@ public class GUIController
             HVACMachine1Status.setText("Heat");
         else
         {
-            HVACMachine1Status.setText("None");
+            HVACMachine1Status.setText("Off");
         }
 
         if(bms.relayRead(53).equals("on"))
@@ -1399,7 +1348,7 @@ public class GUIController
             HVACMachine2Status.setText("Heat");
         else
         {
-            HVACMachine2Status.setText("None");
+            HVACMachine2Status.setText("Off");
         }
 
         if(BMSMainController.mainStatusFlag.equals("purging"))

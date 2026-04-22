@@ -353,7 +353,7 @@ public class GUIHelperMethods
 
             for(Room r : bms.getPrimary())
             {
-                r.setRequestState('c');
+                r.setCoolHeat('c');
                 if(!r.getRoomName().contains("Machine Room"))
                     r.setTargetTemp(74.00);
             }
@@ -542,6 +542,12 @@ public class GUIHelperMethods
                     bms.launchStudio2();
                 if(room == 3)
                     bms.launchStudio3();
+
+                bms.findRoom("CR "+room).setCoolHeat('c');
+                bms.findRoom("CR "+room).setTargetTemp(73);
+                bms.findRoom("Booth "+room).setCoolHeat('c');
+                bms.findRoom("Booth "+room).setTargetTemp(73);
+
 
                 new singleRoomLightsWorker(room, true, lightsButton, bms).execute();
                 buttonEnabler(powerButton, true, "Power");
