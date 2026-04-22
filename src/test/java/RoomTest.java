@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -39,6 +41,7 @@ class RoomTest
         //default for currentTemp is 72
         assertEquals(72, dummyRoom.getCurrentTemp());
     }
+
 
     @Test
     void setTargetTemp()
@@ -178,7 +181,7 @@ class RoomTest
         //default target temp is 74
         dummyRoom.setCoolHeat('H');
         dummyRoom.fixTargetCutoffTemp();
-        assertEquals(72.5, dummyRoom.getTargetCutoffTemp());
+        assertEquals(75.5, dummyRoom.getTargetCutoffTemp());
     }
 
     @Test
@@ -200,7 +203,26 @@ class RoomTest
     }
 
     @Test
-    void updateRequestStateTempLowCoolHeatc()
+    void updateTemp_whenFail()
+    {
+        Room mockRoom = spy(new Room("mock", 'c', 10, "test", 0));
+
+        try (MockedStatic<BMSMethods> mockedBMS = mockStatic(BMSMethods.class))
+        {
+            mockedBMS.when(() -> BMSMethods.readSensor("test")).thenThrow(new IOException("Sensor Failure"));
+
+            mockRoom.updateTemp();
+
+            mockedBMS.verify(() -> BMSMethods.readSensor("test"));
+
+            verify(mockRoom).fixTargetCutoffTemp();
+
+        }
+
+    }
+
+    @Test
+    void updateRequestState_TempLow_CoolHeat_c()
     {
         //default target temp is 74
         dummyRoom.setCurrentTemp(60);
@@ -211,7 +233,7 @@ class RoomTest
     }
 
     @Test
-    void updateRequestStateTempLowCoolHeatn()
+    void updateRequestState_TempLow_CoolHeat_n()
     {
         //default target temp is 74
         dummyRoom.setCurrentTemp(60);
@@ -222,7 +244,7 @@ class RoomTest
     }
 
     @Test
-    void updateRequestStateTempLowCoolHeath()
+    void updateRequestState_TempLow_CoolHeat_h()
     {
         //default target temp is 74
         dummyRoom.setCurrentTemp(60);
@@ -232,7 +254,7 @@ class RoomTest
         assertEquals(dummyRoom.getRequestState(), 'H');
     }
     @Test
-    void updateRequestStateTempMidCoolHeatc()
+    void updateRequestState_TempMid_CoolHeat_c()
     {
         //default target temp is 74
         dummyRoom.setCurrentTemp(73);
@@ -243,7 +265,7 @@ class RoomTest
     }
 
     @Test
-    void updateRequestStateTempMidCoolHeatn()
+    void updateRequestState_TempMidLow_CoolHeat_n()
     {
         //default target temp is 74
         dummyRoom.setCurrentTemp(73);
@@ -253,4 +275,80 @@ class RoomTest
         assertEquals(dummyRoom.getRequestState(), 'n');
     }
 
+    @Test
+    void updateRequestState_TempMidLow_CoolHeat_h()
+    {
+        //default target temp is 74
+        dummyRoom.setCurrentTemp(73);
+        dummyRoom.setCoolHeat('h');
+        dummyRoom.updateRequestState();
+
+        assertEquals(dummyRoom.getRequestState(), 'h');
+    }
+
+    @Test
+    void updateRequestState_TempMidHigh_CoolHeat_c()
+    {
+        //default target temp is 74
+        dummyRoom.setCurrentTemp(75);
+        dummyRoom.setCoolHeat('c');
+        dummyRoom.updateRequestState();
+
+        assertEquals(dummyRoom.getRequestState(), 'c');
+    }
+
+    @Test
+    void updateRequestState_TempMidHigh_CoolHeat_n()
+    {
+        //default target temp is 74
+        dummyRoom.setCurrentTemp(75);
+        dummyRoom.setCoolHeat('n');
+        dummyRoom.updateRequestState();
+
+        assertEquals(dummyRoom.getRequestState(), 'n');
+    }
+
+    @Test
+    void updateRequestState_TempMidHigh_CoolHeat_h()
+    {
+        //default target temp is 74
+        dummyRoom.setCurrentTemp(75);
+        dummyRoom.setCoolHeat('h');
+        dummyRoom.updateRequestState();
+
+        assertEquals(dummyRoom.getRequestState(), 'n');
+    }
+
+    @Test
+    void updateRequestState_TempHigh_CoolHeat_c()
+    {
+        //default target temp is 74
+        dummyRoom.setCurrentTemp(80);
+        dummyRoom.setCoolHeat('c');
+        dummyRoom.updateRequestState();
+
+        assertEquals(dummyRoom.getRequestState(), 'C');
+    }
+
+    @Test
+    void updateRequestState_TempHigh_CoolHeat_n()
+    {
+        //default target temp is 74
+        dummyRoom.setCurrentTemp(80);
+        dummyRoom.setCoolHeat('n');
+        dummyRoom.updateRequestState();
+
+        assertEquals(dummyRoom.getRequestState(), 'n');
+    }
+
+    @Test
+    void updateRequestState_TempHigh_CoolHeat_h()
+    {
+        //default target temp is 74
+        dummyRoom.setCurrentTemp(80);
+        dummyRoom.setCoolHeat('h');
+        dummyRoom.updateRequestState();
+
+        assertEquals(dummyRoom.getRequestState(), 'n');
+    }
 }

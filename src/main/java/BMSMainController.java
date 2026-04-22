@@ -105,7 +105,8 @@ public class BMSMainController
 	 * If not then enter a while loop until a port is selected.
 	 * Presents a dialog box that will hopefully aid in the rectification of the issue.
 	 * */
-	public static void portCheck() throws InterruptedException {
+	static void portCheck() throws InterruptedException
+	{
 		//this is here in case the port is missing (USB is unplugged)
 		Object[] options;
 		while(!bms.relayBoard.isOpen())
