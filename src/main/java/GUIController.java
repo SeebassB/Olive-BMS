@@ -202,7 +202,7 @@ public class GUIController
 
                     else if(e.getStateChange() == ItemEvent.DESELECTED)
                         new GUIHelperMethods.allPowerOffWorker(bms).execute();
-
+                    update(bms);
                 });
 
 

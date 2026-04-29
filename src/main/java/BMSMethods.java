@@ -1,8 +1,4 @@
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -241,7 +237,7 @@ public class BMSMethods
 			byte[] answer = new byte[1024];
 			int bytesReadNumber = this.relayBoard.readBytes(answer, answer.length);
 			String relayReadResult = (bytesReadNumber > 0) ? new String(answer, 0, bytesReadNumber) : "";
-			out = formatOutput(relayReadResult);
+			out =  formatOutput(relayReadResult);
 			logInfo("Relay " + relayNumber + " reads " + out + "  .", "INFORMATION");
 
 		}
@@ -546,22 +542,28 @@ public class BMSMethods
 	public static double readSensor(String inURL) throws IOException
 	{
 		
-		InputStream is;
 		String jsonText;
-		
-		try
+
+		try (InputStream is = new URI(inURL).toURL().openStream())
 		{
-		 	is = new URI(inURL).toURL().openStream();
-		 	jsonText = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+			BufferedReader buff = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+
+			StringBuilder sb = new StringBuilder();
+			String line;
+			while ((line = buff.readLine()) != null)
+			{
+				sb.append(line);
+			}
+
+			jsonText = sb.toString();
 		}
 		catch (IOException | URISyntaxException e)
 		{
 			e.printStackTrace();
-			System.out.println("IOException error in readSensor for "+inURL);
+			System.out.println("IOException error in readSensor for " + inURL + "(READING ERROR)");
 			return 73;
 		}
 
-		is.close();
 
 		try
 		{
@@ -808,7 +810,7 @@ public class BMSMethods
 	{
 		StringBuilder out = new StringBuilder();
 		for(Room i : list)
-			out.append(String.format("%-10s",df2.format(i.getPreviousState())));
+			out.append(String.format("%-10s",i.getPreviousState()));
 
 		return out.toString();
 	}
@@ -823,7 +825,7 @@ public class BMSMethods
 	{
 		StringBuilder out = new StringBuilder();
 		for(Room i : list)
-			out.append(String.format("%-10s",df2.format(i.getCoolHeat())));
+			out.append(String.format("%-10s",i.getCoolHeat()));
 
 		return out.toString();
 	}

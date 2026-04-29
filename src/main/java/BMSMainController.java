@@ -1,3 +1,6 @@
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 import com.fazecast.jSerialComm.SerialPort;
@@ -52,7 +55,8 @@ public class BMSMainController
 				BMSMethods.logInfo("PORT ERROR, CABLE DISCONNECTED?", "WARNING");
 				portCheck();
 			}
-
+			DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+			System.out.println( dateFormat.format( new Date())+ "heartbeat");
 			bms.refreshAllRooms();
 			bms.extremeTempCheck();
 			gui.update(bms);
@@ -60,6 +64,7 @@ public class BMSMainController
 			BMSMethods.logInfo("BMSController status: "+mainStatusFlag,"INFO");
 			switch(mainStatusFlag)//regular operation
 			{
+
 				case "normal":
 					//UPDATE GUI
                     cond.runConditioning(bms);
