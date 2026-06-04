@@ -37,7 +37,7 @@ public class BMSMainController
 
 
 
-		BMSMethods.logInfo("Beginning of BMSMainController","IMPORTANT");
+		BMSMethods.logInfo("Started BMSMainController","IMPORTANT");
 
 		//holds conditioning methods, split for clarity
 		ConditioningMethods cond = new ConditioningMethods(bms);
@@ -81,7 +81,7 @@ public class BMSMainController
 					break;
 
 				case "maintenance":
-					System.out.println("System entering maintenance mode");
+					BMSMethods.logInfo("System entering maintenance mode","INFO");
 					while(!Objects.equals(mainStatusFlag, "normal"))
 					{
 						Thread.sleep(1 * 30 * 1000);//sleep for a minute

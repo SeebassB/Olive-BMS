@@ -152,6 +152,8 @@ public class GUIHelperMethods
         //get coolHeat of the target room
         char currentlyOn = bms.findRoom(roomIn).getCoolHeat();
 
+        BMSMethods.logInfo("updateRoomCoolHeatButtons, "+roomIn+" set to "+currentlyOn,"DEBUG");
+
         //reset to gray
         x.setBackground(Color.GRAY);
         y.setBackground(Color.GRAY);
@@ -258,6 +260,8 @@ public class GUIHelperMethods
 
             GUIController.itemListenerFlag = false;
 
+            BMSMethods.logInfo("All lights are on","INFO");
+
             return null;
         }
 
@@ -307,6 +311,8 @@ public class GUIHelperMethods
             buttonEnabler(GUIController.allLightsButton, false, "Lights");
 
             GUIController.itemListenerFlag = false;
+
+            BMSMethods.logInfo("All lights are off","INFO");
 
             return null;
         }
@@ -378,6 +384,8 @@ public class GUIHelperMethods
         protected Void doInBackground()
         {
 
+            BMSMethods.logInfo("Powering on all rooms","INFO");
+
             //double check
             int confirmation = JOptionPane.showConfirmDialog(new JFrame(), "Are you sure you want to shutdown all rooms?", "Exit?", JOptionPane.YES_NO_OPTION);
             boolean shutdownRequested = false;
@@ -386,13 +394,13 @@ public class GUIHelperMethods
             {
                 bms.shutdownAll();
                 System.out.println("All power OFF");
-
             }
             else
             {
                 System.out.println("Shutdown AVERTED");
                 shutdownRequested = true;
                 GUIController.allPowerButton.setSelected(true);
+                BMSMethods.logInfo("All room shutdown averted","INFO");
             }
 
             //re-enable all power buttons when done
@@ -446,6 +454,7 @@ public class GUIHelperMethods
             int currentRoomLights = 0;
             int boothLights       = 0;
 
+            BMSMethods.logInfo("Lights on for room "+room+" are "+onOff,"INFO");
 
             if (room == 1)
             {
@@ -533,6 +542,9 @@ public class GUIHelperMethods
         protected Void doInBackground()
         {
 
+            BMSMethods.logInfo("Power on for room "+room+" are "+onOff,"INFO");
+
+
             //turn the power on
             if(onOff)
             {
@@ -564,6 +576,7 @@ public class GUIHelperMethods
                     buttonEnabler(lightsButton, lightsButtonInitialState, "Lights");
                     buttonEnabler(powerButton, true, "Power");
                     GUIController.itemListenerFlag =false;
+                    BMSMethods.logInfo("Power deactivation averted","INFO");
                     return null;
                 }
 
