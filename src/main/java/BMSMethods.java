@@ -1,6 +1,8 @@
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URI;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -539,12 +541,21 @@ public class BMSMethods
 	 * @param inURL the URL of the room's sensor
 	 * @return double temperature of the room
 	 * */
-	public static double readSensor(String inURL) throws IOException
-	{
+	public static double readSensor(String inURL) throws IOException, URISyntaxException {
 		
 		String jsonText;
 
-		try (InputStream is = new URI(inURL).toURL().openStream())
+		URL url = new URI(inURL).toURL();
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+		conn.setRequestMethod("GET");
+
+		conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+		conn.setConnectTimeout(10000);
+		conn.setReadTimeout(10000);
+
+
+		try (InputStream is = conn.getInputStream())
 		{
 			BufferedReader buff = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
 
@@ -557,7 +568,7 @@ public class BMSMethods
 
 			jsonText = sb.toString();
 		}
-		catch (IOException | URISyntaxException e)
+		catch (IOException e)
 		{
 			e.printStackTrace();
 			System.out.println("IOException error in readSensor for " + inURL + "(READING ERROR)");
