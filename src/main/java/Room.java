@@ -1,5 +1,3 @@
-import java.io.IOException;
-
 public class Room
 {
 	double CUTOFF_AMOUNT = 1.5;//adjust this to alter the cutoff temp
@@ -139,15 +137,8 @@ public class Room
 	 */
 	public void updateTemp()
 	{
-		try 
-		{
-			setCurrentTemp(BMSMethods.readSensor(sensorURL));
-		} 
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			System.err.println("Room.updateTemp() failed");
-		}
+		setCurrentTemp(BMSMethods.readSensor(sensorURL));
+
 		BMSMethods.logInfo(" UpdateTemp for room " + roomName,"DEBUG");
 		fixTargetCutoffTemp();
 	}

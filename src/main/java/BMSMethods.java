@@ -1,8 +1,8 @@
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
 import java.net.URI;
-import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,6 +10,7 @@ import java.nio.file.StandardOpenOption;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
@@ -72,7 +73,6 @@ public class BMSMethods
 	final static String on = "on";
 	final static String off = "off";
     private static final DecimalFormat df2 = new DecimalFormat("00.00");
-    private static final DecimalFormat df2sans0 = new DecimalFormat("0.00");
 
 	private final Room[] primary;
 	private final Room[] secondary;
@@ -179,7 +179,7 @@ public class BMSMethods
 						System.out.println("Logger is having issues");
 						System.out.println("level = " + level);
 						System.out.println("in = " + message);
-						e.printStackTrace();                }
+				}
 			}
 
     	}
@@ -344,7 +344,6 @@ public class BMSMethods
 		catch( InterruptedException e)
 		{
 			logInfo("Studio 1 Launch Interrupted!","WARNING");
-			e.printStackTrace();
 		}
 	}
 
@@ -383,7 +382,6 @@ public class BMSMethods
 		catch( InterruptedException e)
 		{
 			logInfo("Studio 1 shutdown Interrupted!","WARNING");
-			e.printStackTrace();
 		}
 	}
 	
@@ -412,7 +410,6 @@ public class BMSMethods
 		catch( InterruptedException e)
 		{
 			logInfo("Studio 2 Launch Interrupted!", "WARNING");
-			e.printStackTrace();
 		}
 		
 	}
@@ -445,7 +442,6 @@ public class BMSMethods
 		catch( InterruptedException e)
 		{
 			logInfo("Studio 2 Shutdown Interrupted!", "WARNING");
-			e.printStackTrace();
 		}
 		
 	}	
@@ -475,7 +471,6 @@ public class BMSMethods
 		catch( InterruptedException e)
 		{
 			logInfo("Studio 3 Launch Interrupted!","WARNING");
-			e.printStackTrace();
 		}
 		
 	}
@@ -507,7 +502,6 @@ public class BMSMethods
 		catch( InterruptedException e)
 		{
 			logInfo("Studio 3 Shutdown Interrupted!","WARNING");
-			e.printStackTrace();
 		}
 	}
 
@@ -541,45 +535,46 @@ public class BMSMethods
 	 * @param inURL the URL of the room's sensor
 	 * @return double temperature of the room
 	 * */
-	public static double readSensor(String inURL) throws IOException, URISyntaxException {
-		
+	public static double readSensor(String inURL)
+	{
+
 		String jsonText;
-
-		URL url = new URI(inURL).toURL();
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-		conn.setRequestMethod("GET");
-
-		conn.setRequestProperty("User-Agent", "Mozilla/5.0");
-		conn.setConnectTimeout(10000);
-		conn.setReadTimeout(10000);
-
-
-		try (InputStream is = conn.getInputStream())
-		{
-			BufferedReader buff = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-
-			StringBuilder sb = new StringBuilder();
-			String line;
-			while ((line = buff.readLine()) != null)
-			{
-				sb.append(line);
-			}
-
-			jsonText = sb.toString();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			System.out.println("IOException error in readSensor for " + inURL + "(READING ERROR)");
-			return 73;
-		}
-
 
 		try
 		{
+
+			HttpClient client = HttpClient.newBuilder()
+				.followRedirects(HttpClient.Redirect.NORMAL)
+				.connectTimeout(Duration.ofSeconds(10))
+				.build();
+
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(inURL))
+				.header("User-Agent", "Mozilla/5.0")
+				.header("Accept", "application/json")
+				.GET()
+				.build();
+
+			HttpResponse<String> response = client.send(
+				request,
+				HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)
+			);
+
+			jsonText = response.body();
+
+		}
+		catch (IOException | InterruptedException e )
+		{
+			BMSMethods.logInfo("IOException error in readSensor for " + inURL + "(READING ERROR)", "ERROR");
+			return 73;
+        }
+
+		//parse through the json to find the temps
+        try
+		{
 			JSONObject pulledJSON = new JSONObject(jsonText);
 
+			//there are three different firmwares/json formats coming in from the sensors
 			if(pulledJSON.has("general") && pulledJSON.has("digitalSensors"))
 			{
 				JSONArray sensors = pulledJSON.getJSONArray("digitalSensors");
@@ -590,7 +585,6 @@ public class BMSMethods
 
 					if ("Ext Sensor 1".equalsIgnoreCase(label)) {
 						double temp = sensor.optDouble("temperature");
-						//System.out.println(inURL + " A " + temp);
 						temp = ((temp*9)/5)+32;//convert C to F
 						temp = Math.round(temp * 100)/100.0;
 						return temp;
@@ -618,10 +612,9 @@ public class BMSMethods
 				}
 			}
 
-		}//try end
+		}
 		catch(Exception e)
 		{
-			System.out.println("Normal Exception error in readSensor for "+inURL);
 			logInfo("Sensor missing! URL= " + inURL, "WARNING");
 			return 73;
 		}

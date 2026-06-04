@@ -23,7 +23,6 @@ public class BMSMainController
 		catch (InterruptedException e)
 		{
 			BMSMethods.logInfo("BMS was unable to be created", "ERROR");
-			e.printStackTrace();
 			throw new RuntimeException(e);
         }
     }
