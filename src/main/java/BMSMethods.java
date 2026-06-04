@@ -148,7 +148,7 @@ public class BMSMethods
 		String currentHour = currentHourFormat.format(new Date());
 
 		//add the time to the log entry
-		message = "["+currentHour + "], " + message + "\n";//add the time
+		message = "["+currentHour+"]  " + message + "\n";//add the time
 
 		//file path
 		String filePath = System.getProperty("user.home") + "\\Desktop\\BMS Logs\\" + currentDay;
@@ -809,6 +809,7 @@ public class BMSMethods
 	public String printPreviousStates(Room[] list)
 	{
 		StringBuilder out = new StringBuilder();
+		out.append("     ");
 		for(Room i : list)
 			out.append(String.format("%-10s",i.getPreviousState()));
 
@@ -824,6 +825,7 @@ public class BMSMethods
 	public String printCurrentRequest(Room[] list)
 	{
 		StringBuilder out = new StringBuilder();
+		out.append("     ");
 		for(Room i : list)
 			out.append(String.format("%-10s",i.getCoolHeat()));
 
@@ -844,7 +846,7 @@ public class BMSMethods
 		for(Room i : list)
 		{
 			double x = i.getCurrentTemp()-i.getTargetCutoffTemp();
-			out.append(String.format("%-10s",df2.format(df2sans0.format(x))));
+			out.append(String.format("%-10.2f",x));
 		}
 		return out.toString();
 	}
