@@ -954,7 +954,7 @@ public class BMSMethods
 	
 
 		//set up the current date and time
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 		Date date = new Date();
 		String currentDate = dateFormat.format(date);
 
@@ -966,18 +966,18 @@ public class BMSMethods
 		StringBuilder out= new StringBuilder();
 	
 		//add the current day into the log
-		out.append(currentDate);
+		out.append(currentDate).append(", ");
 	
 		//empty relayRead because something is up
 		relayRead(50);
 	
 		//add in coolHeat then the status of each machine
-		out.append(coolHeat).append(",").append(relayRead(50)).append(",").append(relayRead(53)).append(",").append(relayRead(51)).append(",").append(relayRead(54)).append(",");
+		out.append(coolHeat).append(", ").append(relayRead(50)).append(", ").append(relayRead(53)).append(",").append(relayRead(51)).append(",").append(relayRead(54)).append(",");
 		
 		//add in each rooms name, currentTemp, damperState
 		for(Room i : list)
 		{
-			out.append(i.getCurrentTemp()).append(",").append(i.getDamperState()).append(",");
+			out.append(i.getCurrentTemp()).append(", ").append(i.getDamperState()).append(", ");
 		}
 	
 		//strip the last comma out of the output
