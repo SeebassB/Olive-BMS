@@ -1076,6 +1076,7 @@ public class BMSMethods
 	 * */
 	public void extremeTempCheck()
 	{
+		boolean triggered = false;
 
 		for(Room r: primary)
 		{
@@ -1084,14 +1085,20 @@ public class BMSMethods
 				r.setTargetTemp(74);
 				r.setRequestState('h');
 				logInfo(r.getRoomName() + " HAS TRIGGERED EXTREME TEMP CHECK HEAT AT "+r.getCurrentTemp(),"WARNING");
+				triggered = true;
 			}
 			else if(r.getCurrentTemp() > 85)
 			{
 				r.setTargetTemp(74);
 				r.setRequestState('c');
 				logInfo(r.getRoomName() + " HAS TRIGGERED EXTREME TEMP CHECK COOL AT "+r.getCurrentTemp(),"WARNING");
+				triggered = true;
 			}
 		}
+		if(triggered)
+			logInfo("EXTREME TEMP CHECK TRIGGERED","WARNING");
+		else
+			logInfo("Extreme temp OK","DEBUG");
 	}
 
 }//main class end

@@ -94,13 +94,14 @@ public class GUIController
 
     static Color onColor = new Color(37, 170, 5);
     static Color offColor = new Color(47,79,143);
-    static Color disabledColor = new Color(202,196,206);
+    static Color disabledColor = new Color(1,1,1);
 
     static boolean itemListenerFlag = false;
 
     public GUIController(BMSMethods bms){
 
         UIManager.put("ToggleButton.select", onColor);
+        UIManager.getDefaults().put("ToggleButton.disabledText", Color.BLACK);
 
         //general formatting things
         Border lineBorder3 = BorderFactory.createLineBorder(Color.BLACK, 3);
@@ -120,7 +121,7 @@ public class GUIController
         frame.setLocation(350,80); //where is the window going to open
         frame.setSize(815, 860); //how large is the window
         frame.setLayout(null); // allow for absolute positioning of components
-        frame.setResizable(false);
+        frame.setResizable(false); //don't let users resize
 
         //y levels for each room
         int allYLevel  = 10;
@@ -150,11 +151,11 @@ public class GUIController
         frame.add(allLightsBox);
 
             //all lights on button
-            allLightsButton = GUIHelperMethods.createToggleButton("LIGHTS", 10, 10,  60, 60, lineBorder2, small, offColor, null);
+            allLightsButton = GUIHelperMethods.createToggleButton("LIGHTS", 10, 10,  60, 60, lineBorder2, serif, offColor, null);
             allLightsBox.add(allLightsButton);
 
             //all lights off button
-            allPowerButton = GUIHelperMethods.createToggleButton("POWER", 80, 10, 60, 60, lineBorder2, small, offColor, null);
+            allPowerButton = GUIHelperMethods.createToggleButton("POWER", 80, 10, 60, 60, lineBorder2, serif, offColor, null);
             allLightsBox.add(allPowerButton);
 
                 allLightsButton.addItemListener(e ->
