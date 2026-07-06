@@ -954,10 +954,11 @@ public class BMSMethods
 	
 
 		//set up the current date and time
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		DateFormat dayAndHourFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date();
 		String currentDate = dateFormat.format(date);
-
+		String currentDateAndHour = dayAndHourFormat.format(date);
 	
 		//handle the string that is added into the log, all the current stats of the building
 		//year, month, day, hour:minute, coolHeat, 50, 53, 51, 54, cr1 temp, cr1 damper,-,-,-,-,-, edit, -, -, -
@@ -966,7 +967,7 @@ public class BMSMethods
 		StringBuilder out= new StringBuilder();
 	
 		//add the current day into the log
-		out.append(currentDate).append(", ");
+		out.append(currentDateAndHour).append(", ");
 	
 		//empty relayRead because something is up
 		relayRead(50);
