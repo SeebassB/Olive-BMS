@@ -23,7 +23,6 @@ public class BMSMainController
 		catch (InterruptedException e)
 		{
 			BMSMethods.logInfo("BMS was unable to be created", "ERROR");
-			e.printStackTrace();
 			throw new RuntimeException(e);
         }
     }
@@ -35,7 +34,7 @@ public class BMSMainController
 		//if(!bms.relayBoard.isOpen()) TO BE WORKED ON
 			bms.relayBoard.openPort();
 
-
+		int keepTrackOfCycles = 0;
 
 		BMSMethods.logInfo("Started BMSMainController","IMPORTANT");
 
@@ -61,7 +60,7 @@ public class BMSMainController
 			bms.extremeTempCheck();
 			gui.update(bms);
 
-			BMSMethods.logInfo("BMSController status: "+mainStatusFlag,"INFO");
+			BMSMethods.logInfo("BMSController status: "+mainStatusFlag+", "+keepTrackOfCycles,"INFO");
 			switch(mainStatusFlag)//regular operation
 			{
 
@@ -96,7 +95,7 @@ public class BMSMainController
 					System.out.println("Shutting down");
 			}
 
-
+			keepTrackOfCycles++;
 		}//mainStatusFlag while end
 
 

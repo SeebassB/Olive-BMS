@@ -1,5 +1,4 @@
-import java.io.IOException;
-
+@SuppressWarnings("SpellCheckingInspection")
 public class Room
 {
 	double CUTOFF_AMOUNT = 1.5;//adjust this to alter the cutoff temp
@@ -7,7 +6,7 @@ public class Room
 	final String roomName;//name of the room
 	final int percentAirflow; //percentage of airflow that the room can take
 	final String sensorURL;//URL of the sensor for the room
-	final int damperNumber;//number of relay for the damper of the room
+	final int damperNumber;//number of relay for the room's damper
 
 	double targetTemp;//target temperature of the room
 	double currentTemp;//current temperature of the room
@@ -139,15 +138,8 @@ public class Room
 	 */
 	public void updateTemp()
 	{
-		try 
-		{
-			setCurrentTemp(BMSMethods.readSensor(sensorURL));
-		} 
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			System.err.println("Room.updateTemp() failed");
-		}
+		setCurrentTemp(BMSMethods.readSensor(sensorURL));
+
 		BMSMethods.logInfo(" UpdateTemp for room " + roomName,"DEBUG");
 		fixTargetCutoffTemp();
 	}

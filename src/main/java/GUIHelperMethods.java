@@ -1,6 +1,7 @@
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicToggleButtonUI;
+import javax.swing.plaf.metal.MetalToggleButtonUI;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -60,6 +61,7 @@ public class GUIHelperMethods
         tButton.setForeground(foreground);
         tButton.setUI(new BasicToggleButtonUI());
         tButton.setHorizontalAlignment(SwingConstants.CENTER);
+        tButton.setOpaque(true);
         tButton.setFocusPainted(false);
         tButton.addFocusListener(new myFocus(tButton));
 
@@ -172,6 +174,8 @@ public class GUIHelperMethods
             case 'n':
                 z.setBackground(Color.WHITE);
                 break;
+            default:
+                System.out.println("Idk how you got here");
         }
 
     }
@@ -207,8 +211,9 @@ public class GUIHelperMethods
      * */
     public static void buttonDisabler(JToggleButton button)
     {
-        button.setEnabled(true);
+        button.setEnabled(false);
         button.setText("<html>Please<br>Wait</html>");
+        button.setForeground(Color.BLACK);
         button.setBackground(GUIController.disabledColor);
         BMSMethods.logInfo("Disabling button " + button.getName(),"DEBUG");
     }

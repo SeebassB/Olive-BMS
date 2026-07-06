@@ -1,5 +1,3 @@
-import java.sql.Date;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -27,6 +25,7 @@ public class ConditioningMethods
 		//keep track of airflow requirements
 		char currentConditioningRequest = 'n';
 
+		BMSMethods.logInfo("runConditioning started","INFO");
 
 		//refreshes all rooms info in order to have currentTemps and damper states
 		bms.refreshAllRooms();
@@ -97,6 +96,7 @@ public class ConditioningMethods
 
 		}//all satisfied end
 
+		BMSMethods.logInfo("runConditioning: currentCond= "+currentConditioningRequest,"INFO");
 
 
 		//conditioning has been determined, now we will calculate the airflow required
@@ -161,6 +161,7 @@ public class ConditioningMethods
 		int[][] heatingMachines = {{51, 54} , {0,0}};
 
 		System.out.println("Machine Request: "+currentRequested);
+		BMSMethods.logInfo("handleHVACMachines started","INFO");
 
 		//something strange is up with read so this is an "empty" read to reset the issue
 		bms.relayRead(50);
@@ -232,6 +233,8 @@ public class ConditioningMethods
 		if((hotCold == 'c' && previousHVAC== 'h')||(hotCold == 'h' && previousHVAC== 'c'))
 		{
 			System.out.println("P U R G I N G");
+			BMSMethods.logInfo("handleHVACMAchines purging","INFO");
+
 			BMSMainController.mainStatusFlag = "purging";
 			//turn off all units
 			bms.relayWrite(50,"off");
@@ -253,6 +256,7 @@ public class ConditioningMethods
 		}
 
 		System.out.println("----------\nMachine Decisions:");
+		BMSMethods.logInfo("handleHVACMachinescurrent airflow requested = "+currentRequested,"INFO");
 
 		BMSMainController.mainStatusFlag = "HVAC Deciding";
 		//machine decisions time
@@ -368,6 +372,7 @@ public class ConditioningMethods
 	{
 		//adjustment int
 		int dumpActivateLevel = -30;
+		BMSMethods.logInfo("handleHVACDumpZones started","INFO");
 
 		//handle cold
 		if(hotCold == 'c')
