@@ -188,9 +188,7 @@ public class GUIHelperMethods
      * */
     public static void buttonEnabler(JToggleButton button, boolean selected, String textIn)
     {
-        BMSMethods.logInfo("Enabling button " + button.getName() + ", the button's selected is " +selected, "DEBUG");
         button.setEnabled(true);
-
         //button is selected or not
         if (selected)
         {
@@ -215,7 +213,6 @@ public class GUIHelperMethods
         button.setText("<html>Please<br>Wait</html>");
         button.setForeground(Color.BLACK);
         button.setBackground(GUIController.disabledColor);
-        BMSMethods.logInfo("Disabling button " + button.getName(),"DEBUG");
     }
 
 

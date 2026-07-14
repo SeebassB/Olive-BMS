@@ -186,8 +186,6 @@ public class Room
 			setRequestState('n');
 		}
 
-
-		BMSMethods.logInfo(" UpdateRequestState for room " + roomName + " request state set to "+ requestState, "DEBUG");
 	}
 
 
