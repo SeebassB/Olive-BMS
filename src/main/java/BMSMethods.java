@@ -123,7 +123,7 @@ public class BMSMethods
 
 
 	/**
-	 * Write to log files depending on the importance. This method is an overload and simply replaces the number with
+	 * Write to log files depending on the importance.
 	 * @param message What you want to log
 	 * @param severity The severity of the log in word form
 	 * */
@@ -325,7 +325,6 @@ public class BMSMethods
 	 */
 	public void launchStudio1()
 	{
-		logInfo("Studio 1 Starting up", "IMPORTANT");
 		try
 		{
 			relayWrite(CR1_Lights,         off);
@@ -340,6 +339,7 @@ public class BMSMethods
 				Thread.sleep(1000);
 			relayWrite(CR1_Desk,           off);
 				Thread.sleep(1000);
+			logInfo("Studio 1 started up", "IMPORTANT");
 		}
 		catch( InterruptedException e)
 		{
@@ -353,7 +353,6 @@ public class BMSMethods
 	 */
 	public void shutdownStudio1()
 	{
-		logInfo("Studio 1 powering down", "IMPORTANT");
 		try
 		{
 
@@ -377,7 +376,7 @@ public class BMSMethods
 				Thread.sleep(1000);
 			findRoom("Booth 1").setTargetTemp(74);
 				Thread.sleep(1000);
-
+			logInfo("Studio 1 powered down", "IMPORTANT");
 		}
 		catch( InterruptedException e)
 		{
@@ -391,7 +390,6 @@ public class BMSMethods
 	 */
 	public void launchStudio2()
 	{
-		logInfo("Studio 2 Starting up", "IMPORTANT");
 		try
 		{
 			relayWrite(CR2_Lights,         off);
@@ -406,6 +404,7 @@ public class BMSMethods
 				Thread.sleep(1000);
 			relayWrite(CR2_Desk,           off);
 				Thread.sleep(1000);
+			logInfo("Studio 2 started up", "IMPORTANT");
 		}
 		catch( InterruptedException e)
 		{
@@ -420,7 +419,6 @@ public class BMSMethods
 	 */	
 	public void shutdownStudio2()
 	{
-		logInfo("Studio 2 Powering down","INFO");
 		try
 		{
 			relayWrite(CR2_Lights,         on);
@@ -438,6 +436,8 @@ public class BMSMethods
 			findRoom("CR 2").setCoolHeat('n');
 				Thread.sleep(1000);
 			findRoom("Booth 2").setCoolHeat('n');
+			logInfo("Studio 2 powered down","INFO");
+
 		}
 		catch( InterruptedException e)
 		{
@@ -452,7 +452,6 @@ public class BMSMethods
 	 */
 	public void launchStudio3()
 	{
-		logInfo("Studio 3 Starting up","INFO");
 		try
 		{
 			relayWrite(CR3_Lights,         off);
@@ -467,6 +466,7 @@ public class BMSMethods
 				Thread.sleep(1000);
 			relayWrite(CR3_Desk,           off);
 				Thread.sleep(1000);
+			logInfo("Studio 3 started up","INFO");
 		}
 		catch( InterruptedException e)
 		{
@@ -481,7 +481,6 @@ public class BMSMethods
 	 */	
 	public void shutdownStudio3()
 	{
-		logInfo("Studio 3 Powering down","INFO");
 		try
 		{
 			relayWrite(CR3_Lights,         on);
@@ -498,6 +497,7 @@ public class BMSMethods
 				Thread.sleep(1000);
 			findRoom("CR 3").setCoolHeat('n');
 			findRoom("Booth 3").setCoolHeat('n');
+			logInfo("Studio 3 Powered down","INFO");
 		}
 		catch( InterruptedException e)
 		{
@@ -513,7 +513,7 @@ public class BMSMethods
 	public void openDamper(int inDamper)
 	{
 		relayWrite(inDamper,"on");
-		logInfo("Opened Damper "+inDamper+".","DEBUG");
+		//logInfo("Opened Damper "+inDamper+".","DEBUG");
 	}
 	
 	/**
@@ -525,7 +525,7 @@ public class BMSMethods
 	public void closeDamper(int inDamper)
 	{
 		relayWrite(inDamper,"off");
-		logInfo("Closed Damper "+inDamper+".","INFO");
+		//logInfo("Closed Damper "+inDamper+".","INFO");
 	}
 	
 	/**
@@ -673,6 +673,8 @@ public class BMSMethods
 			room.updateRequestState();
         	room.setDamperState(relayRead(room.getDamperNumber()));
 		}
+		BMSMethods.logInfo("refreshAllRooms OK", "DEBUG");
+
 	}
 
 	/**

@@ -47,20 +47,20 @@ public class BMSMainController
 		//main thread management loop
 		while(!mainStatusFlag.equalsIgnoreCase( "QUIT"))//while hvacThreadStatus is not -1 which signifies
 		{
-			BMSMethods.logInfo("Start BMS main loop","INFO");
+			BMSMethods.logInfo("BMS main loop, mainStatusFlag = " + mainStatusFlag + " and cycles = " + keepTrackOfCycles,"INFO");
 
 			if(!bms.relayBoard.isOpen())
 			{
 				BMSMethods.logInfo("PORT ERROR, CABLE DISCONNECTED?", "WARNING");
 				portCheck();
 			}
+
 			DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 			System.out.println( dateFormat.format( new Date())+ "heartbeat");
 			bms.refreshAllRooms();
 			bms.extremeTempCheck();
 			gui.update(bms);
 
-			BMSMethods.logInfo("BMSController status: "+mainStatusFlag+", "+keepTrackOfCycles,"INFO");
 			switch(mainStatusFlag)//regular operation
 			{
 
@@ -83,7 +83,7 @@ public class BMSMainController
 					BMSMethods.logInfo("System entering maintenance mode","INFO");
 					while(!Objects.equals(mainStatusFlag, "normal"))
 					{
-						Thread.sleep(1 * 30 * 1000);//sleep for a minute
+						Thread.sleep( 30 * 1000);//sleep for a minute
 						bms.refreshAllRooms();
 						gui.update(bms);
 						bms.printInfo();

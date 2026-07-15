@@ -1266,6 +1266,7 @@ public class GUIController
      * */
     public void update(BMSMethods bms)
     {
+        BMSMethods.logInfo("GUI update", "DEBUG");
 
         //CR1 update cool/heat buttons
         GUIHelperMethods.updateRoomCoolHeatButtons(bms, "CR 1", cr1HeatButton, cr1CoolButton, cr1ConditioningOffButton);

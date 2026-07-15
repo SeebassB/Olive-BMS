@@ -26,13 +26,13 @@ public class ConditioningMethods
 		char currentConditioningRequest = 'n';
 
 		BMSMethods.logInfo("runConditioning started","INFO");
-
+		System.out.println("Conditionoing start right after the log");
 		//refreshes all rooms info in order to have currentTemps and damper states
 		bms.refreshAllRooms();
 
 		//print all temps to see what's going on
 		DateTimeFormatter form = DateTimeFormatter.ofPattern("HH:mm");
-		System.out.println("+-+-+-+-+START+-+-+-+-+" + LocalDateTime.now().format(form));
+		System.out.println(LocalDateTime.now().format(form) + " +-+-+-+-+START+-+-+-+-+");
 		bms.printInfo();
 
 		//collect current room statuses
