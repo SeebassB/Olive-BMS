@@ -2,6 +2,8 @@
 public class Room
 {
 	double CUTOFF_AMOUNT = 1.5;//adjust this to alter the cutoff temp
+	public static int defaultStandardTemp = 74;
+
 
 	final String roomName;//name of the room
 	final int percentAirflow; //percentage of airflow that the room can take
@@ -29,7 +31,7 @@ public class Room
 	{
 		roomName         = inName;//final
 		currentTemp      = 72;
-		targetTemp       = 74.00;
+		targetTemp       = defaultStandardTemp;
 		coolHeat         = cH;
 		fixTargetCutoffTemp(); //calculate cutoffTemp
 		percentAirflow   = pAir;//final
@@ -128,7 +130,7 @@ public class Room
 			targetCutoffTemp = targetTemp + CUTOFF_AMOUNT;
 		else if(coolHeat == 'h')
 			targetCutoffTemp = targetTemp - CUTOFF_AMOUNT;
-		BMSMethods.logInfo("Fixing temp for "+ roomName +" to "+targetCutoffTemp, "DEBUG");
+		//BMSMethods.logInfo("Fixing temp for "+ roomName +" to "+targetCutoffTemp, "DEBUG");
 	}
 
 	/**

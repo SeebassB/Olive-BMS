@@ -1,11 +1,17 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 
 public class GUIController
 {
+    //time
+    JLabel cornerTime;
+
     //all
     static JToggleButton allLightsButton;
     static JToggleButton allPowerButton;
@@ -98,6 +104,8 @@ public class GUIController
 
     static boolean itemListenerFlag = false;
 
+    final DateFormat currentHourFormat = new SimpleDateFormat("HH:mm:ss");
+
     public GUIController(BMSMethods bms){
 
         UIManager.put("ToggleButton.select", onColor);
@@ -139,6 +147,12 @@ public class GUIController
         int firstBoxXLevel = 100;
         int tempInfoBoxXLevel = 330;
         int powerControlBoxXLevel = 640;
+
+
+        //time for the top right corner
+
+        cornerTime = GUIHelperMethods.createLabel(currentHourFormat.format(new Date()), 730, 10, 60, 30, lineBorder2, small, Color.GRAY, Color.BLACK);
+        frame.add(cornerTime);
 
 
         //ALL ROOMS----------------------------------------------------------------------------------------------------
@@ -1267,6 +1281,9 @@ public class GUIController
     public void update(BMSMethods bms)
     {
         BMSMethods.logInfo("GUI update", "DEBUG");
+
+
+        cornerTime.setText(currentHourFormat.format(new Date()));
 
         //CR1 update cool/heat buttons
         GUIHelperMethods.updateRoomCoolHeatButtons(bms, "CR 1", cr1HeatButton, cr1CoolButton, cr1ConditioningOffButton);

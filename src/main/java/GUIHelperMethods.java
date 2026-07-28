@@ -1,7 +1,6 @@
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicToggleButtonUI;
-import javax.swing.plaf.metal.MetalToggleButtonUI;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -154,7 +153,7 @@ public class GUIHelperMethods
         //get coolHeat of the target room
         char currentlyOn = bms.findRoom(roomIn).getCoolHeat();
 
-        BMSMethods.logInfo("updateRoomCoolHeatButtons, "+roomIn+" set to "+currentlyOn,"DEBUG");
+        //BMSMethods.logInfo("updateRoomCoolHeatButtons, "+roomIn+" set to "+currentlyOn,"DEBUG");
 
         //reset to gray
         x.setBackground(Color.GRAY);
@@ -456,7 +455,6 @@ public class GUIHelperMethods
             int currentRoomLights = 0;
             int boothLights       = 0;
 
-            BMSMethods.logInfo("Lights on for room "+room+" are "+onOff,"INFO");
 
             if (room == 1)
             {
@@ -512,6 +510,7 @@ public class GUIHelperMethods
 
             GUIController.itemListenerFlag =false;
 
+            BMSMethods.logInfo("Lights on for room "+room+" are "+onOff,"INFO");
 
             return null;
         }
@@ -544,24 +543,10 @@ public class GUIHelperMethods
         protected Void doInBackground()
         {
 
-            BMSMethods.logInfo("Power on for room "+room+" are "+onOff,"INFO");
-
-
             //turn the power on
             if(onOff)
             {
-                if(room == 1)
-                    bms.launchStudio1();
-                if(room == 2)
-                    bms.launchStudio2();
-                if(room == 3)
-                    bms.launchStudio3();
-
-                bms.findRoom("CR "+room).setCoolHeat('c');
-                bms.findRoom("CR "+room).setTargetTemp(73);
-                bms.findRoom("Booth "+room).setCoolHeat('c');
-                bms.findRoom("Booth "+room).setTargetTemp(73);
-
+                bms.launchOrShutdownStudioX(room, BMSMethods.on);
 
                 new singleRoomLightsWorker(room, true, lightsButton, bms).execute();
                 buttonEnabler(powerButton, true, "Power");
@@ -583,17 +568,8 @@ public class GUIHelperMethods
                 }
 
                 //power off
-                if(room == 1)
-                    bms.shutdownStudio1();
-                if(room == 2)
-                    bms.shutdownStudio2();
-                if(room == 3)
-                    bms.shutdownStudio3();
+                bms.launchOrShutdownStudioX(room, BMSMethods.off);
 
-                bms.findRoom("CR "+room).setCoolHeat('n');
-                bms.findRoom("CR "+room).setTargetTemp(74);
-                bms.findRoom("Booth "+room).setCoolHeat('n');
-                bms.findRoom("Booth "+room).setTargetTemp(74);
                 new singleRoomLightsWorker(room, false, lightsButton, bms).execute();
                 buttonEnabler(powerButton, false, "Power");
             }
@@ -621,7 +597,7 @@ public class GUIHelperMethods
 
             GUIController.itemListenerFlag =false;
 
-
+            BMSMethods.logInfo("Power button for room "+room+" is "+onOff,"INFO");
 
             return null;
         }
