@@ -334,6 +334,11 @@ public class BMSMethods
 	}
 
 
+	/**
+	 * Launch or shutdown a single room
+	 * @param studio int which studio you want to turn on/off
+	 * @param onoff String INVERTED on or off to turn the studio on or off
+	 * */
 	public void launchOrShutdownStudioX(int studio, String onoff)
 	{
 		int CRX_Lights;
@@ -345,6 +350,8 @@ public class BMSMethods
 
 		//get cool or none for HVAC setting
 		char hvacSetting = (onoff.equals("on")) ? 'c':'n' ;
+		String lightSetting = (onoff.equals("on")) ? "off":"on";
+
 
 		if(studio == 1)
 		{
@@ -382,17 +389,17 @@ public class BMSMethods
 		try
 		{
 			//lights
-			relayWrite(CRX_Lights, onoff);
+			relayWrite(CRX_Lights, lightSetting);
 			Thread.sleep(1000);
-			relayWrite( CRX_Middle_Speaker, onoff);
+			relayWrite( CRX_Middle_Speaker, lightSetting);
 			Thread.sleep(1000);
-			relayWrite(CRX_Left_Speaker, onoff);
+			relayWrite(CRX_Left_Speaker, lightSetting);
 			Thread.sleep(1000);
-			relayWrite(CRX_Right_Speaker, onoff);
+			relayWrite(CRX_Right_Speaker, lightSetting);
 			Thread.sleep(1000);
-			relayWrite(BTHX_Power, onoff);
+			relayWrite(BTHX_Power, lightSetting);
 			Thread.sleep(1000);
-			relayWrite(CRX_Desk, onoff);
+			relayWrite(CRX_Desk, lightSetting);
 
 			//temps
 			findRoom("CR "+studio).setCoolHeat(hvacSetting);
@@ -401,11 +408,11 @@ public class BMSMethods
 			findRoom("Booth "+studio).setCoolHeat(hvacSetting);
 			findRoom("Booth "+studio).setTargetTemp(Room.defaultStandardTemp);
 
-			logInfo("Studio " + studio + " is now " + onoff, "IMPORTANT");
+			logInfo("Studio " + studio + " is now " + lightSetting, "IMPORTANT");
 		}
 		catch(Exception e)
 		{
-			logInfo("Studio "+ studio+" FAILED to turn " + onoff,"WARNING");
+			logInfo("Studio "+ studio+" FAILED to turn " + lightSetting,"WARNING");
 		}
 	}
 
