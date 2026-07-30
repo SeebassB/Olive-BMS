@@ -31,10 +31,12 @@ public class BMSMainController
 	{
 
 		//start up BMS
-		//if(!bms.relayBoard.isOpen()) TO BE WORKED ON
-			bms.relayBoard.openPort();
+
+		bms.relayBoard.openPort();
 
 		int keepTrackOfCycles = 0;
+		DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+
 
 		BMSMethods.logInfo("Started BMSMainController","IMPORTANT");
 
@@ -47,15 +49,15 @@ public class BMSMainController
 		//main thread management loop
 		while(!mainStatusFlag.equalsIgnoreCase( "QUIT"))//while hvacThreadStatus is not -1 which signifies
 		{
-			BMSMethods.logInfo("BMS main loop, mainStatusFlag = " + mainStatusFlag + " and cycles = " + keepTrackOfCycles,"INFO");
+			BMSMethods.logInfo("\nBMS main loop, mainStatusFlag = " + mainStatusFlag + " and cycles = " + keepTrackOfCycles,"INFO");
 
+			//check in case the relay board is not found
 			if(!bms.relayBoard.isOpen())
 			{
 				BMSMethods.logInfo("PORT ERROR, CABLE DISCONNECTED?", "WARNING");
 				portCheck();
 			}
 
-			DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 			System.out.println( dateFormat.format( new Date())+ "heartbeat");
 			bms.refreshAllRooms();
 			bms.extremeTempCheck();

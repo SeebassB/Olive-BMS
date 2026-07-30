@@ -130,7 +130,7 @@ public class BMSMethods
 	public static void logInfo(String message, String severity)
 	{
 		//determine level of severity as an int
-		int level = -1;
+		int level;
 
 		if (severity.equalsIgnoreCase("DEBUG"))
 			level = 0;
@@ -140,7 +140,11 @@ public class BMSMethods
 			level = 2;
 		else if(severity.equalsIgnoreCase("ERROR"))
 			level = 3;
-
+		else
+		{
+			level = 3;
+			message += "level error - ";
+		}
 
 		//set up formatting for time and day
 		final DateFormat currentDayFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -176,6 +180,7 @@ public class BMSMethods
 
 				catch (IOException e)
 				{
+						BMSMethods.logInfo("LogInfo is having issues", "WARNING");
 						System.out.println("Logger is having issues");
 						System.out.println("level = " + level);
 						System.out.println("in = " + message);
@@ -186,6 +191,8 @@ public class BMSMethods
 		catch (IOException e)
 		{
 			System.out.println("Directory error");
+			BMSMethods.logInfo("Directory Error in logInfo", "WARNING");
+
 			throw new RuntimeException(e);
     	}
     }
@@ -303,9 +310,7 @@ public class BMSMethods
 	 * */
 	public void launchAll()
 	{
-		launchStudio1();
-		launchStudio2();
-		launchStudio3();
+		launchOrShutdownAllStudios("on");
 	}
 
 	/**
@@ -314,196 +319,96 @@ public class BMSMethods
 	 * */
 	public void shutdownAll()
 	{
-        shutdownStudio1();
-        shutdownStudio2();
-        shutdownStudio3();
+		launchOrShutdownAllStudios("off");
     }
-	
+
 	/**
-	 * Startup Studio 1 at the beginning of the day
-	 * Basically calls relayWrite() for all of Studio 1 with a delay in between
-	 */
-	public void launchStudio1()
+	 * Launch or shutdown all main rooms
+	 * @param onoff String input where you want the room either on or off
+	 * */
+	public void launchOrShutdownAllStudios(String onoff)
 	{
+		launchOrShutdownStudioX(1, onoff);
+		launchOrShutdownStudioX(2, onoff);
+		launchOrShutdownStudioX(3, onoff);
+	}
+
+
+	public void launchOrShutdownStudioX(int studio, String onoff)
+	{
+		int CRX_Lights;
+		int CRX_Middle_Speaker;
+		int CRX_Right_Speaker;
+		int CRX_Left_Speaker;
+		int BTHX_Power;
+		int CRX_Desk;
+
+		//get cool or none for HVAC setting
+		char hvacSetting = (onoff.equals("on")) ? 'c':'n' ;
+
+		if(studio == 1)
+		{
+			CRX_Lights =         CR1_Lights;
+			CRX_Middle_Speaker = CR1_Middle_Speaker;
+			CRX_Right_Speaker =  CR1_Right_Speaker;
+			CRX_Left_Speaker =   CR1_Left_Speaker;
+			BTHX_Power =         BTH1_Power;
+			CRX_Desk =           CR1_Desk;
+		}
+		else if(studio == 2)
+		{
+			CRX_Lights =         CR2_Lights;
+			CRX_Middle_Speaker = CR2_Middle_Speaker;
+			CRX_Right_Speaker =  CR2_Right_Speaker;
+			CRX_Left_Speaker =   CR2_Left_Speaker;
+			BTHX_Power =         BTH2_Power;
+			CRX_Desk =           CR2_Desk;
+		}
+		else if(studio == 3)
+		{
+			CRX_Lights =         CR3_Lights;
+			CRX_Middle_Speaker = CR3_Middle_Speaker;
+			CRX_Right_Speaker =  CR3_Right_Speaker;
+			CRX_Left_Speaker =   CR3_Left_Speaker;
+			BTHX_Power =         BTH3_Power;
+			CRX_Desk =           CR3_Desk;
+		}
+		else
+		{
+			logInfo("STUDIO LAUNCH FAILED, studio = " + studio,"WARNING");
+			return;
+		}
+
 		try
 		{
-			relayWrite(CR1_Lights,         off);
-				Thread.sleep(1000);
-			relayWrite( CR1_Middle_Speaker, off);
-				Thread.sleep(1000);
-			relayWrite(CR1_Left_Speaker,   off);
-				Thread.sleep(1000);
-			relayWrite(CR1_Right_Speaker,  off);
-				Thread.sleep(1000);
-			relayWrite(BTH1_Power,         off);
-				Thread.sleep(1000);
-			relayWrite(CR1_Desk,           off);
-				Thread.sleep(1000);
-			logInfo("Studio 1 started up", "IMPORTANT");
+			//lights
+			relayWrite(CRX_Lights, onoff);
+			Thread.sleep(1000);
+			relayWrite( CRX_Middle_Speaker, onoff);
+			Thread.sleep(1000);
+			relayWrite(CRX_Left_Speaker, onoff);
+			Thread.sleep(1000);
+			relayWrite(CRX_Right_Speaker, onoff);
+			Thread.sleep(1000);
+			relayWrite(BTHX_Power, onoff);
+			Thread.sleep(1000);
+			relayWrite(CRX_Desk, onoff);
+
+			//temps
+			findRoom("CR "+studio).setCoolHeat(hvacSetting);
+			findRoom("CR "+studio).setTargetTemp(Room.defaultStandardTemp);
+
+			findRoom("Booth "+studio).setCoolHeat(hvacSetting);
+			findRoom("Booth "+studio).setTargetTemp(Room.defaultStandardTemp);
+
+			logInfo("Studio " + studio + " is now " + onoff, "IMPORTANT");
 		}
-		catch( InterruptedException e)
+		catch(Exception e)
 		{
-			logInfo("Studio 1 Launch Interrupted!","WARNING");
+			logInfo("Studio "+ studio+" FAILED to turn " + onoff,"WARNING");
 		}
 	}
 
-	/**
-	 * Shutdown Studio 1 at the end of the day
-	 * Basically calls relayWrite() for all of Studio 1 with a delay in between
-	 */
-	public void shutdownStudio1()
-	{
-		try
-		{
-
-			relayWrite(CR1_Lights,         on);
-				Thread.sleep(1000);
-			relayWrite(CR1_Middle_Speaker, on);
-				Thread.sleep(1000);
-			relayWrite(CR1_Left_Speaker,   on);
-				Thread.sleep(1000);
-			relayWrite(CR1_Right_Speaker,  on);
-				Thread.sleep(1000);
-			relayWrite(BTH1_Power,         on);
-				Thread.sleep(1000);
-			relayWrite(CR1_Desk,           on);
-				Thread.sleep(1000);
-			findRoom("CR 1").setCoolHeat('n');
-				Thread.sleep(1000);
-			findRoom("Booth 1").setCoolHeat('n');
-				Thread.sleep(1000);
-			findRoom("CR 1").setTargetTemp(74);
-				Thread.sleep(1000);
-			findRoom("Booth 1").setTargetTemp(74);
-				Thread.sleep(1000);
-			logInfo("Studio 1 powered down", "IMPORTANT");
-		}
-		catch( InterruptedException e)
-		{
-			logInfo("Studio 1 shutdown Interrupted!","WARNING");
-		}
-	}
-	
-	/**
-	 * Startup Studio 2 at the beginning of the day
-	 * Basically calls relayWrite() for all of Studio 2 with a delay in between
-	 */
-	public void launchStudio2()
-	{
-		try
-		{
-			relayWrite(CR2_Lights,         off);
-				Thread.sleep(1000);
-			relayWrite(CR2_Middle_Speaker, off);
-				Thread.sleep(1000);
-			relayWrite(CR2_Left_Speaker,   off);
-				Thread.sleep(1000);
-			relayWrite(CR2_Right_Speaker,  off);
-				Thread.sleep(1000);
-			relayWrite(BTH2_Power,         off);
-				Thread.sleep(1000);
-			relayWrite(CR2_Desk,           off);
-				Thread.sleep(1000);
-			logInfo("Studio 2 started up", "IMPORTANT");
-		}
-		catch( InterruptedException e)
-		{
-			logInfo("Studio 2 Launch Interrupted!", "WARNING");
-		}
-		
-	}
-	
-	/**
-	 * Shutdown Studio 2 at the end of the day
-	 * Basically calls relayWrite() for all of Studio 2 with a delay in between
-	 */	
-	public void shutdownStudio2()
-	{
-		try
-		{
-			relayWrite(CR2_Lights,         on);
-				Thread.sleep(1000);
-			relayWrite(CR2_Middle_Speaker, on);
-				Thread.sleep(1000);
-			relayWrite(CR2_Left_Speaker,   on);
-				Thread.sleep(1000);
-			relayWrite(CR2_Right_Speaker,  on);
-				Thread.sleep(1000);
-			relayWrite(BTH2_Power,         on);
-				Thread.sleep(1000);
-			relayWrite(CR2_Desk,           on);
-				Thread.sleep(1000);
-			findRoom("CR 2").setCoolHeat('n');
-				Thread.sleep(1000);
-			findRoom("Booth 2").setCoolHeat('n');
-			logInfo("Studio 2 powered down","INFO");
-
-		}
-		catch( InterruptedException e)
-		{
-			logInfo("Studio 2 Shutdown Interrupted!", "WARNING");
-		}
-		
-	}	
-
-	/**
-	 * Startup Studio 3 at the beginning of the day
-	 * Basically calls relayWrite() for all of Studio 3 with a delay in between
-	 */
-	public void launchStudio3()
-	{
-		try
-		{
-			relayWrite(CR3_Lights,         off);
-				Thread.sleep(1000);
-			relayWrite(CR3_Middle_Speaker, off);
-				Thread.sleep(1000);
-			relayWrite(CR3_Left_Speaker,   off);
-				Thread.sleep(1000);
-			relayWrite(CR3_Right_Speaker,  off);
-				Thread.sleep(1000);
-			relayWrite(BTH3_Power,         off);
-				Thread.sleep(1000);
-			relayWrite(CR3_Desk,           off);
-				Thread.sleep(1000);
-			logInfo("Studio 3 started up","INFO");
-		}
-		catch( InterruptedException e)
-		{
-			logInfo("Studio 3 Launch Interrupted!","WARNING");
-		}
-		
-	}
-	
-	/**
-	 * Shutdown Studio 3 at the end of the day
-	 * Basically calls relayWrite() for all of Studio 3 with a delay in between
-	 */	
-	public void shutdownStudio3()
-	{
-		try
-		{
-			relayWrite(CR3_Lights,         on);
-				Thread.sleep(1000);
-			relayWrite(CR3_Middle_Speaker, on);
-				Thread.sleep(1000);
-			relayWrite(CR3_Left_Speaker,   on);
-				Thread.sleep(1000);
-			relayWrite(CR3_Right_Speaker,  on);
-				Thread.sleep(1000);
-			relayWrite(BTH3_Power,         on);
-				Thread.sleep(1000);
-			relayWrite(CR3_Desk,           on);
-				Thread.sleep(1000);
-			findRoom("CR 3").setCoolHeat('n');
-			findRoom("Booth 3").setCoolHeat('n');
-			logInfo("Studio 3 Powered down","INFO");
-		}
-		catch( InterruptedException e)
-		{
-			logInfo("Studio 3 Shutdown Interrupted!","WARNING");
-		}
-	}
 
 	/**
 	 * Method to open a damper
@@ -663,7 +568,7 @@ public class BMSMethods
 
 	
 	/**
-	 * Method to update all room's data
+	 * Updates all room's data; temp, requestState, and DamperState
 	 * */
 	public void refreshAllRooms()
 	{
