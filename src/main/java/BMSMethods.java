@@ -310,7 +310,9 @@ public class BMSMethods
 	 * */
 	public void launchAll()
 	{
-		launchOrShutdownAllStudios("on");
+		launchOrShutdownStudioX(1, "on");
+		launchOrShutdownStudioX(2, "on");
+		launchOrShutdownStudioX(3, "on");
 	}
 
 	/**
@@ -319,19 +321,10 @@ public class BMSMethods
 	 * */
 	public void shutdownAll()
 	{
-		launchOrShutdownAllStudios("off");
+		launchOrShutdownStudioX(1, "off");
+		launchOrShutdownStudioX(2, "off");
+		launchOrShutdownStudioX(3, "off");
     }
-
-	/**
-	 * Launch or shutdown all main rooms
-	 * @param onoff String input where you want the room either on or off
-	 * */
-	public void launchOrShutdownAllStudios(String onoff)
-	{
-		launchOrShutdownStudioX(1, onoff);
-		launchOrShutdownStudioX(2, onoff);
-		launchOrShutdownStudioX(3, onoff);
-	}
 
 
 	/**
@@ -348,8 +341,12 @@ public class BMSMethods
 		int BTHX_Power;
 		int CRX_Desk;
 
+		logInfo("Beginning of launchOrShutdownStudioX studio = "+studio+" and onoff = "+onoff ,"DEBUG");
+
 		//get cool or none for HVAC setting
-		char hvacSetting = (onoff.equals("on")) ? 'c':'n' ;
+		char hvacSetting = (onoff.equals("on")) ? 'n':'c' ;
+
+		//on and off are inverted on the lights for some reason
 		String lightSetting = (onoff.equals("on")) ? "off":"on";
 
 
@@ -449,7 +446,7 @@ public class BMSMethods
 	 * */
 	public static double readSensor(String inURL)
 	{
-
+		BMSMethods.logInfo("starting readSensor for "+inURL,"DEBUG");
 		String jsonText;
 
 		try

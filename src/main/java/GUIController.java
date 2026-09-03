@@ -131,6 +131,17 @@ public class GUIController
         frame.setLayout(null); // allow for absolute positioning of components
         frame.setResizable(false); //don't let users resize
 
+        //window close log
+        frame.addWindowListener(new java.awt.event.WindowAdapter()
+        {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent)
+            {
+                BMSMethods.logInfo("Main window closed.","DEBUG");
+            }
+        });
+
+
         //y levels for each room
         int allYLevel  = 10;
         int cr1YLevel  = 100;
@@ -1282,7 +1293,6 @@ public class GUIController
     {
         BMSMethods.logInfo("GUI update", "DEBUG");
 
-
         cornerTime.setText(currentHourFormat.format(new Date()));
 
         //CR1 update cool/heat buttons
@@ -1292,6 +1302,7 @@ public class GUIController
         cr1CurrentTemp.setText(Double.toString(bms.findRoom("CR 1").getCurrentTemp()));
         cr1TargetTemp.setText(Double.toString(bms.findRoom("CR 1").getTargetTemp()));
         cr1ConditioningStatus.setText(Character.toString(bms.findRoom("CR 1").getRequestState()));
+        BMSMethods.logInfo("GUI update CR1 OK", "DEBUG");
 
 
         //bth 1
@@ -1300,6 +1311,7 @@ public class GUIController
         bth1CurrentTemp.setText(Double.toString(bms.findRoom("Booth 1").getCurrentTemp()));
         bth1TargetTemp.setText(Double.toString(bms.findRoom("Booth 1").getTargetTemp()));
         bth1ConditioningStatus.setText(Character.toString(bms.findRoom("Booth 1").getRequestState()));
+        BMSMethods.logInfo("GUI update BTH1 OK", "DEBUG");
 
 
 
@@ -1309,6 +1321,7 @@ public class GUIController
         cr2CurrentTemp.setText(Double.toString(bms.findRoom("CR 2").getCurrentTemp()));
         cr2TargetTemp.setText(Double.toString(bms.findRoom("CR 2").getTargetTemp()));
         cr2ConditioningStatus.setText(Character.toString(bms.findRoom("CR 2").getRequestState()));
+        BMSMethods.logInfo("GUI update CR2 OK", "DEBUG");
 
 
 
@@ -1318,6 +1331,7 @@ public class GUIController
         bth2CurrentTemp.setText(Double.toString(bms.findRoom("Booth 2").getCurrentTemp()));
         bth2TargetTemp.setText(Double.toString(bms.findRoom("Booth 2").getTargetTemp()));
         bth2ConditioningStatus.setText(Character.toString(bms.findRoom("Booth 2").getRequestState()));
+        BMSMethods.logInfo("GUI update BTH2 OK", "DEBUG");
 
 
         //CR3
@@ -1326,6 +1340,7 @@ public class GUIController
         cr3CurrentTemp.setText(Double.toString(bms.findRoom("CR 3").getCurrentTemp()));
         cr3TargetTemp.setText(Double.toString(bms.findRoom("CR 3").getTargetTemp()));
         cr3ConditioningStatus.setText(Character.toString(bms.findRoom("CR 3").getRequestState()));
+        BMSMethods.logInfo("GUI update CR3 OK", "DEBUG");
 
 
         //bth3
@@ -1334,6 +1349,7 @@ public class GUIController
         bth3CurrentTemp.setText(Double.toString(bms.findRoom("Booth 3").getCurrentTemp()));
         bth3TargetTemp.setText(Double.toString(bms.findRoom("Booth 3").getTargetTemp()));
         bth3ConditioningStatus.setText(Character.toString(bms.findRoom("Booth 3").getRequestState()));
+        BMSMethods.logInfo("GUI update BTH3 OK", "DEBUG");
 
         //edit
         GUIHelperMethods.updateRoomCoolHeatButtons(bms, "Edit", editHeatButton, editCoolButton, editConditioningOffButton);
@@ -1341,6 +1357,7 @@ public class GUIController
         editCurrentTemp.setText(Double.toString(bms.findRoom("Edit").getCurrentTemp()));
         editTargetTemp.setText(Double.toString(bms.findRoom("Edit").getTargetTemp()));
         editConditioningStatus.setText(Character.toString(bms.findRoom("Edit").getRequestState()));
+        BMSMethods.logInfo("GUI update EDIT OK", "DEBUG");
 
 
         //others
@@ -1349,6 +1366,7 @@ public class GUIController
         hallwayCurrentTemp.setText(Double.toString(bms.findRoom("Hallway").getCurrentTemp()));
         phoneBoothCurrentTemp.setText(Double.toString(bms.findRoom("Phone Booth").getCurrentTemp()));
         mrCurrentTemp.setText(Double.toString(bms.findRoom("Machine Room 1").getCurrentTemp()));
+        BMSMethods.logInfo("GUI update OTHERS OK", "DEBUG");
 
 
         //HVAC machine state
