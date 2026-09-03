@@ -187,19 +187,22 @@ public class GUIHelperMethods
      * */
     public static void buttonEnabler(JToggleButton button, boolean selected, String textIn)
     {
+        //update button
         button.setEnabled(true);
+        button.setText(textIn);
+
         //button is selected or not
+        button.setSelected(selected);
         if (selected)
         {
-            button.setSelected(true);
             button.setBackground(GUIController.onColor);
         }
+
         else
         {
             button.setBackground(GUIController.offColor);
-            button.setSelected(false);
         }
-        button.setText(textIn);
+
     }
 
     /**
@@ -472,20 +475,13 @@ public class GUIHelperMethods
                 boothLights = BMSMethods.BTH3_Power;
             }
 
-            //lights on, these are inverted for some reason
-            if(onOff)
-            {
-                bms.relayWrite(currentRoomLights, "off");
-                Thread.sleep(500);
-                bms.relayWrite(boothLights, "off");
-            }
-            //lights off
-            else
-            {
-                bms.relayWrite(currentRoomLights, "on");
-                Thread.sleep(500);
-                bms.relayWrite(boothLights, "on");
-            }
+            //get on or off, remember its inverted
+            String lightSetting = (onOff)? "off":"on";
+
+            bms.relayWrite(currentRoomLights, "lightSetting");
+            Thread.sleep(500);
+            bms.relayWrite(boothLights, "lightSetting");
+            Thread.sleep(500);
 
             buttonEnabler(tButt, onOff, "Lights");
 
@@ -503,10 +499,13 @@ public class GUIHelperMethods
             System.out.println("running lights = "+runningOnCount);
 
             if(runningOnCount == 3)
+            {
                 GUIHelperMethods.buttonEnabler(GUIController.allLightsButton, true, "Lights");
+            }
             else if(runningOnCount == 0)
+            {
                 GUIHelperMethods.buttonEnabler(GUIController.allLightsButton, false, "Lights");
-
+            }
 
             GUIController.itemListenerFlag =false;
 

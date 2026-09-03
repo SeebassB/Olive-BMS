@@ -310,7 +310,9 @@ public class BMSMethods
 	 * */
 	public void launchAll()
 	{
-		launchOrShutdownAllStudios("on");
+		launchOrShutdownStudioX(1, "on");
+		launchOrShutdownStudioX(2, "on");
+		launchOrShutdownStudioX(3, "on");
 	}
 
 	/**
@@ -319,21 +321,17 @@ public class BMSMethods
 	 * */
 	public void shutdownAll()
 	{
-		launchOrShutdownAllStudios("off");
+		launchOrShutdownStudioX(1, "off");
+		launchOrShutdownStudioX(2, "off");
+		launchOrShutdownStudioX(3, "off");
     }
 
+
 	/**
-	 * Launch or shutdown all main rooms
-	 * @param onoff String input where you want the room either on or off
+	 * Launch or shutdown a single room
+	 * @param studio int which studio you want to turn on/off
+	 * @param onoff String INVERTED on or off to turn the studio on or off
 	 * */
-	public void launchOrShutdownAllStudios(String onoff)
-	{
-		launchOrShutdownStudioX(1, onoff);
-		launchOrShutdownStudioX(2, onoff);
-		launchOrShutdownStudioX(3, onoff);
-	}
-
-
 	public void launchOrShutdownStudioX(int studio, String onoff)
 	{
 		int CRX_Lights;
@@ -343,8 +341,14 @@ public class BMSMethods
 		int BTHX_Power;
 		int CRX_Desk;
 
+		logInfo("Beginning of launchOrShutdownStudioX studio = "+studio+" and onoff = "+onoff ,"DEBUG");
+
 		//get cool or none for HVAC setting
-		char hvacSetting = (onoff.equals("on")) ? 'c':'n' ;
+		char hvacSetting = (onoff.equals("on")) ? 'n':'c' ;
+
+		//on and off are inverted on the lights for some reason
+		String lightSetting = (onoff.equals("on")) ? "off":"on";
+
 
 		if(studio == 1)
 		{
@@ -382,17 +386,17 @@ public class BMSMethods
 		try
 		{
 			//lights
-			relayWrite(CRX_Lights, onoff);
+			relayWrite(CRX_Lights, lightSetting);
 			Thread.sleep(1000);
-			relayWrite( CRX_Middle_Speaker, onoff);
+			relayWrite( CRX_Middle_Speaker, lightSetting);
 			Thread.sleep(1000);
-			relayWrite(CRX_Left_Speaker, onoff);
+			relayWrite(CRX_Left_Speaker, lightSetting);
 			Thread.sleep(1000);
-			relayWrite(CRX_Right_Speaker, onoff);
+			relayWrite(CRX_Right_Speaker, lightSetting);
 			Thread.sleep(1000);
-			relayWrite(BTHX_Power, onoff);
+			relayWrite(BTHX_Power, lightSetting);
 			Thread.sleep(1000);
-			relayWrite(CRX_Desk, onoff);
+			relayWrite(CRX_Desk, lightSetting);
 
 			//temps
 			findRoom("CR "+studio).setCoolHeat(hvacSetting);
@@ -401,11 +405,11 @@ public class BMSMethods
 			findRoom("Booth "+studio).setCoolHeat(hvacSetting);
 			findRoom("Booth "+studio).setTargetTemp(Room.defaultStandardTemp);
 
-			logInfo("Studio " + studio + " is now " + onoff, "IMPORTANT");
+			logInfo("Studio " + studio + " is now " + lightSetting, "IMPORTANT");
 		}
 		catch(Exception e)
 		{
-			logInfo("Studio "+ studio+" FAILED to turn " + onoff,"WARNING");
+			logInfo("Studio "+ studio+" FAILED to turn " + lightSetting,"WARNING");
 		}
 	}
 
@@ -442,7 +446,7 @@ public class BMSMethods
 	 * */
 	public static double readSensor(String inURL)
 	{
-
+		BMSMethods.logInfo("starting readSensor for "+inURL,"DEBUG");
 		String jsonText;
 
 		try
