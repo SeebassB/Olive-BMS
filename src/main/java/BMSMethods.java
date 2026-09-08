@@ -478,6 +478,9 @@ public class BMSMethods
 			return 73;
         }
 
+		BMSMethods.logInfo("ReadSensor reading complete, parsing begin for  " + inURL, "DEBUG");
+
+
 		//parse through the json to find the temps
         try
 		{
@@ -496,6 +499,7 @@ public class BMSMethods
 						double temp = sensor.optDouble("temperature");
 						temp = ((temp*9)/5)+32;//convert C to F
 						temp = Math.round(temp * 100)/100.0;
+						BMSMethods.logInfo("ReadSensor general + digitalSensors found for " + inURL, "DEBUG");
 						return temp;
 					}
 				}
@@ -512,12 +516,16 @@ public class BMSMethods
 
 					// Format 2 target
 					if (label.equalsIgnoreCase("Ext Sensor 1"))
+					{
+						BMSMethods.logInfo("ReadSensor sensor + Ext Sensor 1 found for " + inURL, "DEBUG");
 						return Double.parseDouble(sensor.getString("tempf"));
-
+					}
 					// Format 3 target
 					if (label.equalsIgnoreCase("Sensor 2"))
+					{
+						BMSMethods.logInfo("ReadSensor sensor + Sensor 2 found for " + inURL, "DEBUG");
 						return Double.parseDouble(sensor.getString("tempf"));
-
+					}
 				}
 			}
 
