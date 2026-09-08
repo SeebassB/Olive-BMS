@@ -421,14 +421,6 @@ public class GUIHelperMethods
 
             GUIController.itemListenerFlag =false;
 
-            for(Room r : bms.getPrimary())
-            {
-                r.setRequestState('n');
-                if(!r.getRoomName().contains("Machine Room"))
-                    r.setTargetTemp(74);
-            }
-
-
             return null;
         }
 
@@ -478,9 +470,9 @@ public class GUIHelperMethods
             //get on or off, remember its inverted
             String lightSetting = (onOff)? "off":"on";
 
-            bms.relayWrite(currentRoomLights, "lightSetting");
+            bms.relayWrite(currentRoomLights, lightSetting);
             Thread.sleep(500);
-            bms.relayWrite(boothLights, "lightSetting");
+            bms.relayWrite(boothLights, lightSetting);
             Thread.sleep(500);
 
             buttonEnabler(tButt, onOff, "Lights");

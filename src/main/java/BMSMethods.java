@@ -247,12 +247,12 @@ public class BMSMethods
 			int bytesReadNumber = this.relayBoard.readBytes(answer, answer.length);
 			String relayReadResult = (bytesReadNumber > 0) ? new String(answer, 0, bytesReadNumber) : "";
 			out =  formatOutput(relayReadResult);
-			logInfo("Relay " + relayNumber + " reads " + out + "  .", "INFORMATION");
+			logInfo("Relay " + relayNumber + " reads " + out + " .", "IMPORTANT");
 
 		}
 		catch (InterruptedException e)
 		{
-			logInfo("RELAY READ FAIL, tried to read relay #" + inRelay, "WARNING");
+			logInfo("RELAY READ FAIL, tried to read relay #" + inRelay, "ERROR");
 			throw new RuntimeException(e);
 		}
 
@@ -344,7 +344,7 @@ public class BMSMethods
 		logInfo("Beginning of launchOrShutdownStudioX studio = "+studio+" and onoff = "+onoff ,"DEBUG");
 
 		//get cool or none for HVAC setting
-		char hvacSetting = (onoff.equals("on")) ? 'n':'c' ;
+		char hvacSetting = (onoff.equals("on")) ? 'c':'n' ;
 
 		//on and off are inverted on the lights for some reason
 		String lightSetting = (onoff.equals("on")) ? "off":"on";
