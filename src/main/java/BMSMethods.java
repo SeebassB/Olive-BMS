@@ -405,11 +405,11 @@ public class BMSMethods
 			findRoom("Booth "+studio).setCoolHeat(hvacSetting);
 			findRoom("Booth "+studio).setTargetTemp(Room.defaultStandardTemp);
 
-			logInfo("Studio " + studio + " is now " + lightSetting, "IMPORTANT");
+			logInfo("Studio " + studio + " is now " + onoff, "IMPORTANT");
 		}
 		catch(Exception e)
 		{
-			logInfo("Studio "+ studio+" FAILED to turn " + lightSetting,"WARNING");
+			logInfo("Studio "+ studio+" FAILED to turn " + onoff,"WARNING");
 		}
 	}
 
@@ -461,6 +461,7 @@ public class BMSMethods
 				.uri(URI.create(inURL))
 				.header("User-Agent", "Mozilla/5.0")
 				.header("Accept", "application/json")
+				.timeout(Duration.ofSeconds(10))
 				.GET()
 				.build();
 
