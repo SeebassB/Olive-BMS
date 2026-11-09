@@ -422,7 +422,6 @@ public class BMSMethods
 	public void openDamper(int inDamper)
 	{
 		relayWrite(inDamper,"on");
-		//logInfo("Opened Damper "+inDamper+".","DEBUG");
 	}
 	
 	/**
@@ -434,7 +433,6 @@ public class BMSMethods
 	public void closeDamper(int inDamper)
 	{
 		relayWrite(inDamper,"off");
-		//logInfo("Closed Damper "+inDamper+".","INFO");
 	}
 	
 	/**
@@ -478,9 +476,6 @@ public class BMSMethods
 			BMSMethods.logInfo("IOException error in readSensor for " + inURL + "(READING ERROR)", "ERROR");
 			return 73;
         }
-
-		BMSMethods.logInfo("ReadSensor reading complete, parsing begin for  " + inURL, "DEBUG");
-
 
 		//parse through the json to find the temps
         try

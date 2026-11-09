@@ -126,7 +126,10 @@ public class GUIController
         frame.getContentPane().setBackground(mainBackgroundColor);
         frame.getContentPane().setLayout(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //close when you hit the X button
-        frame.setLocation(350,80); //where is the window going to open
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int openAtWidth = ((int) screenSize.getWidth()/2) - 400;
+        int openAtHeight = ((int) screenSize.getHeight()/2) - 400;
+        frame.setLocation(openAtWidth,openAtHeight); //where is the window going to open
         frame.setSize(815, 860); //how large is the window
         frame.setLayout(null); // allow for absolute positioning of components
         frame.setResizable(false); //don't let users resize
